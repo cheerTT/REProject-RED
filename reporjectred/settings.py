@@ -44,6 +44,10 @@ INSTALLED_APPS = [
     'apps.personal.apps.PersonalConfig',
     'apps.commodity.apps.CommodityConfig',
 
+=======
+    'apps.member.apps.MemberConfig',
+    'apps.recommendations.apps.RecommendationsConfig',
+
 ]
 
 MIDDLEWARE = [
