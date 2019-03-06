@@ -36,6 +36,8 @@ a scrm management system based on face recognitio
 asdasdasdsadsadasdsan
 
 #### 2019-3-6 virus
-ceshi
+更新了推荐商品查询模块，数据库更新了推荐表users_recommendations
 
+#### 2019-3-6 ttwen
+完成了member查询
 
