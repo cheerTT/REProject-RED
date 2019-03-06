@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'apps.users.apps.UsersConfig',
     'apps.personal.apps.PersonalConfig',
     'apps.commodity.apps.CommodityConfig',
+    'apps.commendation.apps.CommendationConfig',
 
 ]
 
