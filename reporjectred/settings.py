@@ -165,9 +165,21 @@ SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 SESSION_SAVE_EVERY_REQUEST = True
 
 # mail server
-EMAIL_HOST = "mail.sandbox.com"
-EMAIL_PORT = 587
-EMAIL_HOST_USER = "test@sandbox.com"
-EMAIL_HOST_PASSWORD = "1234@abcd.com"
-EMAIL_USE_TLS = True
-EMAIL_FROM = "test@sandbox.com"
+# EMAIL_HOST = "mail.sandbox.com"
+# EMAIL_PORT = 587
+# EMAIL_HOST_USER = "test@sandbox.com"
+# EMAIL_HOST_PASSWORD = "1234@abcd.com"
+# EMAIL_USE_TLS = True
+# EMAIL_FROM = "test@sandbox.com"
+
+# 人脸配置参数
+MINSIZE =20  # minimum size of face
+THRESHOLD = [0.6, 0.7, 0.7]  # three steps's threshold
+FACTOR =0.709  # scale factor
+MODELPATH = BASE_DIR + os.sep + 'facenet' + os.sep + '20180402-114759'
+
+MAX_CONTENT_LENGTH = 16 * 1024 * 1024 # 图片最大为16M
+MAX_DISTINCT = 1.00 #设置最大的相似距离，1.22是facenet基于lfw计算得到的
+
+APPID = 'wx56291ba66ff53a69'
+SECRET = 'f4ecc5552da2ce4241d7fe083da90592'

@@ -10,7 +10,7 @@ a scrm management system based on face recognition
 完成商品管理模块，展示商品信息，以及对商品的增删改查；
 
 bug：修改商品图片不成功;
-=======
+
 #### 2019-2-25 cheertt
 
  添加dev分支；
@@ -23,17 +23,13 @@ bug：修改商品图片不成功;
 
 修改登陆主界面样式;
 
+#### 2019-3-6 sutrue 
 
+ceshi;
 
-sutrue ceshi
-=======
 #### 2019-3-6 ttwen
 
-更新了会员管理模块
-=======
-a scrm management system based on face recognitio
-
-asdasdasdsadsadasdsan
+更新了会员管理模块;
 
 #### 2019-3-6 virus
 更新了推荐商品查询模块，数据库更新了推荐表users_recommendations
@@ -41,3 +37,8 @@ asdasdasdsadsadasdsan
 #### 2019-3-6 ttwen
 完成了member查询
 
+#### 2019-3-6 lym
+git 测试
+
+#### 2019-3-6 caicai
+测试更新
