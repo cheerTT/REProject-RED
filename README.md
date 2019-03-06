@@ -13,3 +13,7 @@ a scrm management system based on face recognition
 
 修改登陆主界面样式;
 
+#### 2019-3-6 ttwen
+
+更新了会员管理模块
+
