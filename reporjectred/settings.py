@@ -42,7 +42,7 @@ INSTALLED_APPS = [
     'apps.users.apps.UsersConfig',
     'apps.personal.apps.PersonalConfig',
     'apps.member.apps.MemberConfig',
-
+    'apps.recommendations.apps.RecommendationsConfig',
 ]
 
 MIDDLEWARE = [

@@ -37,5 +37,5 @@ urlpatterns = [
     url(r'^personal/passwordchange', PasswdChangeView.as_view(), name="personal-passwordchange"),
 
     url(r'^users/', include('users.urls', namespace='users')),
-
+    url(r'^recommendations/', include('recommendations.urls', namespace='recommendations')),
 ]
