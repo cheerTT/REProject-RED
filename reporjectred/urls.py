@@ -38,9 +38,8 @@ urlpatterns = [
 
     url(r'^users/', include('users.urls', namespace='users')),
 
-
+    url(r'^member/', include('member.urls', namespace='member')),
     url(r'^commodity/', include('commodity.urls', namespace='commodity')),
-
 
     url(r'^recommendations/', include('recommendations.urls', namespace='recommendations')),
 

@@ -48,35 +48,33 @@
                         </div>
 
 
-                      <div class="form-group searchArea margin-r-5 margin-top-5">
-                        <label>用户类型：</label>
-                         <select class="form-control inputText select2" name="state" id="state">
-                            <option></option>
-                            {% for state in state_list %}
-                                <option value={{ state.item }}>{{ state.value }}</option>
-                            {% endfor %}
-                        </select>
-                      </div>
-
-                    <div class="form-group searchArea margin-r-5 margin-top-5">
-                        <label>用户状态：</label>
-                        <select class="form-control inputText select2" name="type", id="type">
-                            <option></option>
-                            {% for type in type_list %}
-                                <option value={{ type.item }}>{{ type.value }}</option>
-                            {% endfor %}
-                        </select>
-                      </div>
-                        <div class="form-group has-feedback">
-                                <label class="col-sm-2 control-label">开始日期：</label>
-                                <div class="col-sm-3">
-                                    <input type="text" class="form-control pull-right form_datetime" name="beginDate"/>
-                                </div>
-                                <label class="col-sm-2 control-label">结束日期：</label>
-                                <div class="col-sm-3">
-                                    <input type="text" class="form-control pull-right form_datetime" name="endDate"/>
-                                </div>
+                        <div class="form-group searchArea margin-r-5 margin-top-5">
+                            <label>用户类型：</label>
+                             <select class="form-control inputText select2" name="state" id="state">
+                                <option></option>
+                                {% for state in state_list %}
+                                    <option value={{ state.item }}>{{ state.value }}</option>
+                                {% endfor %}
+                            </select>
                         </div>
+
+                        <div class="form-group searchArea margin-r-5 margin-top-5">
+                            <label>用户状态：</label>
+                            <select class="form-control inputText select2" name="type", id="type">
+                                <option></option>
+                                {% for type in type_list %}
+                                    <option value={{ type.item }}>{{ type.value }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                         <div class="form-group searchArea margin-r-5 margin-top-5">
+                            <label>开始时间：</label>
+                             <input type="text" class ="form-control inputText form_datetime"  name="beginDate" id="beginDate"/>
+                         </div>
+                         <div class="form-group searchArea margin-r-5 margin-top-5">
+                            <label>结束时间：</label>
+                             <input type="text" class ="form-control inputText form_datetime"  name="endDate" id="endDate"/>
+                         </div>
 
                         <button type="button" id="btnMemberSearch" class="btn btn-default">
                             <i class="glyphicon glyphicon-search"></i>查询
@@ -145,6 +143,8 @@ $(function() {
                                     d.nickname=$("#nickname").val();
                                     d.type=$("#type").val();
                                     d.state=$("#state").val();
+                                    d.beginDate=$("#beginDate").val();
+                                    d.endDate=$("#endDate").val();
 								}
 						},
 
