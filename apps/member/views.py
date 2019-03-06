@@ -45,8 +45,12 @@ class MemberListView(LoginRequiredMixin, View):
             filters['type'] = request.GET['type']
         if 'state' in request.GET and request.GET['state']:
             filters['state'] = request.GET['state']
-        # if 'joined_date2' in request.GET and request.GET['joined_date2']:
-        #     filters['state'] = request.GET['joined_date2']
+
+        if 'beginDate' in request.GET and request.GET['beginDate']:
+            filters['joined_date2__gte'] = request.GET['beginDate']
+        if 'endDate' in request.GET and request.GET['endDate']:
+            filters['joined_date2__lte'] = request.GET['endDate']
+
         ret = dict(data=list(ApiMember.objects.filter(**filters).values(*fields)))
 
         return HttpResponse(json.dumps(ret, cls=DjangoJSONEncoder), content_type='application/json')
