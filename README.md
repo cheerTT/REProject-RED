@@ -1,4 +1,5 @@
 # REProject-RED
+
 a scrm management system based on face recognition
 
 
@@ -23,9 +24,15 @@ bug：修改商品图片不成功;
 修改登陆主界面样式;
 
 
+
 sutrue ceshi
 =======
 #### 2019-3-6 ttwen
 
 更新了会员管理模块
+=======
+a scrm management system based on face recognitio
+
+asdasdasdsadsadasdsan
+
 
