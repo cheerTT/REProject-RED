@@ -43,8 +43,6 @@ INSTALLED_APPS = [
     'apps.users.apps.UsersConfig',
     'apps.personal.apps.PersonalConfig',
     'apps.commodity.apps.CommodityConfig',
-
-=======
     'apps.member.apps.MemberConfig',
     'apps.recommendations.apps.RecommendationsConfig',
 
@@ -98,7 +96,7 @@ DATABASES = {
         'NAME': 'reprojectred',
         'HOST': '127.0.0.1',
         'USER': 'root',
-        'PASSWORD': '123456',
+        'PASSWORD': 'root',
         'PORT': '3306'
     }
 }

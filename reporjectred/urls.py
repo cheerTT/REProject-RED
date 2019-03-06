@@ -42,8 +42,6 @@ urlpatterns = [
     url(r'^commodity/', include('commodity.urls', namespace='commodity')),
 
 
-
-=======
     url(r'^recommendations/', include('recommendations.urls', namespace='recommendations')),
 
 ]
