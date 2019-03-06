@@ -17,14 +17,7 @@
             {% csrf_token %}
             <div class="box-body">
                 <fieldset>
-                    <legend>
-                    </legend>
                     <div class="form-group has-feedback">
-                        <input class="form-control" name="operator" type="hidden" value="{{ request.user.name }}"/>
-                        <label class="col-sm-2 control-label">商品编号</label>
-                        <div class="col-sm-3">
-                            <input class="form-control" name="assin" type="text"/>
-                        </div>
                         <label class="col-sm-2 control-label">商品类型</label>
                         <div class="col-sm-3">
                             <select class="form-control select2" style="width:100%;" name="categories">
@@ -34,6 +27,13 @@
                                 {% endfor %}
                             </select>
                         </div>
+
+                        <input class="form-control" name="operator" type="hidden" value="{{ request.user.name }}"/>
+                        <label class="col-sm-2 control-label">商品编号</label>
+                        <div class="col-sm-3">
+                            <input class="form-control" name="assin" type="text"/>
+                        </div>
+
                     </div>
                     <div class="form-group has-feedback">
                         <label class="col-sm-2 control-label">商品名称</label>
