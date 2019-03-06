@@ -40,6 +40,7 @@ urlpatterns = [
 
     url(r'^member/', include('member.urls', namespace='member')),
     url(r'^commodity/', include('commodity.urls', namespace='commodity')),
+
     url(r'^recommendations/', include('recommendations.urls', namespace='recommendations')),
 
 ]
