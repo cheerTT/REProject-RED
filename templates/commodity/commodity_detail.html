@@ -40,7 +40,7 @@
                     <tbody>
                         <tr class="info">
                             <td width="10%"><strong>商品编号</strong></td>
-                            <td class="text-left">{{ commodity.assin }}</td>
+                            <td class="text-left" width="50%">{{ commodity.assin }}</td>
                             <td width="10%"><strong>商品类型</strong></td>
                             <td class="text-left">{{ commodity.categories.type_name }}</td>
                         </tr>
@@ -78,9 +78,9 @@
                <div class="box-footer">
                   <ul class="mailbox-attachments clearfix">
 
-                    <li>
-                      <a href="/media/{{ commodity.imUrl }}" target="_blank">
-                        <span class="mailbox-attachment-icon has-img"><img src="/media/{{ commodity.imUrl }}" alt=""></span>
+                    <li >
+                      <a href="{{ commodity.imUrl }}" target="_blank">
+                        <span class="mailbox-attachment-icon has-img" width="70px" height="1000px"><img src="{{ commodity.imUrl }}" alt=""></span>
                       </a>
                     </li>
 
