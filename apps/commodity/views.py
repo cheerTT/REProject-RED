@@ -92,8 +92,8 @@ class CommodityUpdateView(LoginRequiredMixin, View):
     def get(self, request):
         ret = dict()
         status_list = []
-        if 'assin' in request.GET and request.GET['assin']:
-            commodity = Commodity.objects.filter(assin=request.GET['assin'])
+        if 'id' in request.GET and request.GET['id']:
+            commodity = Commodity.objects.filter(id=request.GET['id'])
             ret['commodity'] = commodity[0]
         for status in Commodity.commodity_status:
             status_dict = dict(item=status[0], value=status[1])
@@ -140,8 +140,8 @@ class CommodityDetailView(LoginRequiredMixin, View):
 
     def get(self, request):
         ret = dict()
-        if 'assin' in request.GET and request.GET['assin']:
-            commodity = Commodity.objects.filter(assin=request.GET['assin'])
+        if 'id' in request.GET and request.GET['id']:
+            commodity = Commodity.objects.filter(id=request.GET['id'])
             ret['commodity'] = commodity[0]
         return render(request, 'commodity/commodity_detail.html', ret)
 
