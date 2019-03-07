@@ -43,4 +43,5 @@ urlpatterns = [
 
     url(r'^recommendations/', include('recommendations.urls', namespace='recommendations')),
 
+    url(r'^commendation/', include('commendation.urls', namespace='commendation')),
 ]
