@@ -95,7 +95,7 @@ DATABASES = {
         'NAME': 'reprojectred',
         'HOST': '127.0.0.1',
         'USER': 'root',
-        'PASSWORD': '123456',
+        'PASSWORD': 'root',
         'PORT': '3306'
     }
 }

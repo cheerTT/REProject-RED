@@ -4,7 +4,8 @@ from recommendations import views
 
 urlpatterns = [
     url(r'recommendations/$', views.RecommendationsView.as_view(), name="recommendations"),
-    url(r'^recommendations/list$', views.RecommendationsListView.as_view(), name="recommendations-list"),]
+    url(r'^recommendations/list$', views.RecommendationsListView.as_view(), name="recommendations-list"),
+    url(r'^recommendations/detail$', views.RecommendationsDetailView.as_view(), name="detail"),]
     # url(r'^user/detail$', views_user.UserDetailView.as_view(), name="user-detail"),
     # url(r'^user/update$', views_user.UserUpdataView.as_view(), name="user-update"),
     # url(r'^user/create$', views_user.UserCreateView.as_view(), name="user-create"),
