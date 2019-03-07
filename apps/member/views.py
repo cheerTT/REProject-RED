@@ -1,3 +1,9 @@
+'''
+@Author:ttwen
+@Time:2019年3月7日10:45:35
+@Description: 会员管理的views层
+'''
+
 from django.shortcuts import render, get_object_or_404
 from utils.mixin_utils import LoginRequiredMixin
 from django.views.generic.base import View
@@ -9,6 +15,9 @@ import json
 
 
 class MemberView(LoginRequiredMixin, View):
+    '''
+    会员查询
+    '''
     def get(self, request):
         ret = dict()
 
@@ -34,7 +43,9 @@ class MemberView(LoginRequiredMixin, View):
 
 
 class MemberListView(LoginRequiredMixin, View):
-
+    '''
+    会员列表页面处理方法
+    '''
     def get(self, request):
         fields = ['id', 'nickname', 'gender', 'province', 'city', 'type', 'state', 'last_login_date', 'joined_date2']
         filters = dict()

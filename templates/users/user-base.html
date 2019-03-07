@@ -11,7 +11,8 @@
   <link rel="stylesheet" href="{% static 'bootstrap/css/bootstrap.min.css' %}">
   <!-- Font Awesome -->
 
-  <link rel="stylesheet" href="{% static 'dist/css/AdminLTE.min.css' %}">
+{#  <link rel="stylesheet" href="{% static 'dist/css/AdminLTE.min.css' %}">#}
+    <link rel="stylesheet" href="{% static 'dist/css/NewAdmin.css' %}">
   <!-- iCheck -->
   <link rel="stylesheet" href="{% static 'plugins/iCheck/square/blue.css' %}">
 
@@ -25,8 +26,9 @@
   <![endif]-->
 </head>
 <body class="hold-transition login-page">
+
 <div class="login-box">
-  <div class="login-logo">
+  <div class="login-logo" style="color: white;" >
       向日葵后台管理系统
   </div>
     {% block user-content %}
