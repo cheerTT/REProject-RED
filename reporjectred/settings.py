@@ -44,7 +44,7 @@ INSTALLED_APPS = [
     'apps.member.apps.MemberConfig',
     'apps.commodity.apps.CommodityConfig',
     'apps.recommendations.apps.RecommendationsConfig',
-
+    'apps.commendation.apps.CommendationConfig',
 ]
 
 MIDDLEWARE = [
@@ -95,7 +95,7 @@ DATABASES = {
         'NAME': 'reprojectred',
         'HOST': '127.0.0.1',
         'USER': 'root',
-        'PASSWORD': 'root',
+        'PASSWORD': '123456',
         'PORT': '3306'
     }
 }
