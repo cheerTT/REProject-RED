@@ -92,8 +92,8 @@ class CommodityUpdateView(LoginRequiredMixin, View):
     def get(self, request):
         ret = dict()
         status_list = []
-        if 'assin' in request.GET and request.GET['assin']:
-            commodity = Commodity.objects.filter(assin=request.GET['assin'])
+        if 'id' in request.GET and request.GET['id']:
+            commodity = Commodity.objects.filter(id=request.GET['id'])
             ret['commodity'] = commodity[0]
         for status in Commodity.commodity_status:
             status_dict = dict(item=status[0], value=status[1])
@@ -124,17 +124,11 @@ class CommodityUpdateView(LoginRequiredMixin, View):
 class CommodityDeleteView(LoginRequiredMixin, View):
 
     def post(self, request):
-        # ret = dict(result=False)
-        # if 'assin' in request.POST and request.POST['assin']:
-        #     assin_list = map(request.POST.get('assin').split(','))
-        #     Commodity.objects.filter(assin__in=assin_list).delete()
-        #     ret['result'] = True
         ret = dict(result=False)
-        array = request.POST.getlist('assin')
-        assin_list = ','.join(array)
-        print("测试")
-        print("assin_list")
-        Commodity.objects.extra(where=['assin IN (' + assin_list + ')']).delete()
+        if 'id' in request.POST and request.POST['id']:
+            id_list = map(int,request.POST.get('id').split(','))
+            Commodity.objects.filter(id__in=id_list).delete()
+
         ret['result'] = True
         return HttpResponse(json.dumps(ret), content_type='application/json')
 
@@ -146,8 +140,9 @@ class CommodityDetailView(LoginRequiredMixin, View):
 
     def get(self, request):
         ret = dict()
-        if 'assin' in request.GET and request.GET['assin']:
-            commodity = Commodity.objects.filter(assin=request.GET['assin'])
+        if 'id' in request.GET and request.GET['id']:
+            commodity = Commodity.objects.filter(id=request.GET['id'])
+            print(commodity)
             ret['commodity'] = commodity[0]
         return render(request, 'commodity/commodity_detail.html', ret)
 

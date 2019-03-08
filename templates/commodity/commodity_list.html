@@ -184,16 +184,16 @@
                             },
 
                             {
-                                data: "assin",
+                                data: "id",
                                 {#width : "10%",#}
                                 bSortable: "false",
                                 render: function (data, type, row, meta) {
-                                    var ret = "<button title='详情' onclick='doDetail(\""
-                                        + data + "\")'><i class='glyphicon glyphicon-list-alt'></i></button>";
-                                    ret = ret + "<button title='编辑' onclick='doUpdate(\""
-                                        + data + "\")'><i class='glyphicon glyphicon-pencil'></i></button>";
-                                    ret = ret + "<button title='删除' onclick='doDelete(\""
-                                        + data + "\")'><i class='glyphicon glyphicon-trash'></i></button>";
+                                    var ret = "<button title='详情' onclick='doDetail("
+                                        + data + ")'><i class='glyphicon glyphicon-list-alt'></i></button>";
+                                    ret = ret + "<button title='编辑' onclick='doUpdate("
+                                        + data + ")'><i class='glyphicon glyphicon-pencil'></i></button>";
+                                    ret = ret + "<button title='删除' onclick='doDelete("
+                                        + data + ")'><i class='glyphicon glyphicon-trash'></i></button>";
                                     return ret;
                                 }
                             }],
@@ -250,7 +250,6 @@
 
                 var arrId = new Array();
                 $("input[name='checkList']:checked").each(function () {
-                    //alert($(this).val());
                     arrId.push($(this).val());
                 });
 
@@ -266,7 +265,7 @@
                         $.ajax({
                             type: "POST",
                             url: "{% url 'commodity:delete' %}",
-                            data: {"assin": sId, csrfmiddlewaretoken: '{{ csrf_token }}'},
+                            data: {"id": sId, csrfmiddlewaretoken: '{{ csrf_token }}'},
                             cache: false,
                             success: function (msg) {
                                 if (msg.result) {
@@ -287,8 +286,7 @@
         });
 
         function doDetail(id) {
-
-            window.location.href = "{% url 'commodity:detail' %}?assin=" + id;
+            window.location.href = "{% url 'commodity:detail' %}?id=" + id;
         }
 
         function doUpdate(id) {
@@ -298,7 +296,7 @@
                 shadeClose: false,
                 maxmin: true,
                 area: ['800px', '580px'],
-                content: "{% url 'commodity:update' %}" + '?assin=' + id,
+                content: "{% url 'commodity:update' %}" + '?id=' + id,
                 end: function () {
                     //oDataTable.ajax.reload();
                     window.location.reload();
@@ -320,7 +318,7 @@
                     $.ajax({
                         type: "POST",
                         url: "{% url 'commodity:delete' %}",
-                        data: {"assin": id, csrfmiddlewaretoken: '{{ csrf_token }}'},  //防止post数据时报 csrf_token 403
+                        data: {"id": id, csrfmiddlewaretoken: '{{ csrf_token }}'},  //防止post数据时报 csrf_token 403
                         cache: false,
                         success: function (msg) {
                             if (msg.result) {
