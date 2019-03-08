@@ -1,0 +1,171 @@
+{% extends 'base-layer.html' %}
+{% load staticfiles %}
+
+{% block css %}
+    <link rel="stylesheet" href="{% static 'plugins/datatables/jquery.dataTables.min.css' %}">
+    <link rel="stylesheet" href="{% static 'js/plugins/layer/skin/layer.css' %}">
+    <link rel="stylesheet" href="{% static 'plugins/select2/select2.min.css' %}">
+
+    <link rel="stylesheet" href="{% static 'plugins/select2/select2.min.css' %}">
+    <link rel="stylesheet" href="{% static 'js/plugins/layer/skin/layer.css' %}">
+    <link rel="stylesheet" href="{% static 'bootstrap/css/bootstrap-datetimepicker.min.css' %}">
+    <link rel="stylesheet" href="{% static 'plugins/fileinput/fileinput.css' %}">
+    <link rel="stylesheet" href="{% static 'plugins/combo-select/combo.select.css' %}">
+    <link rel="stylesheet" href="{% static 'js/plugins/layer/skin/layer.css' %}">
+    <link rel="stylesheet" href="{% static 'bootstrap/css/bootstrap-datetimepicker.min.css' %}">
+{% endblock %}
+
+{% block main %}
+
+        <div id="devlist">
+            <div class="box box-primary" id="liebiao">
+                <div class="box-header">
+                    <div align="center">
+                        <div class="btn-group">
+                            <button class="btn">昨日</button>
+                            <button class="btn">近三天</button>
+                            <button class="btn">近一周</button>
+                        </div>
+                        <button type="button" id="btnSave" class="btn btn-info margin-right ">确定</button>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+        <section class="content">
+{#                <div class="box-body">#}
+                    <table id="dtbList" class="display" cellspacing="0" width="100%">
+                        <thead>
+                        <tr valign="middle">
+                            <th><input type="checkbox" id="checkAll"></th>
+                            <th>商品ID</th>
+                            <th>商品销量</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+{#                </div>#}
+        </section>
+
+
+{% endblock %}
+
+{% block javascripts %}
+    <script src="{% static 'plugins/select2/select2.full.min.js' %}"></script>
+    <script src="{% static 'bootstrap/js/bootstrap-datetimepicker.js' %}"></script>
+    <script src="{% static 'plugins/fileinput/fileinput.js' %}"></script>
+    <script src="{% static 'js/plugins/layer/layer.js' %}"></script>
+    <script src="{% static 'plugins/ajaxfileupload/ajaxfile-upload.js' %}"></script>
+    <script src="{% static 'plugins/fileinput/zh.js' %}"></script>
+    <script src="{% static 'plugins/combo-select/jquery.combo.select.js' %}"></script>
+
+    <script src="{% static 'plugins/datatables/jquery.dataTables.min.js' %}"></script>
+    <script src="{% static 'plugins/datatables/dataTables.const.js' %}"></script>
+    <script src="{% static 'plugins/datatables/moment.min.js' %}"></script>
+    <script src="{% static 'js/plugins/layer/layer.js' %}"></script>
+    <script src="{% static 'plugins/select2/select2.full.min.js'%}"></script>
+
+
+    <script type="text/javascript">
+    var oDataTable=null;
+    $(function() {
+
+        oDataTable = initTable();
+        function initTable() {
+            var oTable=$('#dtbList').DataTable($.extend(true,{},
+                DATATABLES_CONSTANT.DATA_TABLES.DEFAULT_OPTION,
+                {
+
+                    ajax : {
+                        "url":"{% url 'hotcommend:item_rank' %}",
+                        "data":function ( d ) {
+                            d.item="fkdsoifjs"
+                            {#d.item_id=$("#item_id").val();#}
+                            {#d.counts=$("#counts").val();#}
+                        }
+                    },
+                    columns : [
+                        DATATABLES_CONSTANT.DATA_TABLES.COLUMN.CHECKBOX,
+                        {
+                            data : "item_id",
+                        },
+                        {
+                            data : "counts",
+                        },
+                        {
+                            data : "id",
+                            width : "10%",
+                            bSortable : "false",
+                            render : function(data, type, row, meta) {
+                                var ret="<button onclick='doDelete(" + data + ")'><i class='glyphicon glyphicon-plus'></i></button>";
+                                return ret;
+                            }
+                        }],
+                }));
+            return oTable;
+	    }
+
+        $("#btnSave").click(function () {
+            var data = $("#addForm").serialize();
+
+            $.ajax({
+                type: $("#addForm").attr('method'),
+                url: "{% url 'commodity:create' %}",
+                url:"/commodity/commodity/create",
+                data: data,
+                cache: false,
+                success: function (msg) {
+                    if (msg.status == 'success') {
+                        layer.alert('数据保存成功！', {icon: 1}, function (index) {
+                            parent.layer.closeAll(); //关闭所有弹窗
+                        });
+                    } else if (msg.status == 'fail') {
+                        layer.alert(msg.commodity_form_errors, {icon: 5});
+                    }
+                    return;
+                }
+            });
+        });
+
+        /*点取消刷新新页面*/
+        $("#btnCancel").click(function () {
+            window.location.reload();
+        });
+
+
+            //select选择后刷新页面GET请求
+            $("#select").change(function () {
+                alert($("#select").val())
+                oDataTable.ajax.reload();
+            });
+            //checkbox全选
+            $("#checkAll").on("click", function () {
+                if ($(this).prop("checked") === true) {
+                    $("input[name='checkList']").prop("checked", $(this).prop("checked"));
+                    $('#example tbody tr').addClass('selected');
+                } else {
+                    $("input[name='checkList']").prop("checked", false);
+                    $('#example tbody tr').removeClass('selected');
+                }
+            });
+
+    });
+
+
+        /*通过按钮关闭弹layer弹出的页面窗口*/
+            $(document).ready(function(){
+                $("#btnCancel").click(function(){
+                    var index = parent.layer.getFrameIndex(window.name); //获取窗口索引
+                    parent.layer.close(index);//关闭窗口
+                });
+            });
+
+    </script>
+    <script>
+        $(function() {
+            //Initialize Select2 Elements
+            $(".select2").select2();
+        });
+    </script>
+{% endblock %}

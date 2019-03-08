@@ -44,7 +44,7 @@ INSTALLED_APPS = [
     'apps.member.apps.MemberConfig',
     'apps.commodity.apps.CommodityConfig',
     'apps.recommendations.apps.RecommendationsConfig',
-    'apps.commendation.apps.CommendationConfig',
+    'apps.hotcommend.apps.HotCommendConfig',
 ]
 
 MIDDLEWARE = [

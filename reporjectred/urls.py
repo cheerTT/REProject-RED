@@ -42,6 +42,5 @@ urlpatterns = [
     url(r'^commodity/', include('commodity.urls', namespace='commodity')),
 
     url(r'^recommendations/', include('recommendations.urls', namespace='recommendations')),
-
-    url(r'^commendation/', include('commendation.urls', namespace='commendation')),
+    url(r'^hotcommend/', include('hotcommend.urls', namespace='hotcommend')),
 ]
