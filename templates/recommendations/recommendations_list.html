@@ -73,6 +73,7 @@
                         <th>推荐商品4</th>
                         <th>推荐商品5</th>
                         <th>更新时间</th>
+                        <th>操作</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -128,37 +129,33 @@ $(function() {
                                 {
 									data : "product_id_1",
                                     render : function(data, type, row, meta) {
-                                        var ret="<button title='详情' onclick='doDetail("+ "\""+data + "\")'><i class='glyphicon glyphicon-list-alt'></i></button>";
-                                        return data + ret;
+                                        return data ;
                                         }
+
 								},
                                 {
                                     data:"product_id_2",
                                     render : function(data, type, row, meta) {
-                                        var ret="<button title='详情' onclick='doDetail("+ "\""+data + "\")'><i class='glyphicon glyphicon-list-alt'></i></button>";
-                                        return data + ret;
+                                        return data ;
                                         }
                                 },
                                 {
 									data : "product_id_3",
                                     render : function(data, type, row, meta) {
-                                        var ret="<button title='详情' onclick='doDetail("+ "\""+data + "\")'><i class='glyphicon glyphicon-list-alt'></i></button>";
-                                        return data + ret;
+                                        return data ;
                                         }
 
 								},
                                 {
 									data : "product_id_4",
                                     render : function(data, type, row, meta) {
-                                        var ret="<button title='详情' onclick='doDetail("+ "\""+data + "\")'><i class='glyphicon glyphicon-list-alt'></i></button>";
-                                        return data + ret;
+                                        return data ;
                                         }
 								},
 
                                 {   data : "product_id_5",
                                     render : function(data, type, row, meta) {
-                                        var ret="<button title='详情' onclick='doDetail("+ "\""+data + "\")'><i class='glyphicon glyphicon-list-alt'></i></button>";
-                                        return data + ret;
+                                        return data ;
                                         }
 
 								},
@@ -168,6 +165,17 @@ $(function() {
                                      render : function(data, type, full, meta) {
                                          return  moment(data).format("YYYY-MM-DD HH:mm");}
 								},
+                                {
+
+                                    data : "user_id",
+
+                                    render: function (data, type, full, meta) {
+                                        var ret="<button title='详情' onclick='doDetail(\""+data + "\")'><i class='glyphicon glyphicon-list-alt'></i></button>";
+
+                                        return ret;}
+                                }
+
+
 
 								 ],
 						}));
@@ -261,9 +269,10 @@ $(function() {
 });
 
 function doDetail(id){
-
-    window.location.href="{% url 'commodity:detail' %}?assin="+id;
+    console.log(id);
+    window.location.href="{% url 'recommendations:detail' %}?user_id="+id;
 }
+
 
 function doUpdate(id){
 	var div=layer.open({
