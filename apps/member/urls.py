@@ -1,3 +1,9 @@
+'''
+@Author:ttwen
+@Time:2019年3月7日10:45:35
+@Description: 会员管理的urls层
+'''
+
 from django.conf.urls import url
 
 from member import views

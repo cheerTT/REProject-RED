@@ -1,3 +1,10 @@
+'''
+@Author:ttwen
+@Time:2019年3月7日10:45:35
+@Description: 会员管理的models层
+'''
+
+
 from django.db import models
 
 class ApiMember(models.Model):
