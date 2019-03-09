@@ -24,7 +24,7 @@
                         <th>商品ID</th>
                         <th>商品名称</th>
                         <th>商品类别</th>
-{#                        <th>品牌</th>#}
+                        <th>撤销推荐</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -51,11 +51,19 @@
 {% endblock %}
 
 {% block javascripts %}
-  <script src="{% static 'plugins/datatables/jquery.dataTables.min.js' %}"></script>
-  <script src="{% static 'plugins/datatables/dataTables.const.js' %}"></script>
-  <script src="{% static 'plugins/datatables/moment.min.js' %}"></script>
-  <script src="{% static 'js/plugins/layer/layer.js' %}"></script>
-  <script src="{% static 'plugins/select2/select2.full.min.js' %}"></script>
+    <script src="{% static 'plugins/select2/select2.full.min.js' %}"></script>
+    <script src="{% static 'bootstrap/js/bootstrap-datetimepicker.js' %}"></script>
+    <script src="{% static 'plugins/fileinput/fileinput.js' %}"></script>
+    <script src="{% static 'js/plugins/layer/layer.js' %}"></script>
+    <script src="{% static 'plugins/ajaxfileupload/ajaxfile-upload.js' %}"></script>
+    <script src="{% static 'plugins/fileinput/zh.js' %}"></script>
+    <script src="{% static 'plugins/combo-select/jquery.combo.select.js' %}"></script>
+
+      <script src="{% static 'plugins/datatables/jquery.dataTables.min.js' %}"></script>
+      <script src="{% static 'plugins/datatables/dataTables.const.js' %}"></script>
+      <script src="{% static 'plugins/datatables/moment.min.js' %}"></script>
+      <script src="{% static 'js/plugins/layer/layer.js' %}"></script>
+      <script src="{% static 'plugins/select2/select2.full.min.js' %}"></script>
   <!-- iCheck 1.0.1 -->
   <script type="text/javascript">
 	$(function() {
@@ -73,9 +81,11 @@ $(function() {
 						DATATABLES_CONSTANT.DATA_TABLES.DEFAULT_OPTION,
 						{
 							ajax : {
-								"url":"{% url 'commodity:commodity-list' %}",
+								"url":"{% url 'hotcommend:hot_add' %}",
 								"data":function ( d ) {
-									d.select=$("#select").val();
+									d.assin=$("#assin").val();
+									d.title=$("#title").val();
+									d.categories=$("#categories").val();
 								}
 						},
 
@@ -91,19 +101,19 @@ $(function() {
 								},
 
                                 {
-									data : "categories__type_name",
+									data : "categories",
 								},
 
 								{
+								    data : "assin",
 									{#data : "id",#}
 									{#width : "10%",#}
 									bSortable : "false",
 									render : function(data, type, row, meta) {
-										var ret="<button title='删除' onclick='doDelete("
-                                            + data + ")'><i class='glyphicon glyphicon-trash'></i></button>";
+										var ret="<button title='删除' onclick='doDelete(\"" + data + "\")'><i class='glyphicon glyphicon-trash'></i></button>";
 										return ret;
 									}
-								} ],
+								}],
 						}));
 		return oTable;
 	}
@@ -113,7 +123,6 @@ $(function() {
             alert(oDataTable.ajax.all())
             oDataTable.ajax.reload();
         });
-
 
 	//select选择后刷新页面GET请求
     $("#select").change(function(){
@@ -145,7 +154,7 @@ $(function() {
 				window.location.reload();
 			}
 		});
-           layer.full(div)
+           {#layer.full(div)#}
 	});
 
 
@@ -194,27 +203,6 @@ $(function() {
 
 });
 
-function doDetail(id){
-    window.location.href="{% url 'commodity:detail' %}?id="+id;
-}
-
-function doUpdate(id){
-	var div=layer.open({
-		type : 2,
-		title : '修改商品信息',
-		shadeClose : false,
-    	maxmin : true,
-		area : [ '800px', '580px' ],
-		content : "{% url 'commodity:update' %}"+'?id='+id,
-		end : function() {
-			//oDataTable.ajax.reload();
-            window.location.reload();
-
-		}
-	});
-	layer.full(div)
-}
-
 //删除单个数据
 function doDelete(id){
     layer.alert('确定删除吗？', {
@@ -226,8 +214,8 @@ function doDelete(id){
             layer.close(index);
             $.ajax({
                 type: "POST",
-                url : "{% url 'commodity:delete' %}",
-                data : {"id":id, csrfmiddlewaretoken: '{{ csrf_token }}'},  //防止post数据时报 csrf_token 403
+                url : "{% url 'hotcommend:hot_delete' %}",
+                data : {"assin":id, csrfmiddlewaretoken: '{{ csrf_token }}'},  //防止post数据时报 csrf_token 403
                 cache: false,
                 success : function(msg) {
                     if (msg.result){
@@ -242,13 +230,6 @@ function doDelete(id){
             });
         }
     });
-
 }
-</script>
-<script>
-  $(function () {
-    //Initialize Select2 Elements
-    $(".select2").select2();
-  });
 </script>
 {% endblock %}
