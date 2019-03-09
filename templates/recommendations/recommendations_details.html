@@ -1,0 +1,137 @@
+{% extends "base-left.html" %}
+{% load staticfiles %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'js/plugins/layer/skin/layer.css' %}">
+{% endblock %}
+
+{% block content %}
+
+
+    <!-- Main content -->
+
+  <section class="content">
+      <div class="row">
+       <div class="col-md-12">
+        <div class="box box-primary">
+            <div class="box-header with-border">
+
+              <div class="box-tools">
+                <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
+                </button>
+              </div>
+            </div>
+            <div class="box-body no-padding">
+                <div class="btn-group pull-right margin-b-10 margin-r-5">
+
+                  <button type="button" class="btn btn-primary btn-sm" title="返回" id="btnReturn">
+                      <i class="fa fa-undo"> 返回</i>
+                  </button>
+
+                </div>
+           </div>
+            <div class="panel panel-default">
+              <div class="panel-heading">
+                <h3 class="panel-title">Panel title</h3>
+              </div>
+              <div class="panel-body">
+                <div class="row">
+                    <div class="col-lg-4">
+                      <img class="img-circle" src="https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1551972494148&di=04bcc05443ff7e682d9ba63dcfa79eab&imgtype=0&src=http%3A%2F%2Fwww.goumin.com%2Fattachments%2Fphoto%2F0%2F0%2F1%2F426%2F109164.jpg" alt="Generic placeholder image" width="140" height="140">
+                      <h2>{{ commodity_1.title }}</h2>
+                      <p>{{ commodity_1.description }}</p>
+                      <p><a class="btn btn-default" href="#" role="button">View details »</a></p>
+                    </div><!-- /.col-lg-4 -->
+                    <div class="col-lg-4">
+                      <img class="img-circle" src="{{ commodity_2.imUrl }}" alt="Generic placeholder image" width="140" height="140">
+                      <h2>{{ commodity_2.title }}</h2>
+                      <p>{{ commodity_2.description }}</p>
+                      <p><a class="btn btn-default" href="#" role="button">View details »</a></p>
+                    </div><!-- /.col-lg-4 -->
+                    <div class="col-lg-4">
+                      <img class="img-circle" src="{{ commodity_3.imUrl }}" alt="Generic placeholder image" width="140" height="140">
+                      <h2>{{ commodity_3.title }}</h2>
+                      <p>{{ commodity_3.description }}</p>
+                      <p><a class="btn btn-default" href="#" role="button">View details »</a></p>
+                    </div><!-- /.col-lg-4 -->
+
+                    <div class="col-lg-4">
+                      <img class="img-circle" src="{{ commodity_4.imUrl }}" alt="Generic placeholder image" width="140" height="140">
+                      <h2>{{ commodity_4.title }}</h2>
+                      <p>{{ commodity_4.description }}</p>
+                      <p><a class="btn btn-default" href="#" role="button">View details »</a></p>
+                    </div><!-- /.col-lg-4 -->
+
+                    <div class="col-lg-4">
+                      <img class="img-circle" src="{{ commodity_5.imUrl }}" alt="Generic placeholder image" width="140" height="140">
+                      <h2>{{ commodity_5.title }}</h2>
+                      <p>{{ commodity_5.description }}</p>
+                      <p><a class="btn btn-default" href="#" role="button">View details »</a></p>
+                    </div><!-- /.col-lg-4 -->
+                  </div>
+              </div>
+            </div>
+
+
+
+               <br>
+               <div class="box-footer">
+                  <ul class="mailbox-attachments clearfix">
+
+                    <li >
+                      <a href="{{ commodity.imUrl }}" target="_blank">
+                        <span class="mailbox-attachment-icon has-img" width="70px" height="1000px"><img src="{{ commodity.imUrl }}" alt=""></span>
+                      </a>
+                    </li>
+
+                  </ul>
+                </div>
+
+            <!-- /.box-footer -->
+            </div>
+            <!-- /.box-body -->
+          </div>
+      </div>
+        <!-- /.col -->
+     <!-- TO DO List -->
+
+          <!-- /.box -->
+
+    </section>
+
+    <!-- /.content -->
+
+{% endblock %}
+
+{% block javascripts %}
+  <script src="{% static 'js/plugins/layer/layer.js' %}"></script>
+  <script type="text/javascript">
+  	$(function() {
+	    $('#ADM-ASSET').addClass('active');
+
+	});
+  	//返回
+    $("#btnReturn").click(function(){
+		history.back();
+	});
+
+    function doUpdate(id){
+	var div=layer.open({
+		type : 2,
+		title : '修改商品信息',
+		shadeClose : false,
+    	maxmin : true,
+		area : [ '800px', '580px' ],
+		content : "{% url 'commodity:update' %}"+'?id='+id,
+		end : function() {
+			//oDataTable.ajax.reload();
+            window.location.reload();
+
+		}
+	});
+	layer.full(div)
+}
+
+</script>
+
+{% endblock %}

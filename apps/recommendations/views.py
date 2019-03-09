@@ -14,8 +14,7 @@ from recommendations.models import Users_Recommendations
 from django.db.models import Q
 from django.contrib.auth import get_user_model
 from django.contrib.auth.backends import ModelBackend
-
-# Create your views here.
+from commodity.models import Commodity
 
 class RecommendationsView(LoginRequiredMixin, View):
 
@@ -24,6 +23,35 @@ class RecommendationsView(LoginRequiredMixin, View):
         # ret = SystemSetup.getSystemSetupLastData()
         return render(request, 'recommendations/recommendations_list.html')
 
+class RecommendationsDetailView(LoginRequiredMixin, View):
+    """
+    商品详情页面
+    """
+
+    def get(self, request):
+        ret = dict()
+        print(request.GET)
+        if 'user_id' in request.GET and request.GET['user_id']:
+            print(request.GET['user_id'])
+            recommendations = Users_Recommendations.objects.filter(user_id=request.GET['user_id'])
+            commodityidlist = []
+            for i in recommendations:
+                commodityidlist.append([i.product_id_1, i.product_id_2, i.product_id_3,i.product_id_4,i.product_id_5])
+            #print(commodityidlist)
+            commoditylist = []
+            for assin in commodityidlist[0]:
+                commodity = Commodity.objects.filter(assin=assin)
+                commoditylist.append(commodity[0])
+            #print(commoditylist)
+            # print("this is ")
+            # print(commodity)
+            # ret['commodity'] = commodity[0]
+            ret['commodity_1'] = commoditylist[0]
+            ret['commodity_2'] = commoditylist[1]
+            ret['commodity_3'] = commoditylist[2]
+            ret['commodity_4'] = commoditylist[3]
+            ret['commodity_5'] = commoditylist[4]
+        return render(request, 'recommendations/recommendations_details.html', ret)
 
 class RecommendationsListView(LoginRequiredMixin, View):
     """
@@ -33,7 +61,6 @@ class RecommendationsListView(LoginRequiredMixin, View):
     def get(self, request):
         fields = ['user_id', 'product_id_1', 'product_id_2', 'product_id_3', 'product_id_4', 'product_id_5']
         filters = dict()
-        print('来了老弟')
         print(request.GET.get('user_id'))
         if 'user_id' in request.GET and request.GET['user_id']:
             filters['user_id__icontains'] = request.GET['user_id']
