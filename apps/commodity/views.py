@@ -142,6 +142,7 @@ class CommodityDetailView(LoginRequiredMixin, View):
         ret = dict()
         if 'id' in request.GET and request.GET['id']:
             commodity = Commodity.objects.filter(id=request.GET['id'])
+            print(commodity)
             ret['commodity'] = commodity[0]
         return render(request, 'commodity/commodity_detail.html', ret)
 

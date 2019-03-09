@@ -1,0 +1,7 @@
+arguments: 02_align_dataset_mtcnn.py E:\codes\pycharm\pycharm_face\facenet01\testpic\1 E:\codes\pycharm\pycharm_face\facenet01\testpic\11 --image_size 160 --margin 32 --random_order --gpu_memory_fraction 0.25
+--------------------
+tensorflow version: 1.7.0
+--------------------
+git hash: b''
+--------------------
+b''
