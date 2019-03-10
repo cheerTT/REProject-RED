@@ -16,7 +16,7 @@ from .models import WorkOrder
 from .forms import UserUpdateForm, ImageUploadForm
 from users.forms import AdminPasswdChangeForm
 from system.models import SystemSetup
-from utils.toolkit import get_month_member_count, get_year_work_order_count
+from utils.toolkit import get_month_member_count, get_member_gender
 
 
 User = get_user_model()
@@ -38,9 +38,12 @@ class PersonalView(LoginRequiredMixin, View):
         ret['start_date'] = start_date
 
         month_member_count = get_month_member_count(value=int(request.GET.get('value', 0)))
-        result = month_member_count[0]['count']
-        ret['month_member_count'] = result
-        # print('ret',ret['month_member_count']) # [1, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0]
+        result1 = month_member_count[0]['count']
+        ret['month_member_count'] = result1
+
+        result2 = get_member_gender(value=int(request.GET.get('value', 0)))[0]['count']
+        # print('result2:', result2)  # {'男生': 3, '女生': 1}
+        ret['member_gender'] = result2
         return render(request, 'personal/personal_index.html', ret)
 
 

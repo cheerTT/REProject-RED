@@ -103,10 +103,10 @@
                 <div class="box-body">
                     <div class="row">
                         <div class="col-md-8">
-                           <div id="bar_container" style="height: 400px"></div>
+                           <div id="bar_container" style="height: 400px; width: 900px;"></div>
                         </div>
                         <div class="col-md-4">
-                           <div id="pie_container" style="height: 400px"></div>
+                           <div id="pie_container" style="height: 400px; width: auto"></div>
                         </div>
                     </div>
 
@@ -156,17 +156,18 @@
 	});
 
 
-    var a = {{ month_member_count }}
+    // var a = {{ month_member_count }}
     // alert(a)
-	//echarts
+	// 月度用户统计echarts
     var bar_dom = document.getElementById("bar_container");
     var myBarChart = echarts.init(bar_dom);
 
     option = null;
     option = {
         title: {
-            text: '月度用户统计',
-            subtext: ''
+            text: '月度新增用户数量统计',
+            subtext: '',
+            x:'center'
         },
         tooltip: {
             trigger: 'axis'
@@ -199,7 +200,7 @@
                 type: 'line',
                 smooth: true,
                 itemStyle: {normal: {areaStyle: {type: 'default'}}},
-                data: a,
+                data: {{ month_member_count }},
                 markPoint : {
                     data : [
                         {type : 'max', name: '最大值'},
@@ -213,6 +214,63 @@
         myBarChart.setOption(option, true);
     }
 
+    // var a = {{ month_member_count }}
+    // alert(a)
+	// 用户数据统计echarts(性别、地区)
+    var bar_dom = document.getElementById("pie_container");
+    var myBarChart = echarts.init(bar_dom);
+    var gender = {{ member_gender }}
+
+    option = null;
+    option = {
+        title: {
+            text: '用户性别统计',
+            subtext: '',
+            x:'center'
+        },
+        tooltip: {
+            trigger: 'item',
+            formatter: "{a} <br/>{b} : {c} ({d}%)"
+        },
+         legend: {
+         orient : 'vertical',
+         x : 'left',
+    },
+
+        toolbox: {
+            show: true,
+            feature: {
+                dataView: {show: true, readOnly: false},
+                magicType : {
+                    show: true,
+                    type: ['pie', 'funnel'],
+                    options:{
+                        funnel:{
+                            x:'25%',
+                        }
+                    }},
+                restore : {show: true},
+                saveAsImage: {show: true}
+            }
+        },
+        calculable: true,
+
+        series: [
+            {
+                name: '用户性别统计',
+                type: 'pie',
+                radius : '55%',
+                itemStyle: {normal: {areaStyle: {type: 'default'}}},
+                data: [
+                    { value: gender[0], name:'男生'},
+                    { value: gender[1], name:'女生'}
+                ]
+            },
+        ]
+    };
+    if (option && typeof option === "object") {
+        myBarChart.setOption(option, true);
+    }
 
     //图表窗体自适应
   $(window).resize(function(){
