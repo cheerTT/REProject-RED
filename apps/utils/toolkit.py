@@ -2,6 +2,7 @@
 # @Author : ttwen
 # @Remark   : 生成工作台各种统计数据
 
+
 import calendar
 from datetime import date, timedelta
 
@@ -50,17 +51,17 @@ def  get_member_gender(value=0):
     # end_date = start_date + timedelta(days_in_month - 1)
     filters['gender'] = '1'
     member_gender1 = Member.objects.filter(**filters).count()
-    print("member_gender1:", member_gender1)
+    # print("member_gender1:", member_gender1)
     count.append(member_gender1)
 
     filters['gender'] = '2'
     member_gender2 = Member.objects.filter(**filters).count()
-    print("member_gender2:",member_gender2)
+    # print("member_gender2:",member_gender2)
     count.append(member_gender2)
     data = {
         'count': count
     }
-    print('data:',data)
+    # print('data:',data)
     member_gender.append(data)
     return member_gender
 

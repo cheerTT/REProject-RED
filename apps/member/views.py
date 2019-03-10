@@ -19,6 +19,11 @@ class MemberView(LoginRequiredMixin, View):
     会员查询
     '''
     def get(self, request):
+        '''
+        get方法
+        :param request:页面的请求
+        :return:跳转member/member_list.html页面
+        '''
         ret = dict()
 
         type_list = []
@@ -47,6 +52,11 @@ class MemberListView(LoginRequiredMixin, View):
     会员列表页面处理方法
     '''
     def get(self, request):
+        '''
+        get方法
+        :param request:来自页面的请求
+        :return:返回会员信息
+        '''
         fields = ['id', 'openid', 'pic_name', 'nickname', 'gender', 'city', 'province', 'state', 'last_login_date', 'faceid', 'joined_date1', 'joined_date2', 'avatarUrl', 'codeVerify', 'type',]
         filters = dict()
         # print("test:",request.GET['nickname'])
@@ -80,6 +90,11 @@ class MemberDetailView(LoginRequiredMixin, View):
     用户详情页面
     '''
     def get(self, request):
+        '''
+        get方法
+        :param request:页面的请求
+        :return: 跳转member/member_detail.html页面
+        '''
         ret = dict()
         if 'id' in request.GET and request.GET['id']:
             member = get_object_or_404(Member, pk=request.GET.get('id'))
@@ -91,6 +106,11 @@ class MemberEnableView(LoginRequiredMixin, View):
     启用用户：单个或批量启用
     """
     def post(self, request):
+        '''
+        post方法
+        :param request: 页面的request请求
+        :return: 返回启用成功的信息
+        '''
         if 'id' in request.POST and request.POST['id']:
             id_nums = request.POST.get('id')
             queryset = Member.objects.extra(where=["id IN(" + id_nums + ")"])
@@ -104,6 +124,11 @@ class MemberDisableView(LoginRequiredMixin, View):
     锁定用户：单个或批量锁定
     """
     def post(self, request):
+        '''
+        post方法
+        :param request:来自页面的请求
+        :return: 返回锁定成功的信息
+        '''
         if 'id' in request.POST and request.POST['id']:
             id_nums = request.POST.get('id')
             queryset = Member.objects.extra(where=["id IN(" + id_nums + ")"])
