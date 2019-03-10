@@ -1,3 +1,10 @@
+<!--
+@Time    : 2019年3月5日19:54:50
+@Author  : xie Liangcai
+@Remark  : 显示商品详细信息页面
+
+-->
+
 {% extends "base-left.html" %}
 {% load staticfiles %}
 
@@ -79,8 +86,8 @@
                   <ul class="mailbox-attachments clearfix">
 
                     <li >
-                      <a href="{{ commodity.imUrl }}" target="_blank">
-                        <span class="mailbox-attachment-icon has-img" width="70px" height="1000px"><img src="{{ commodity.imUrl }}" alt=""></span>
+                      <a href="/media/{{ commodity.imUrl }}" target="_blank">
+                        <span class="mailbox-attachment-icon has-img" width="70px" height="1000px"><img src="/media/{{ commodity.imUrl }}" alt=""></span>
                       </a>
                     </li>
 
