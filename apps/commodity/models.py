@@ -24,7 +24,7 @@ class Commodity(models.Model):
     present_price = models.FloatField(max_length=100, blank=True, null=True)
     description = models.TextField(blank=True, null=True)
     title = models.CharField(max_length=1000, blank=True, null=True)
-    imUrl = models.CharField(max_length=100, blank=True, null=True)
+    imUrl = models.ImageField(upload_to="commImage", blank=True)
     brand = models.CharField(max_length=1000, blank=True, null=True)
     buyDate = models.DateTimeField('商品购买日期', auto_now_add=True, blank=True, null=True)
     warrantyDate = models.DateTimeField('商品保质日期', auto_now_add=True, blank=True, null=True)
