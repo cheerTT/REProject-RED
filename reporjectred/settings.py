@@ -44,10 +44,14 @@ INSTALLED_APPS = [
     'apps.member.apps.MemberConfig',
     'apps.commodity.apps.CommodityConfig',
     'apps.recommendations.apps.RecommendationsConfig',
+
+    'apps.hotcommend.apps.HotCommendConfig',
+
     'apps.commendation.apps.CommendationConfig',
     'apps.api.apps.ApiConfig',
     'apps.rbac.apps.RbacConfig',
     'apps.system.apps.SystemConfig',
+
 ]
 
 MIDDLEWARE = [
@@ -98,7 +102,8 @@ DATABASES = {
         'NAME': 'reprojectred',
         'HOST': '139.219.2.134',
         'USER': 'root',
-        'PASSWORD': 'Jincan.4943198',
+        'PASSWORD': '123',
+
         'PORT': '3306'
     }
 }
