@@ -9,10 +9,16 @@ from commodity.forms import CommodityCreateForm, CommodityUpdateForm, ImageUploa
 from utils.mixin_utils import LoginRequiredMixin
 import json
 import re
-
+from PIL import Image
+from django.views.decorators.csrf import csrf_exempt
 
 class CommodityView(LoginRequiredMixin, View):
     def get(self, request):
+        '''
+        get方法
+        :param request:
+        :return:跳转到商品列表页面
+        '''
         ret = dict()
         status_list = []
         for status in Commodity.commodity_status:
@@ -25,8 +31,16 @@ class CommodityView(LoginRequiredMixin, View):
 
 
 class CommodityListView(LoginRequiredMixin, View):
+    """
+        商品显示页面
+    """
 
     def get(self, request):
+        '''
+        get方法
+        :param request:
+        :return: 返回商品信息列表到前端
+        '''
         fields = ['id', 'assin', 'title', 'brand', 'status', 'buyDate', 'present_price', 'categories__type_name']
         filters = dict()
         if 'assin' in request.GET and request.GET['assin']:
@@ -49,8 +63,17 @@ class CommodityListView(LoginRequiredMixin, View):
 
 
 class CommodityCreateView(LoginRequiredMixin, View):
+    """
+         添加商品页面
+    """
 
     def get(self, request):
+        '''
+
+        :param request:
+        :return:跳转到添加商品页面
+        '''
+        print("1111111111111111111111111111111111111111")
         ret = dict()
         status_list = []
         for status in Commodity.commodity_status:
@@ -79,27 +102,32 @@ class CommodityCreateView(LoginRequiredMixin, View):
 
 
 class CommodityUpdateView(LoginRequiredMixin, View):
+    """
+     商品信息修改页面
+     """
 
     def get(self, request):
+        '''
+
+        :param request:
+        :return: 跳转到修改商品信息页面
+        '''
         ret = dict()
         status_list = []
         if 'id' in request.GET and request.GET['id']:
-            commodity = get_object_or_404(Commodity, pk=request.GET['id'])
-            ret['commodity'] = commodity
+            commodity = Commodity.objects.filter(id=request.GET['id'])
+            ret['commodity'] = commodity[0]
         for status in Commodity.commodity_status:
             status_dict = dict(item=status[0], value=status[1])
             status_list.append(status_dict)
         commodity_type = CommodityType.objects.values()
-        # role = get_object_or_404(Role, title="销售")
-        # user_info = role.userprofile_set.all()
         ret['commodity_type'] = commodity_type
-        # ret['user_info'] = user_info
         ret['status_list'] = status_list
         return render(request, 'commodity/commodity_update.html', ret)
 
     def post(self, request):
         res = dict()
-        commodity = get_object_or_404(Commodity, pk=request.POST['id'])
+        commodity = Commodity.objects.filter(assin=request.GET['assin'])[0]
         commodity_update_form = CommodityUpdateForm(request.POST, instance=commodity)
         if commodity_update_form.is_valid():
             commodity_update_form.save()
@@ -116,13 +144,22 @@ class CommodityUpdateView(LoginRequiredMixin, View):
 
 
 class CommodityDeleteView(LoginRequiredMixin, View):
+    '''
+    删除商品视图
+    '''
 
     def post(self, request):
+        '''
+
+        :param request:
+        :return: 返回商品删除成功信息
+        '''
         ret = dict(result=False)
         if 'id' in request.POST and request.POST['id']:
             id_list = map(int, request.POST.get('id').split(','))
             Commodity.objects.filter(id__in=id_list).delete()
-            ret['result'] = True
+
+        ret['result'] = True
         return HttpResponse(json.dumps(ret), content_type='application/json')
 
 
@@ -132,19 +169,16 @@ class CommodityDetailView(LoginRequiredMixin, View):
     """
 
     def get(self, request):
+        '''
+
+        :param request:
+        :return: 跳转到商品详情页面
+        '''
         ret = dict()
-        print ("测试")
-        print(request.GET.get('assin'))
-        print(request.GET)
-        if 'assin' in request.GET and request.GET['assin']:
-            # commodity = get_object_or_404(Commodity)
-            # asset_log = asset.assetlog_set.all()
-            commodity = Commodity.objects.filter(assin=request.GET['assin'])
+        if 'id' in request.GET and request.GET['id']:
+            commodity = Commodity.objects.filter(id=request.GET['id'])
             print(commodity)
-            # asset_file = asset.assetfile_set.all()
             ret['commodity'] = commodity[0]
-            # ret['asset_log'] = asset_log
-            # ret['asset_file'] = asset_file
         return render(request, 'commodity/commodity_detail.html', ret)
 
 
@@ -154,6 +188,20 @@ class UploadImageView(LoginRequiredMixin, View):
     """
 
     def post(self, request):
+        '''
+        :param request:
+        :return: 上传商品图片
+        '''
+
+        # File = request.FILES.get("myImage")
+        # print("上传一下啊！")
+        # print(request.POST['assin'])
+        # path = "/media/commImage/" + request.POST['categories'] + "/" + request.POST['assin'] + ".jpg"
+        # print(path)
+        # with open(path, 'wb+') as f:
+        #     # 分块写入文件
+        #     for chunk in File.chunks():
+        #         f.write(chunk)
         ret = dict(result=False)
         image_form = ImageUploadForm(request.POST, request.FILES)
         if image_form.is_valid():
