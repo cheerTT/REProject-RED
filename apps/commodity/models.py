@@ -6,6 +6,7 @@
 from django.db import models
 
 
+
 # 商品类别表
 class CommodityType(models.Model):
     '''
@@ -29,7 +30,6 @@ class Commodity(models.Model):
         ("2", "热销"),
 
     )
-
     assin = models.CharField(max_length=100, blank=False, null=False)
     categories = models.ForeignKey(CommodityType, on_delete=models.SET_NULL, blank=True, null=True)
     present_price = models.FloatField(max_length=100, blank=True, null=True)
