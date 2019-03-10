@@ -1,3 +1,6 @@
+# @Time    : ${3/10/2019} ${TIME}
+# @Author  : $Sutrue
+# @Remark  :
 from django.conf.urls import url
 from hotcommend import views
 
