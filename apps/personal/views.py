@@ -9,13 +9,10 @@ from django.http import HttpResponse
 from django.contrib.auth import get_user_model
 from django.shortcuts import get_object_or_404
 from django.db.models import Q
-from rbac.models import Menu
-from rbac.models import Role
 from utils.mixin_utils import LoginRequiredMixin
 from .models import WorkOrder
 from .forms import UserUpdateForm, ImageUploadForm
 from users.forms import AdminPasswdChangeForm
-from system.models import SystemSetup
 from utils.toolkit import get_month_member_count, get_member_gender
 
 
@@ -28,22 +25,22 @@ class PersonalView(LoginRequiredMixin, View):
     """
 
     def get(self, request):
-        ret = Menu.getMenuByRequestUrl(url=request.path_info)
-        ret.update(SystemSetup.getSystemSetupLastData())
+
         start_date = date.today().replace(day=1)
         _, days_in_month = calendar.monthrange(start_date.year, start_date.month)
         end_date = start_date + timedelta(days=days_in_month)
-
-        # month_member =
+        ret = dict()
         ret['start_date'] = start_date
 
         month_member_count = get_month_member_count(value=int(request.GET.get('value', 0)))
         result1 = month_member_count[0]['count']
+        # print(result1)
         ret['month_member_count'] = result1
 
         result2 = get_member_gender(value=int(request.GET.get('value', 0)))[0]['count']
         # print('result2:', result2)  # {'男生': 3, '女生': 1}
         ret['member_gender'] = result2
+
         return render(request, 'personal/personal_index.html', ret)
 
 
