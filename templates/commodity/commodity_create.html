@@ -1,3 +1,11 @@
+<!--
+@Time    : 2019年3月5日19:54:50
+@Author  : xie Liangcai
+@Remark  : 添加商品信息页面
+
+-->
+
+
 {% extends 'base-layer.html' %}
 {% load staticfiles %}
 
@@ -86,9 +94,10 @@
 {#                        </div>#}
                          <div class="form-group has-feedback">
                              <label class="col-sm-2 control-label"> </label>
-                                <button type="button" id="btnImport"  class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
-						             上传图片
-					             </button>
+{#                                <button type="button" id="btnImport"  class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">#}
+{#						             上传图片#}
+{#					             </button>#}
+                             <input type="file" class="" name="myImage"/>
 
 
                          </div>
@@ -109,28 +118,28 @@
 
 
 <!-- Modal -->
-<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-lg" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">上传图片</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body">
-        <div class="file-loading">
-
-          <input id="input-b9" name="image" multiple type="file">
-        </div>
-        <div id="kartik-file-errors"></div>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">关闭</button>
-      </div>
-    </div>
-  </div>
-</div>
+{#<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">#}
+{#  <div class="modal-dialog modal-lg" role="document">#}
+{#    <div class="modal-content">#}
+{#      <div class="modal-header">#}
+{#        <h5 class="modal-title" id="exampleModalLabel">上传图片</h5>#}
+{#        <button type="button" class="close" data-dismiss="modal" aria-label="Close">#}
+{#          <span aria-hidden="true">&times;</span>#}
+{#        </button>#}
+{#      </div>#}
+{#      <div class="modal-body">#}
+{#        <div class="file-loading">#}
+{##}
+{#          <input id="input-b9" name="image" multiple type="file">#}
+{#        </div>#}
+{#        <div id="kartik-file-errors"></div>#}
+{#      </div>#}
+{#      <div class="modal-footer">#}
+{#        <button type="button" class="btn btn-secondary" data-dismiss="modal">关闭</button>#}
+{#      </div>#}
+{#    </div>#}
+{#  </div>#}
+{#</div>#}
 {% endblock %}
 
 {% block javascripts %}
@@ -149,6 +158,8 @@
     <script type="text/javascript">
 
         $("#btnSave").click(function () {
+            alert("疯了")
+            alert($(#"categories").val())
             var data = $("#addForm").serialize();
 
             $.ajax({
