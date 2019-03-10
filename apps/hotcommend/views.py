@@ -1,3 +1,6 @@
+# @Time    : ${3/10/2019} ${TIME}
+# @Author  : $Sutrue
+# @Remark  : 视图函数
 from django.shortcuts import render
 import json
 import re
@@ -12,12 +15,18 @@ from hotcommend.models import hot_list, transaction_record
 from django.db.models import Count
 
 class CommendView(LoginRequiredMixin, View):
+    """
+    转入热门推荐页
+    """
     def get(self, request):
         return render(request, 'hotcommend/hot_list.html')
 
 
 #通过QuerySet的values方法来获取指定字段列的数据内容，转换QuerySet类型最终序列化成json串，返回数据访问接口
 class ItemRank(LoginRequiredMixin, View):
+    """
+    统计商品销量
+    """
     def get(self, request):
         ret = transaction_record.objects.all().values('item_id').annotate(counts=Count('date')).order_by('-counts')
         #为每个物品添加对应的id
@@ -33,12 +42,17 @@ class ItemRank(LoginRequiredMixin, View):
         return HttpResponse(ret, content_type='application/json')
 
 class AddCommendation(LoginRequiredMixin, View):
+    """
+    进入热门推荐增加页面
+    """
     def get(self, request):
         return render(request, 'hotcommend/item_rank.html')
 
 
-#将选择的商品加入热门商品数据库
 class HotAdd(LoginRequiredMixin, View):
+    """
+    显示热门推荐列表
+    """
     def get(self, request):
         fields = ['assin', 'title', 'categories']
         filters = dict()
@@ -59,6 +73,9 @@ class HotAdd(LoginRequiredMixin, View):
         return HttpResponse(ret, content_type='application/json')
 
 class ToTheList(LoginRequiredMixin, View):
+    """
+    将选择的商品加入热门商品数据库
+    """
     def post(self, request):
         ret=dict()
         fields = ['assin', 'title', 'categories']
@@ -66,15 +83,17 @@ class ToTheList(LoginRequiredMixin, View):
             a = Commodity.objects.filter(assin=request.POST['item_id']).values(*fields)
 
             #如果hot表中已经存在该商品，则不再放入
-            print(a.values('assin')[0]['assin'])
-            print(hot_list.objects.filter(assin=a.values('assin')[0]['assin']).count())
-            # if  (hot_list.objects.filter(assin=a.values('assin')[0]['assin'].count())):
-            hot_commodity = hot_list(assin=a.values('assin')[0]['assin'], title=a.values('title')[0]['title'], categories=a.values('categories')[0]['categories'])
-            hot_commodity.save()
+            if hot_list.objects.filter(assin=a.values('assin')[0]['assin']).count() == 0:
+                hot_commodity = hot_list(assin=a.values('assin')[0]['assin'], title=a.values('title')[0]['title'], categories=a.values('categories')[0]['categories'])
+                hot_commodity.save()
         return HttpResponse(ret, content_type='application/json')
 
 class HotDeleteView(LoginRequiredMixin, View):
+    """
+    热门推荐商品删除视图
+    """
     def post(self, request):
+
         ret = dict(result=False)
         if 'assin' in request.POST and request.POST['assin']:
             delete_item = request.POST.get('assin')
