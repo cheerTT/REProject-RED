@@ -1,3 +1,11 @@
+<!--
+@Time    : 2019年3月5日19:54:50
+@Author  : xie Liangcai
+@Remark  : 显示商品列表页面
+
+-->
+
+
 {% extends "base-left.html" %}
 {% load staticfiles %}
 
@@ -81,7 +89,7 @@
                             <th><input type="checkbox" id="checkAll"></th>
                             <th>商品ID</th>
                             <th>商品名称</th>
-                            <th>当前价格</th>
+                            <th width="100px">当前价格($)</th>
                             <th>商品类别</th>
                             <th>品牌</th>
                             <th>状态</th>
@@ -237,7 +245,7 @@
                         window.location.reload();
                     }
                 });
-                layer.full(div)
+                {#layer.full(div)#}
             });
 
 

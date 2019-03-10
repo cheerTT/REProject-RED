@@ -9,10 +9,16 @@ from commodity.forms import CommodityCreateForm, CommodityUpdateForm, ImageUploa
 from utils.mixin_utils import LoginRequiredMixin
 import json
 import re
-
+from PIL import Image
+from django.views.decorators.csrf import csrf_exempt
 
 class CommodityView(LoginRequiredMixin, View):
     def get(self, request):
+        '''
+        get方法
+        :param request:
+        :return:跳转到商品列表页面
+        '''
         ret = dict()
         status_list = []
         for status in Commodity.commodity_status:
@@ -30,6 +36,11 @@ class CommodityListView(LoginRequiredMixin, View):
     """
 
     def get(self, request):
+        '''
+        get方法
+        :param request:
+        :return: 返回商品信息列表到前端
+        '''
         fields = ['id', 'assin', 'title', 'brand', 'status', 'buyDate', 'present_price', 'categories__type_name']
         filters = dict()
         if 'assin' in request.GET and request.GET['assin']:
@@ -57,6 +68,12 @@ class CommodityCreateView(LoginRequiredMixin, View):
     """
 
     def get(self, request):
+        '''
+
+        :param request:
+        :return:跳转到添加商品页面
+        '''
+        print("1111111111111111111111111111111111111111")
         ret = dict()
         status_list = []
         for status in Commodity.commodity_status:
@@ -90,6 +107,11 @@ class CommodityUpdateView(LoginRequiredMixin, View):
      """
 
     def get(self, request):
+        '''
+
+        :param request:
+        :return: 跳转到修改商品信息页面
+        '''
         ret = dict()
         status_list = []
         if 'id' in request.GET and request.GET['id']:
@@ -122,11 +144,19 @@ class CommodityUpdateView(LoginRequiredMixin, View):
 
 
 class CommodityDeleteView(LoginRequiredMixin, View):
+    '''
+    删除商品视图
+    '''
 
     def post(self, request):
+        '''
+
+        :param request:
+        :return: 返回商品删除成功信息
+        '''
         ret = dict(result=False)
         if 'id' in request.POST and request.POST['id']:
-            id_list = map(int,request.POST.get('id').split(','))
+            id_list = map(int, request.POST.get('id').split(','))
             Commodity.objects.filter(id__in=id_list).delete()
 
         ret['result'] = True
@@ -139,6 +169,11 @@ class CommodityDetailView(LoginRequiredMixin, View):
     """
 
     def get(self, request):
+        '''
+
+        :param request:
+        :return: 跳转到商品详情页面
+        '''
         ret = dict()
         if 'id' in request.GET and request.GET['id']:
             commodity = Commodity.objects.filter(id=request.GET['id'])
@@ -153,6 +188,20 @@ class UploadImageView(LoginRequiredMixin, View):
     """
 
     def post(self, request):
+        '''
+        :param request:
+        :return: 上传商品图片
+        '''
+
+        # File = request.FILES.get("myImage")
+        # print("上传一下啊！")
+        # print(request.POST['assin'])
+        # path = "/media/commImage/" + request.POST['categories'] + "/" + request.POST['assin'] + ".jpg"
+        # print(path)
+        # with open(path, 'wb+') as f:
+        #     # 分块写入文件
+        #     for chunk in File.chunks():
+        #         f.write(chunk)
         ret = dict(result=False)
         image_form = ImageUploadForm(request.POST, request.FILES)
         if image_form.is_valid():
