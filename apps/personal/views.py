@@ -1,3 +1,6 @@
+# @Time    : 2019/3/10 21:03
+# @Author  : liyuming
+# @Remark  : 登录主界面信息展示处理
 import json
 import re
 import calendar

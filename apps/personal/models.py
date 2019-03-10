@@ -1,3 +1,6 @@
+# @Time    : 2019/3/7 19:10
+# @Author  : liyuming
+# @Remark  : 建模型
 from django.db import models
 
 from django.contrib.auth import get_user_model
