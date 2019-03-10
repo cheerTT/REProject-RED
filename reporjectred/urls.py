@@ -44,7 +44,7 @@ urlpatterns = [
 
     url(r'^recommendations/', include('recommendations.urls', namespace='recommendations')),
 
-    url(r'^commendation/', include('commendation.urls', namespace='commendation')),
+    url(r'^hotcommend/', include('hotcommend.urls', namespace='hotcommend')),
 
     url(r'^api/face/$', FaceView.as_view(), name="face"),
 

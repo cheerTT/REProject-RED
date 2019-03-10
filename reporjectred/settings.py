@@ -44,8 +44,14 @@ INSTALLED_APPS = [
     'apps.member.apps.MemberConfig',
     'apps.commodity.apps.CommodityConfig',
     'apps.recommendations.apps.RecommendationsConfig',
+
+    'apps.hotcommend.apps.HotCommendConfig',
+
     'apps.commendation.apps.CommendationConfig',
     'apps.api.apps.ApiConfig',
+    'apps.rbac.apps.RbacConfig',
+    'apps.system.apps.SystemConfig',
+
 ]
 
 MIDDLEWARE = [
@@ -94,9 +100,10 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'reprojectred',
-        'HOST': '127.0.0.1',
+        'HOST': '139.219.2.134',
         'USER': 'root',
         'PASSWORD': '123',
+
         'PORT': '3306'
     }
 }
@@ -177,3 +184,5 @@ MAX_DISTINCT = 1.00 #设置最大的相似距离，1.22是facenet基于lfw计算
 
 APPID = 'wx56291ba66ff53a69'
 SECRET = 'f4ecc5552da2ce4241d7fe083da90592'
+
+EMAIL_FROM = "test@sandbox.com"
