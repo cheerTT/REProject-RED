@@ -1,0 +1,239 @@
+{# @Time    : 2019/3/10 19:48#}
+{# @Author  : Sutrue#}
+{# @Remark  : 热门推荐页}
+
+{% extends "base-left.html" %}
+{% load staticfiles %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'plugins/datatables/jquery.dataTables.min.css' %}">
+<link rel="stylesheet" href="{% static 'js/plugins/layer/skin/layer.css' %}">
+<link rel="stylesheet" href="{% static 'plugins/select2/select2.min.css' %}">
+<!-- iCheck for checkboxes and radio inputs -->
+{% endblock %}
+
+{% block content %}
+
+    <!-- Main content -->
+    <section class="content-header margin-bottom">
+        <ol class="breadcrumb">
+            <li><i class=""></i>推荐列表</li>
+        </ol>
+    </section>
+  <section class="content">
+                <table id="dtbList" class="display" cellspacing="0" width="100%">
+                    <thead>
+                    <tr valign="middle">
+                        <th><input type="checkbox" id="checkAll"></th>
+                        <th>商品ID</th>
+                        <th>商品名称</th>
+                        <th>商品类别</th>
+                        <th>撤销推荐</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+
+              <div class="box-header" align="center">
+                <div class="btn-group">
+                    <button type="button" id="btnCreate" class="btn btn-primary">
+                        <i class="glyphicon glyphicon-plus"></i>推荐
+                    </button>
+                </div>
+                <div class="btn-group">
+                    <button type="button" id="btnDelete" class="btn btn-danger">
+                        <i class="glyphicon glyphicon-trash"></i>撤下
+                    </button>
+                </div>
+              </div>
+
+  </section>
+
+    <!-- /.content -->
+
+{% endblock %}
+
+{% block javascripts %}
+    <script src="{% static 'plugins/select2/select2.full.min.js' %}"></script>
+    <script src="{% static 'bootstrap/js/bootstrap-datetimepicker.js' %}"></script>
+    <script src="{% static 'plugins/fileinput/fileinput.js' %}"></script>
+    <script src="{% static 'js/plugins/layer/layer.js' %}"></script>
+    <script src="{% static 'plugins/ajaxfileupload/ajaxfile-upload.js' %}"></script>
+    <script src="{% static 'plugins/fileinput/zh.js' %}"></script>
+    <script src="{% static 'plugins/combo-select/jquery.combo.select.js' %}"></script>
+
+      <script src="{% static 'plugins/datatables/jquery.dataTables.min.js' %}"></script>
+      <script src="{% static 'plugins/datatables/dataTables.const.js' %}"></script>
+      <script src="{% static 'plugins/datatables/moment.min.js' %}"></script>
+      <script src="{% static 'js/plugins/layer/layer.js' %}"></script>
+      <script src="{% static 'plugins/select2/select2.full.min.js' %}"></script>
+  <!-- iCheck 1.0.1 -->
+  <script type="text/javascript">
+	$(function() {
+	    $('#COOMDITY-LIST').addClass('active');
+
+	});
+  </script>
+
+    <script type="text/javascript">
+var oDataTable=null;
+$(function() {
+	oDataTable = initTable();
+	function initTable() {
+		var oTable=$('#dtbList').DataTable($.extend(true,{},
+						DATATABLES_CONSTANT.DATA_TABLES.DEFAULT_OPTION,
+						{
+							ajax : {
+								"url":"{% url 'hotcommend:hot_add' %}",
+								"data":function ( d ) {
+									d.assin=$("#assin").val();
+									d.title=$("#title").val();
+									d.categories=$("#categories").val();
+								}
+						},
+
+						columns : [
+								DATATABLES_CONSTANT.DATA_TABLES.COLUMN.CHECKBOX,
+
+								{
+									data : "assin",
+								},
+
+                                {
+									data : "title",
+								},
+
+                                {
+									data : "categories",
+								},
+
+								{
+								    data : "assin",
+									{#data : "id",#}
+									{#width : "10%",#}
+									bSortable : "false",
+									render : function(data, type, row, meta) {
+										var ret="<button title='删除' onclick='doDelete(\"" + data + "\")'><i class='glyphicon glyphicon-trash'></i></button>";
+										return ret;
+									}
+								}],
+						}));
+		return oTable;
+	}
+
+   //刷新页面GET查询请求
+    $("#btnCommoditySearch").click(function(){
+            alert(oDataTable.ajax.all())
+            oDataTable.ajax.reload();
+        });
+
+	//select选择后刷新页面GET请求
+    $("#select").change(function(){
+		alert($("#select").val())
+		oDataTable.ajax.reload();
+	});
+	//checkbox全选
+    $("#checkAll").on("click", function () {
+        if ($(this).prop("checked") === true) {
+            $("input[name='checkList']").prop("checked", $(this).prop("checked"));
+            $('#example tbody tr').addClass('selected');
+        } else {
+            $("input[name='checkList']").prop("checked", false);
+            $('#example tbody tr').removeClass('selected');
+        }
+    });
+
+
+	$("#btnCreate").click(function() {
+		var div=layer.open({
+			type : 2,
+			title : '推荐选择',
+			shadeClose : false,
+			maxmin : true,
+			area : [ '800px', '580px' ],
+			content : "{% url 'hotcommend:add_commendation' %}",
+			end : function() {
+				//关闭时做的事情
+				window.location.reload();
+			}
+		});
+           {#layer.full(div)#}
+	});
+
+
+	//批量删除
+	$("#btnDelete").click(function() {
+		if ($("input[name='checkList']:checked").length == 0){
+			layer.msg("请选择要删除的记录");
+			return ;
+		}
+
+		var arrId= new Array();
+		$("input[name='checkList']:checked").each(function(){
+			//alert($(this).val());
+			arrId.push($(this).val());
+		});
+
+		sId=arrId.join(',');
+
+		layer.alert('确定删除吗？', {
+			title:'提示'
+			,icon: 3 //0:感叹号 1：对号 2：差号 3：问号 4：小锁 5：哭脸 6：笑脸
+			,time: 0 //不自动关闭
+			,btn: ['YES', 'NO']
+			,yes: function(index){
+			 	layer.close(index);
+			 	$.ajax({
+					type: "POST",
+					url : "{% url 'commodity:delete' %}",
+					data : {"id":sId, csrfmiddlewaretoken: '{{ csrf_token }}'},
+					cache: false,
+					success : function(msg) {
+						if (msg.result){
+							layer.alert("操作成功",{icon:1});
+							oDataTable.ajax.reload();
+						}else{
+							//alert(msg.message);
+							layer.alert("操作失败",{icon:2});
+						}
+						return ;
+					}
+				});
+			}
+		});
+	});
+
+
+});
+
+//删除单个数据
+function doDelete(id){
+    layer.alert('确定删除吗？', {
+        title:'提示'
+        ,icon: 3 //0:感叹号 1：对号 2：差号 3：问号 4：小锁 5：哭脸 6：笑脸
+        ,time: 0 //不自动关闭
+        ,btn: ['YES', 'NO']
+        ,yes: function(index){
+            layer.close(index);
+            $.ajax({
+                type: "POST",
+                url : "{% url 'hotcommend:hot_delete' %}",
+                data : {"assin":id, csrfmiddlewaretoken: '{{ csrf_token }}'},  //防止post数据时报 csrf_token 403
+                cache: false,
+                success : function(msg) {
+                    if (msg.result){
+                        layer.alert('删除成功',{icon: 1});
+                        oDataTable.ajax.reload();
+                    }else{
+                        //alert(msg.message);
+                        layer.alert('删除失败', {icon: 2});
+                    }
+                    return ;
+                }
+            });
+        }
+    });
+}
+</script>
+{% endblock %}
