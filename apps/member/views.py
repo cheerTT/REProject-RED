@@ -75,7 +75,6 @@ class MemberListView(LoginRequiredMixin, View):
             filters['joined_date2__lte'] = request.GET['endDate']
 
         ret = dict(data=list(Member.objects.filter(**filters).values(*fields)))
-
         return HttpResponse(json.dumps(ret, cls=DjangoJSONEncoder), content_type='application/json')
 
 
