@@ -2,6 +2,7 @@
 @Author:ttwen
 @Time:2019年3月7日10:45:35
 @Description: 会员管理的views层
+为什么要commit才能update
 '''
 
 from django.shortcuts import render, get_object_or_404
@@ -12,6 +13,7 @@ from django.http import HttpResponse
 from django.core.serializers.json import DjangoJSONEncoder
 
 import json
+
 
 
 class MemberView(LoginRequiredMixin, View):
