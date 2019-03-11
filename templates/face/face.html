@@ -6,18 +6,39 @@
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title>摄像头拍照</title>
   <script src="{% static 'plugins/jQuery/jquery-2.2.3.min.js' %}"></script>
+  <link rel="stylesheet" href="{% static 'dist/css/face.css' %}">
 </head>
 
 <body>
+    <div class="video">
+        <video id="video" width="480" height="320" controls></video>
+        <div>
+            <button id="capture">拍照</button>
+        </div>
+        <div id="a">
+            <canvas id="canvas" width="480" height="320"></canvas>
+        </div>
+        {% csrf_token %}
+    </div>
+    <div class="commodity">
+        显示商品
+        <div class="inputArea">
 
-    <video id="video" width="480" height="320" controls></video>
-    <div>
-        <button id="capture">拍照</button>
+            <input type="text" class="searchInput" />
+
+            <input type="button" class="searchButton" value="提交" onclick="add_search()" />
+
+            <ul class="dataList">
+
+            </ul>
+        </div>
     </div>
-    <div id="a">
-        <canvas id="canvas" width="480" height="320"></canvas>
+    <div class="order">
+        订单结果
+        <ul class="orderList">
+
+        </ul>
     </div>
-    {% csrf_token %}
 </body>
 
 <script type="text/javascript">
@@ -74,6 +95,7 @@
 
     //上传人脸图片
     function upload(base64) {
+        console.log($("ul li").text());
       $.ajax({
           "type": "POST",
           "url": "{% url 'api:member-save-face' %}",
@@ -86,6 +108,69 @@
           }
       });
     }
+
+</script>
+
+<script type="application/javascript">
+    var orderList = '';
+    let orderId = new Set();
+    function orderAdd(id) {
+        console.log(id);
+
+        if (orderId.has(id) == true) {
+            console.log($("#orderList"));
+            // todo
+            {#orderList += '<li>' + id +'<input type="text" id=' + id +' value=' + 0 + '/></li>';#}
+        } else {
+            orderId.add(id);
+            orderList += '<li>' + id +'<input type="text" id="id_' + id +'" value="' + 0 + '" /></li>';
+        }
+
+        $(".orderList").html("");
+        $(".orderList").append(orderList);
+        console.log(orderId);
+    }
+    // 搜索商品建议
+    $(function(){
+        $('.searchInput').bind('input propertychange',function(){
+            var searchText = $(this).val();
+            var tmpHtml = "";
+            var search_url = "";
+            if (searchText.length > 4) {
+                $.ajax({
+                    cache: false,
+                    type: 'get',
+                    dataType:'json',
+                    url:"http://127.0.0.1:8000/api/commodity/search"+"?s="+searchText,
+                    async: true,
+                    success: function(data) {
+                        data = data['data'];
+                        for (var i=0;i<data.length;i++){
+                            console.log(data[i]);
+                            console.log(data[i]["id"]);
+                            console.log(data[i]["assin"]);
+                            tmpHtml += '<li><a onclick="orderAdd(' + data[i]["id"] + ')" href="#">'+data[i]["assin"]+'</a></li>'
+                        }
+
+                        $(".dataList").html("")
+                        $(".dataList").append(tmpHtml);
+                        if (data.length == 0){
+                            $('.dataList').hide()
+                        }else {
+                            $('.dataList').show()
+                        }
+
+                    }
+                });
+            }
+        } );
+
+    });
+
+    hideElement($('.dataList'), $('.searchInput'));
+
+
+
 
 </script>
 
