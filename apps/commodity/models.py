@@ -41,6 +41,19 @@ class Commodity(models.Model):
     warrantyDate = models.DateTimeField('商品保质日期', auto_now_add=True, blank=True, null=True)
     status = models.CharField(choices=commodity_status, max_length=20, default="1", verbose_name="商品的状态")
 
+
+    def short_description(self):
+        if len(str(self.description)) > 400:
+            return '{}...'.format(str(self.description)[0:400])
+        else:
+            return str(self.description)
+
+    def short_title(self):
+
+        if len(str(self.title)) > 50:
+            return '{}...'.format(str(self.title)[0:50])
+        else:
+            return str(self.title)
     class Meta:
         db_table = "commodity"
 
