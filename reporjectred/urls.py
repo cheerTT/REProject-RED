@@ -43,6 +43,7 @@ urlpatterns = [
     url(r'^commodity/', include('commodity.urls', namespace='commodity')),
 
     url(r'^recommendations/', include('recommendations.urls', namespace='recommendations')),
+    url(r'^comment/', include('comment.urls', namespace='comment')),
 
     url(r'^hotcommend/', include('hotcommend.urls', namespace='hotcommend')),
 
