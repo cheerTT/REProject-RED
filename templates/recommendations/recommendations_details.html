@@ -1,3 +1,6 @@
+# @Time    : 2019/3/6 20:00
+# @Author  : Virus
+# @Remark  :
 {% extends "base-left.html" %}
 {% load staticfiles %}
 
@@ -37,7 +40,7 @@
               <div class="panel-body">
                 <div class="row">
                     <div class="col-lg-4">
-                      <img class="img-circle" src="https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1551972494148&di=04bcc05443ff7e682d9ba63dcfa79eab&imgtype=0&src=http%3A%2F%2Fwww.goumin.com%2Fattachments%2Fphoto%2F0%2F0%2F1%2F426%2F109164.jpg" alt="Generic placeholder image" width="140" height="140">
+                      <img class="img-circle" src="{{ commodity_1.imUrl }}" alt="Generic placeholder image" width="140" height="140">
                       <h2>{{ commodity_1.title }}</h2>
                       <p>{{ commodity_1.description }}</p>
                       <p><a class="btn btn-default" href="#" role="button">View details »</a></p>

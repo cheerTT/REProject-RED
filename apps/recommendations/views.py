@@ -1,3 +1,7 @@
+# @Time    : 2019/3/10 20:12
+# @Author  : Virus
+# @Remark  :
+
 import json
 import re
 from django.shortcuts import render
@@ -17,18 +21,29 @@ from django.contrib.auth.backends import ModelBackend
 from commodity.models import Commodity
 
 class RecommendationsView(LoginRequiredMixin, View):
-
-
+    """
+    推荐页面列表
+    """
     def get(self, request):
         # ret = SystemSetup.getSystemSetupLastData()
         return render(request, 'recommendations/recommendations_list.html')
 
 class RecommendationsDetailView(LoginRequiredMixin, View):
     """
-    商品详情页面
+    推荐页面详情
     """
 
     def get(self, request):
+        """
+        基本思路是，先获取到在URL中携带的User_ID变量
+        然后在User_Recommendations表中获取到五个推荐商品
+        接着去Commodity表中获取到五个商品详情，然后通过ret传递给Html页面.
+
+        关键是要理解Django架构中的QuerySet类,只能通过迭代器进行访问。
+        该方法尚待优化。
+        :param request: 网页请求，不赘述
+        :return: 返回html页面
+        """
         ret = dict()
         print(request.GET)
         if 'user_id' in request.GET and request.GET['user_id']:
@@ -55,10 +70,17 @@ class RecommendationsDetailView(LoginRequiredMixin, View):
 
 class RecommendationsListView(LoginRequiredMixin, View):
     """
-    获取用户列表信息
+    推荐列表
     """
 
     def get(self, request):
+        """
+
+        :param request: 网页请求，不赘述
+
+        理解Objet.Filter方法，将列名合并成列表，去数据库中找值。
+        :return: html网页
+        """
         fields = ['user_id', 'product_id_1', 'product_id_2', 'product_id_3', 'product_id_4', 'product_id_5']
         filters = dict()
         print(request.GET.get('user_id'))
