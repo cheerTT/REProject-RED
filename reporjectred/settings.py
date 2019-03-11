@@ -45,7 +45,6 @@ INSTALLED_APPS = [
     'apps.commodity.apps.CommodityConfig',
     'apps.recommendations.apps.RecommendationsConfig',
     'apps.hotcommend.apps.HotCommendConfig',
-    'apps.commendation.apps.CommendationConfig',
     'apps.api.apps.ApiConfig',
 
 ]
