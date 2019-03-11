@@ -1,3 +1,6 @@
+# @Time    : ${3/10/2019} ${TIME}
+# @Author  : $Sutrue
+# @Remark  :
 from django.db import models
 
 # Create your models here.
