@@ -13,6 +13,7 @@ from django.core.serializers.json import DjangoJSONEncoder
 from hotcommend.models import hot_list, transaction_record
 
 from django.db.models import Count
+from itertools import chain
 
 class CommendView(LoginRequiredMixin, View):
     """
@@ -28,7 +29,12 @@ class ItemRank(LoginRequiredMixin, View):
     统计商品销量
     """
     def get(self, request):
-        ret = transaction_record.objects.all().values('item_id').annotate(counts=Count('date')).order_by('-counts')
+        ret = transaction_record.objects.all().values('item_id').annotate(counts=Count('date')).order_by('-counts')[:100]
+        item_name= Commodity.objects.all().values('assin', 'title')
+        print(item_name)
+        # test = chain(item_name, ret)
+        # for item in test:
+        #     print(item)
         #为每个物品添加对应的id
         # for item in ret:
         #     a = Commodity.objects.filter(assin=item['item_id'])
@@ -72,6 +78,7 @@ class HotAdd(LoginRequiredMixin, View):
         #     commodity.save()
         return HttpResponse(ret, content_type='application/json')
 
+
 class ToTheList(LoginRequiredMixin, View):
     """
     将选择的商品加入热门商品数据库
@@ -88,6 +95,7 @@ class ToTheList(LoginRequiredMixin, View):
                 hot_commodity.save()
         return HttpResponse(ret, content_type='application/json')
 
+
 class HotDeleteView(LoginRequiredMixin, View):
     """
     热门推荐商品删除视图
@@ -101,20 +109,3 @@ class HotDeleteView(LoginRequiredMixin, View):
 
         ret['result'] = True
         return HttpResponse(json.dumps(ret), content_type='application/json')
-
-
-    # def post(self, request):
-    #     res = dict()
-    #     sales_query_form = SalesQueryForm(request.POST)
-    #     if sales_query_form.is_valid():
-    #         sales_query_form.save()
-    #         res['status'] = 'success'
-    #     else:
-    #         pattern = '<li>.*?<ul class=.*?><li>(.*?)</li>'
-    #         errors = str(sales_query_form.errors)
-    #         sales_query_form_errors = re.findall(pattern, errors)
-    #         res = {
-    #             'status': 'fail',
-    #             'sales_query_form_errors': sales_query_form_errors[0]
-    #         }
-    #     return HttpResponse(json.dumps(res), content_type='application/json')
