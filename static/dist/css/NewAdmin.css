@@ -7,6 +7,12 @@
  *   License: Open source - MIT
  *           Please visit http://opensource.org/licenses/MIT for more information
 !*/
+
+@font-face {
+    font-family: 'newfont3';
+    src:url('newfont3.otf');
+}
+
 html {
     height: 100%;
     background-color: #0c0c0c;
@@ -3438,8 +3444,8 @@ table.text-center, table.text-center td, table.text-center th {
 
 
 .login-logo {
-    font-size: 50px;
-    font-family: 华文行楷;
+    font-size: 60px;
+    font-family: 'newfont3';
     text-align: center;
     font-weight: 300;
     color: white;
@@ -3466,9 +3472,10 @@ table.text-center, table.text-center td, table.text-center th {
 }
 
 .login-box {
-    zoom: 1.1;
+    /*zoom: 2;*/
     margin: auto;
-    width: 450px;
+    width: 600px;
+    height: 400px;
 }
 
 .register-box {
