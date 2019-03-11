@@ -5,10 +5,11 @@ from django.http import HttpResponse
 from django.contrib.auth import get_user_model
 from django.core.serializers.json import DjangoJSONEncoder
 from commodity.models import Commodity, CommodityType, Commodity_price
-from commodity.forms import CommodityCreateForm, CommodityUpdateForm, ImageUploadForm
+from commodity.forms import CommodityCreateForm, CommodityUpdateForm
 from utils.mixin_utils import LoginRequiredMixin
 import json
 import re
+import os
 from PIL import Image
 from django.views.decorators.csrf import csrf_exempt
 
@@ -73,7 +74,6 @@ class CommodityCreateView(LoginRequiredMixin, View):
         :param request:
         :return:跳转到添加商品页面
         '''
-        print("1111111111111111111111111111111111111111")
         ret = dict()
         status_list = []
         for status in Commodity.commodity_status:
@@ -85,8 +85,9 @@ class CommodityCreateView(LoginRequiredMixin, View):
         return render(request, 'commodity/commodity_create.html', ret)
 
     def post(self, request):
+        print("图片路径：",request.POST['imUrl'])
         res = dict()
-        commodity_create_form = CommodityCreateForm(request.POST)
+        commodity_create_form = CommodityCreateForm(request.POST,request.FILES)
         if commodity_create_form.is_valid():
             commodity_create_form.save()
             res['status'] = 'success'
@@ -182,29 +183,35 @@ class CommodityDetailView(LoginRequiredMixin, View):
         return render(request, 'commodity/commodity_detail.html', ret)
 
 
+
+
 class UploadImageView(LoginRequiredMixin, View):
-    """
-    上传商品图片
-    """
+    '''
+        上传商品图片
+    '''
+
+    def get(self, request):
+        ret = dict()
+        assin=request.GET['assin']
+        categories=request.GET['categories']
+        ret['assin'] = assin
+        ret['categories']=categories
+        print("Image get()")
+        return render(request, 'commodity/commodity_upload.html', ret)
 
     def post(self, request):
-        '''
-        :param request:
-        :return: 上传商品图片
-        '''
-
-        # File = request.FILES.get("myImage")
-        # print("上传一下啊！")
-        # print(request.POST['assin'])
-        # path = "/media/commImage/" + request.POST['categories'] + "/" + request.POST['assin'] + ".jpg"
-        # print(path)
-        # with open(path, 'wb+') as f:
-        #     # 分块写入文件
-        #     for chunk in File.chunks():
-        #         f.write(chunk)
-        ret = dict(result=False)
-        image_form = ImageUploadForm(request.POST, request.FILES)
-        if image_form.is_valid():
-            image_form.save()
-            ret['result'] = True
-        return HttpResponse(json.dumps(ret), content_type='application/json')
+        res = dict(status='fail')
+        File = request.FILES.get("file_content")
+        # File = request.FILES.get("image")
+        print(File.name)
+        accessory_dir = "media/commImage/"+request.POST['categories']
+        if not os.path.isdir(accessory_dir):  # 判断是否有这个目录，没有就创建
+            os.mkdir(accessory_dir)
+        filename = accessory_dir + "/"+request.POST['assin'] + ".jpg"
+        print(filename)
+        with open(filename, 'wb+') as f:
+            # 分块写入文件
+            for chunk in File.chunks():
+                f.write(chunk)
+        res['status'] = 'success'
+        return HttpResponse(json.dumps(res, cls=DjangoJSONEncoder), content_type='application/json')

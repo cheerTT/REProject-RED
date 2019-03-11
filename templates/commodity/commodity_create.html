@@ -21,7 +21,7 @@
 
 {% block main %}
     <div class="box box-danger">
-        <form class="form-horizontal" id="addForm" method="post">
+        <form class="form-horizontal" id="addForm" method="post" enctype="multipart/form-data">
             {% csrf_token %}
             <div class="box-body">
                 <fieldset>
@@ -31,14 +31,17 @@
                         <input class="form-control" name="operator" type="hidden" value="{{ request.user.name }}"/>
                         <label class="col-sm-2 control-label">商品编号</label>
                         <div class="col-sm-3">
-                            <input class="form-control" name="assin" type="text"/>
+                            <input class="form-control" name="assin" type="text" id="assin"/>
                         </div>
                         <label class="col-sm-2 control-label">商品类型</label>
                         <div class="col-sm-3">
-                            <select class="form-control select2" style="width:100%;" name="categories">
+
+                            <input id="imUrl1" type="hidden" name="imUrl" value=""/>
+
+                            <select class="form-control select2" style="width:100%;" id="categories">
                                 <option></option>
                                 {% for type in commodity_type %}
-                                    <option value="{{ type.id }}">{{ type.type_name }}</option>
+                                    <option value="{{ type.type_name }}">{{ type.type_name }}</option>
                                 {% endfor %}
                             </select>
                         </div>
@@ -94,11 +97,14 @@
 {#                        </div>#}
                          <div class="form-group has-feedback">
                              <label class="col-sm-2 control-label"> </label>
-{#                                <button type="button" id="btnImport"  class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">#}
+{#                                <button type="button" id="btnImport"  class="btn btn-primary" data-toggle="modal"  data-target="#exampleModal">#}
 {#						             上传图片#}
 {#					             </button>#}
-                             <input type="file" class="" name="myImage"/>
+{#                             <input type="file" class="file" name="imUrl"/>#}
 
+                             <button type="button" class="btn btn-default btn-sm" onclick="doAssetUpload()">
+                                      <i class="fa fa-cloud-upload">上传图片</i>
+                             </button>
 
                          </div>
 
@@ -115,31 +121,6 @@
         </form>
     </div>
 
-
-
-<!-- Modal -->
-{#<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">#}
-{#  <div class="modal-dialog modal-lg" role="document">#}
-{#    <div class="modal-content">#}
-{#      <div class="modal-header">#}
-{#        <h5 class="modal-title" id="exampleModalLabel">上传图片</h5>#}
-{#        <button type="button" class="close" data-dismiss="modal" aria-label="Close">#}
-{#          <span aria-hidden="true">&times;</span>#}
-{#        </button>#}
-{#      </div>#}
-{#      <div class="modal-body">#}
-{#        <div class="file-loading">#}
-{##}
-{#          <input id="input-b9" name="image" multiple type="file">#}
-{#        </div>#}
-{#        <div id="kartik-file-errors"></div>#}
-{#      </div>#}
-{#      <div class="modal-footer">#}
-{#        <button type="button" class="btn btn-secondary" data-dismiss="modal">关闭</button>#}
-{#      </div>#}
-{#    </div>#}
-{#  </div>#}
-{#</div>#}
 {% endblock %}
 
 {% block javascripts %}
@@ -150,19 +131,19 @@
     <script src="{% static 'plugins/ajaxfileupload/ajaxfile-upload.js' %}"></script>
     <script src="{% static 'plugins/fileinput/zh.js' %}"></script>
     <script src="{% static 'plugins/combo-select/jquery.combo.select.js' %}"></script>
-
-
-
+    <script src="{% static 'js/bootstrap.min.js' %}"></script>
 
 
     <script type="text/javascript">
 
         $("#btnSave").click(function () {
-            alert("疯了")
-            alert($(#"categories").val())
+            var categories = document.getElementById("categories").value;
+            var assin=$("#assin").val();
+            var imUrl="CommImage/"+categories+"/"+assin+".jpg";
+            document.getElementById('imUrl1').value=imUrl;
             var data = $("#addForm").serialize();
-
             $.ajax({
+                {#async : false,#}
                 type: $("#addForm").attr('method'),
                 url: "{% url 'commodity:create' %}",
                 {#url:"/commodity/commodity/create",#}
@@ -174,6 +155,7 @@
                             parent.layer.closeAll(); //关闭所有弹窗
                         });
                     } else if (msg.status == 'fail') {
+                        console.log(msg);
                         layer.alert(msg.commodity_form_errors, {icon: 5});
                     }
                     return;
@@ -185,25 +167,15 @@
         $("#btnCancel").click(function () {
             window.location.reload();
 
-        })
+        });
 
-        /*通过按钮关闭弹layer弹出的页面窗口*/
-        {#    $(document).ready(function(){#}
-        {#        $("#btnCancel").click(function(){#}
-        {#            var index = parent.layer.getFrameIndex(window.name); //获取窗口索引#}
-        {#            parent.layer.close(index);//关闭窗口#}
-        {#        });#}
-        {#    });#}
 
         /*input 时间输入选择*/
         $(".form_datetime").datetimepicker({
             language: 'zh',
             minView: 'month', //选择范围知道日期，不选择时分
-            //weekStart: 1,
-            //todayBtn:  1,
             autoclose: 1,
             todayHighlight: 1,
-            //startView: 2,
             forceParse: 0,
             showMeridian: 1,
             format: 'yyyy-mm-dd'
@@ -213,27 +185,42 @@
 
         // select2
         $(function () {
-            //Initialize Select2 Elements
             $(".select2").select2();
         });
 
 
+         //上传商品图片
+        function doAssetUpload(){
 
-        //上传头像图片
-        $(document).on('ready', function() {
-            $("#input-b9").fileinput({
-                showPreview: false,
-                showUpload: true,
-                uploadExtraData: {'csrfmiddlewaretoken': '{{ csrf_token }}'},
-                language: "zh",
-                elErrorContainer: '#kartik-file-errors',
-                allowedFileExtensions: ["jpg", "png", "gif"],
-                uploadUrl: '{% url "commodity:commodity-uploadimage" %}',
-                maxImageWidth: 500,
-                maxImageHeight: 500,
+            var categories = document.getElementById("categories").value;
+            var assin = $("#assin").val();
 
-            });
-        });
+            if (!assin) {
+                var msg = "请先填写商品编号！"
+                layer.alert(msg, {icon: 5});
+            }
+            else if(!categories) {
+                var msg = "请先填写商品类别！"
+                layer.alert(msg, {icon: 5});
+            }
+            else{
+                var div = layer.open({
+                    type: 2,
+                    title: '上传图片',
+                    shadeClose: false,
+                    maxmin: true,
+                    area: ['770px', '400px'],
+                    content: ["{% url 'commodity:commodity-uploadimage' %}" + '?assin=' + assin + '&categories=' + categories],
+                    end: function () {
+                        {#window.location.reload();#}
+
+                    }
+                });
+                layer.full(div)
+            }
+
+        }
+
     </script>
 
 {% endblock %}
