@@ -28,7 +28,6 @@ class Commodity(models.Model):
         ("0", "下架"),
         ("1", "在售"),
         ("2", "热销"),
-
     )
     assin = models.CharField(max_length=100, blank=False, null=False)
     categories = models.ForeignKey(CommodityType, on_delete=models.SET_NULL, blank=True, null=True)
