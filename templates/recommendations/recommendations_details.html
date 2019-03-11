@@ -33,43 +33,43 @@
 
                 </div>
            </div>
-            <div class="panel panel-default">
+            <div class="panel panel-primary">
               <div class="panel-heading">
-                <h3 class="panel-title">Panel title</h3>
+                <h3 class="panel-title">商品推荐详情</h3>
               </div>
               <div class="panel-body">
                 <div class="row">
                     <div class="col-lg-4">
                       <img class="img-circle" src="{{ commodity_1.imUrl }}" alt="Generic placeholder image" width="140" height="140">
-                      <h2>{{ commodity_1.title }}</h2>
-                      <p>{{ commodity_1.description }}</p>
-                      <p><a class="btn btn-default" href="#" role="button">View details »</a></p>
+                      <h2>{{ commodity_1.short_title }}</h2>
+                      <p>{{ commodity_1.short_description }}</p>
+                      <p><a class="btn btn-default" href="#" role="button" id = "btn1" onclick = 'doDetail({{ commodity_1.id }})'>View details »</a></p>
                     </div><!-- /.col-lg-4 -->
                     <div class="col-lg-4">
                       <img class="img-circle" src="{{ commodity_2.imUrl }}" alt="Generic placeholder image" width="140" height="140">
-                      <h2>{{ commodity_2.title }}</h2>
-                      <p>{{ commodity_2.description }}</p>
-                      <p><a class="btn btn-default" href="#" role="button">View details »</a></p>
+                      <h2>{{ commodity_2.short_title }}</h2>
+                      <p>{{ commodity_2.short_description }}</p>
+                      <p><a class="btn btn-default" href="#" role="button" id="btn2" onclick = 'doDetail({{ commodity_2.id }})'>View details »</a></p>
                     </div><!-- /.col-lg-4 -->
                     <div class="col-lg-4">
                       <img class="img-circle" src="{{ commodity_3.imUrl }}" alt="Generic placeholder image" width="140" height="140">
-                      <h2>{{ commodity_3.title }}</h2>
-                      <p>{{ commodity_3.description }}</p>
-                      <p><a class="btn btn-default" href="#" role="button">View details »</a></p>
+                      <h2>{{ commodity_3.short_title }}</h2>
+                      <p>{{ commodity_3.short_description }}</p>
+                      <p><a class="btn btn-default" href="#" role="button" id = "btn3" onclick = 'doDetail({{ commodity_3.id }})'>View details »</a></p>
                     </div><!-- /.col-lg-4 -->
 
                     <div class="col-lg-4">
                       <img class="img-circle" src="{{ commodity_4.imUrl }}" alt="Generic placeholder image" width="140" height="140">
-                      <h2>{{ commodity_4.title }}</h2>
-                      <p>{{ commodity_4.description }}</p>
-                      <p><a class="btn btn-default" href="#" role="button">View details »</a></p>
+                      <h2>{{ commodity_4.short_title }}</h2>
+                      <p>{{ commodity_4.short_description }}</p>
+                      <p><a class="btn btn-default" href="#" role="button" id = "btn4" onclick = 'doDetail({{ commodity_4.id }})'>View details »</a></p>
                     </div><!-- /.col-lg-4 -->
 
                     <div class="col-lg-4">
                       <img class="img-circle" src="{{ commodity_5.imUrl }}" alt="Generic placeholder image" width="140" height="140">
-                      <h2>{{ commodity_5.title }}</h2>
-                      <p>{{ commodity_5.description }}</p>
-                      <p><a class="btn btn-default" href="#" role="button">View details »</a></p>
+                      <h2>{{ commodity_5.short_title }}</h2>
+                      <p>{{ commodity_5.short_description }}</p>
+                      <p><a class="btn btn-default" href="#" role="button" id = "btn5" onclick = 'doDetail({{ commodity_5.id }})'>View details »</a></p>
                     </div><!-- /.col-lg-4 -->
                   </div>
               </div>
@@ -117,6 +117,10 @@
     $("#btnReturn").click(function(){
 		history.back();
 	});
+
+    function doDetail(id) {
+            window.location.href = "{% url 'commodity:detail' %}?id=" + id;
+    }
 
     function doUpdate(id){
 	var div=layer.open({

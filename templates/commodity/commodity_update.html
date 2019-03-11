@@ -88,16 +88,14 @@
                 <div class="col-sm-3">
                     <textarea class="form-control" name="description" rows="5" value="{{ commodity.description }}">{{ commodity.description }}</textarea>
                 </div>
-                <label class="col-sm-2 control-label">修改图片</label>
+                <label class="col-sm-2 control-label">商品图片</label>
                 <div class="col-sm-3">
 {#                    <a href="/media/{{ commodity.imUrl }}" target="_blank">#}
-                    <a href="/media/image/2019/03/下载.jpg" target="_blank">
-{#                        <span class="mailbox-attachment-icon has-img"><img src="/media/{{ commodity.imUrl }}" alt="">}</span>#}
-                        <span class="mailbox-attachment-icon has-img"><img src="/media/image/2019/03/下载.jpg" alt=""></span>
-                      </a>
-                    <button type="button" id="btnImport"  class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
-						修改图片
-					</button>
+                        <span class="mailbox-attachment-icon has-img"><img src="/media/{{ commodity.imUrl }}" alt="" width="300px" height="300px "></span>
+{#                      </a>#}
+{#                    <button type="button" id="btnImport"  class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">#}
+{#						修改图片#}
+{#					</button>#}
                 </div>
             </div>
 
@@ -113,29 +111,7 @@
 	</form>
 </div>
 
-    <!-- Modal -->
-<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-lg" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">上传图片</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body">
-        <div class="file-loading">
 
-          <input id="input-b9" name="image" multiple type="file">
-        </div>
-        <div id="kartik-file-errors"></div>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">关闭</button>
-      </div>
-    </div>
-  </div>
-</div>
 {% endblock %}
 
 {% block javascripts %}
