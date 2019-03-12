@@ -45,8 +45,8 @@ INSTALLED_APPS = [
     'apps.commodity.apps.CommodityConfig',
     'apps.recommendations.apps.RecommendationsConfig',
     'apps.hotcommend.apps.HotCommendConfig',
-    'apps.commendation.apps.CommendationConfig',
     'apps.api.apps.ApiConfig',
+    'apps.order.apps.OrderConfig'
 
 ]
 
@@ -92,18 +92,30 @@ WSGI_APPLICATION = 'reporjectred.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/1.11/ref/settings/#databases
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.mysql',
+#         'NAME': 'reprojectred',
+#         'HOST': '139.219.2.134',
+#         'USER': 'root',
+#         'PASSWORD': 'Jincan.4943198',
+#
+#         'PORT': '3306'
+#     }
+# }
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'reprojectred',
-        'HOST': '139.219.2.134',
+        'HOST': '127.0.0.1',
         'USER': 'root',
-        'PASSWORD': 'Jincan.4943198',
+        'PASSWORD': 'root',
 
+        'PASSWORD': 'Jincan.4943198',
         'PORT': '3306'
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/1.11/ref/settings/#auth-password-validators

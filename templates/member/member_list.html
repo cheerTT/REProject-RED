@@ -101,7 +101,7 @@
                         <th>市</th>
                         <th>用户类型</th>
                         <th>用户状态</th>
-                        <th>注册时间</th>
+                        <th>注册日期</th>
                         <th>上次登录时间</th>
                         <th>验证码</th>
                         <th>操作</th>
@@ -214,6 +214,9 @@ $(function() {
 								},
                                 {
                                     data: "last_login_date",
+                                    render:function (data) {
+                                        return data.replace("T"," ")
+                                    }
                                 },
 
                                 {
