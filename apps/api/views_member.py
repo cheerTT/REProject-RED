@@ -1,3 +1,6 @@
+# @Author  : cheertt
+# @Time    : 2019/3/8 8:22
+# @Remark  : 收银界面以及小程序会员登陆注册与个人信息显示部分信息
 import os
 import base64
 import json
@@ -18,6 +21,8 @@ from facenet.align.detect_face import create_mtcnn
 from facenet.facenet import get_model_filenames
 from scipy import misc
 from api.models import Member
+from order.models import Transaction
+from commodity.models import Commodity
 
 
 os.environ["TF_CPP_MIN_LOG_LEVEL"]='2' # 只显示 warning 和 Error
@@ -33,22 +38,26 @@ class MemberLoginView(View):
 
     def post(self, request):
 
-        ret = [{'code':200, 'msg':'操作成功', 'data':{}}]
+        ret = {'code':200, 'msg':'操作成功', 'data':{}}
         code = request.POST['code']
         codeVerify = request.POST['codeVerify'] if request.POST['codeVerify'] else ''
 
         if not code or len(code) < 1:
-            ret = {'result': 'false', 'msg': '无效的请求code'}
+            ret['code'] = 500
+            ret['msg'] = '无效的code请求'
             return HttpResponse(json.dumps(ret), content_type='application/json')
 
         openid = WechatUtils.getOpenid(code)
 
         if openid is None:
+            ret['code'] = 500
+            ret['msg'] = 'openid出错'
             ret = {'result': 'false', 'msg': 'openid出错'}
             return HttpResponse(json.dumps(ret), content_type='application/json')
 
         if codeVerify == '-1':
-            ret = {'result': 'false', 'msg': '无效的code请求'}
+            ret['code'] = 500
+            ret['msg'] = '无效的code请求'
             return HttpResponse(json.dumps(ret), content_type='application/json')
 
         nickname = request.POST['nickName'] if request.POST['nickName'] else ''
@@ -76,21 +85,21 @@ class MemberLoginView(View):
         print(bind_info.values_list())
         token = ""
         if bind_info:
-            token = "%s" % (WechatUtils.geneAuthCode(
+            token = "%s#%s" % (WechatUtils.geneAuthCode(
                 id=bind_info.values_list()[0][0],
                 codeVerify=bind_info.values_list()[0][13],
                 state=bind_info.values_list()[0][12],
                 type=bind_info.values_list()[0][14],
-            ))
+            ),bind_info.values_list()[0][0])
         else:
-            token = "%s" % (WechatUtils.geneAuthCode(
+            token = "%s#%s" % (WechatUtils.geneAuthCode(
                 id='-1',
                 codeVerify='-1',
                 state='0',
                 type='0',
-            ))
+            ),-1)
 
-        ret.append({'token': token})
+        ret['data'] = {'token': token}
         return HttpResponse(json.dumps(ret), content_type='application/json')
 
 
@@ -98,9 +107,9 @@ class MemberCheckRegView(View):
 
     def post(self, request):
 
-        ret = [{'code':200, 'msg':'操作成功', 'data':{}}]
+        ret = {'code':200, 'msg':'操作成功', 'data':{}}
         code = request.POST['code']
-        codeVerify = request.POST['codeVerify'] if request.POST['codeVerify'] else 'cheertt'
+        codeVerify = request.POST['codeVerify'] if request.POST['codeVerify'] else ''
 
         print('code')
         print(code)
@@ -108,32 +117,48 @@ class MemberCheckRegView(View):
         print(codeVerify)
 
         if not code or len(code) < 1:
-            ret = {'result': 'false', 'msg': '无效的请求code'}
+            ret['code'] = 500
+            ret['msg'] = '无效的请求code'
             return HttpResponse(json.dumps(ret), content_type='application/json')
 
         openid = WechatUtils.getOpenid(code)
 
         if openid is None:
-            ret = {'result': 'false', 'msg': 'openid出错'}
+            ret['code'] = 500
+            ret['msg'] = 'openid出错'
             return HttpResponse(json.dumps(ret), content_type='application/json')
 
         if codeVerify == '-1':
-            ret = {'result': 'false', 'msg': '无效的code请求'}
+            ret['code'] = 500
+            ret['msg'] = '无效的code请求'
             return HttpResponse(json.dumps(ret), content_type='application/json')
 
         bind_info = Member.objects.filter(openid=openid)
         if not bind_info:
-            ret.append({'result': 'false', 'msg': '未绑定'})
+            ret['code'] = 500
+            ret['msg'] = '未绑定'
             return HttpResponse(json.dumps(ret), content_type='application/json')
 
-        token = "%s" % (WechatUtils.geneAuthCode(
+        token = "%s#%s" % (WechatUtils.geneAuthCode(
             id=bind_info.values_list()[0][0],
             codeVerify=bind_info.values_list()[0][13],
             state=bind_info.values_list()[0][12],
             type=bind_info.values_list()[0][14],
-        ))
-        ret.append({'token': token})
+        ), bind_info.values_list()[0][0])
+        ret['data'] = {'token': token}
         return HttpResponse(json.dumps(ret), content_type='application/json')
+
+
+class MemberInfoView(View):
+
+    def get(self, request):
+
+        ua = request.META.get("HTTP_AUTHORIZATION")
+        auth_cooike = WechatUtils.checkMemberLogin(request)
+
+        print('auth_cooike')
+        print(auth_cooike)
+        pass
 
 
 class MemberView(LoginRequiredMixin, View):
@@ -223,73 +248,79 @@ with tf.Graph().as_default():
                 ret.append({"info": '验证码非法操作'})
                 return HttpResponse(json.dumps(ret), content_type="application/json")
 
-            # 生成一条订单
+            # 分别获取距离该图片中人脸最相近的人脸信息
+            # pic_min_scores 是数据库中人脸距离（facenet计算人脸相似度根据人脸距离进行的）
+            # pic_min_names 是当时入库时保存的文件名
+            # pic_min_uid  是对应的用户id
+            # if face_query.get_socres(emb_array) is not None:
+            pic_min_scores, pic_min_names, pic_min_uid = face_query.get_socres(emb_array)
+            for i in range(0, len(pic_min_scores)):
+                if pic_min_scores[i] < MAX_DISTINCT:
+                    rdict = {'uid': pic_min_uid[i],
+                             'distance': pic_min_scores[i],
+                             'pic_name': pic_min_names[i],
+                             'codeVerify': codeVerify}
+                    # 根据uid查询对应的用户信息
+                    ret.append(rdict)
 
-            request.POST['id_']
+            if len(ret) == 0:
+                # 新建一个用户
+                isVideo = Member.objects.filter(codeVerify=codeVerify)
+                print('isVideo')
+                print(isVideo.exists())
+                if not isVideo.exists():
+                    print('进来了')
+                    for j in range(0, len(emb_array)):
+                        Member.objects.create(faceid=memberid,
+                                              pic_name=memberid + "_" + str(j) + ".png",
+                                              face_json=",".join(str(li) for li in emb_array[j].tolist()),
+                                              joined_date1=datetime.datetime.now(),
+                                              codeVerify=codeVerify.lower()
+                                              )
+                    ret.append({"state": "success, add a face new"})
+                # else:
+                #     for j in range(0, len(emb_array)):
+                #         Member.objects.filter(id=isVideo.first().id).update(
+                #                               faceid=memberid,
+                #                               pic_name=memberid + "_" + str(j) + ".png",
+                #                               face_json=",".join(str(li) for li in emb_array[j].tolist()),
+                #                               joined_date1=datetime.datetime.now()
+                #                               )
+                #     ret.append({"state": "success, add a face update"})
+            else:
+                # 更新操作  已知用户
+                ret.append({"state": "update"})
 
-
-
-
-
-
-
-
-
-
-            # # 分别获取距离该图片中人脸最相近的人脸信息
-            # # pic_min_scores 是数据库中人脸距离（facenet计算人脸相似度根据人脸距离进行的）
-            # # pic_min_names 是当时入库时保存的文件名
-            # # pic_min_uid  是对应的用户id
-            # # if face_query.get_socres(emb_array) is not None:
-            # pic_min_scores, pic_min_names, pic_min_uid = face_query.get_socres(emb_array)
-            # for i in range(0, len(pic_min_scores)):
-            #     if pic_min_scores[i] < MAX_DISTINCT:
-            #         rdict = {'uid': pic_min_uid[i],
-            #                  'distance': pic_min_scores[i],
-            #                  'pic_name': pic_min_names[i],
-            #                  'codeVerify': codeVerify}
-            #         # 根据uid查询对应的用户信息
-            #         ret.append(rdict)
-            #
-            # if len(ret) == 0:
-            #     # 新建一个用户
-            #     isVideo = Member.objects.filter(codeVerify=codeVerify)
-            #     print('isVideo')
-            #     print(isVideo.exists())
-            #     if not isVideo.exists():
-            #         print('进来了')
-            #         for j in range(0, len(emb_array)):
-            #             Member.objects.create(faceid=memberid,
-            #                                   pic_name=memberid + "_" + str(j) + ".png",
-            #                                   face_json=",".join(str(li) for li in emb_array[j].tolist()),
-            #                                   joined_date1=datetime.datetime.now(),
-            #                                   codeVerify=codeVerify.lower()
-            #                                   )
-            #         ret.append({"state": "success, add a face new"})
-            #     # else:
-            #     #     for j in range(0, len(emb_array)):
-            #     #         Member.objects.filter(id=isVideo.first().id).update(
-            #     #                               faceid=memberid,
-            #     #                               pic_name=memberid + "_" + str(j) + ".png",
-            #     #                               face_json=",".join(str(li) for li in emb_array[j].tolist()),
-            #     #                               joined_date1=datetime.datetime.now()
-            #     #                               )
-            #     #     ret.append({"state": "success, add a face update"})
-            # else:
-            #     # 更新操作  已知用户
-            #     ret.append({"state": "update"})
-            #
-            # # filename_base, file_extension = os.path.splitext(image_path)
-            # # id_list = []
-            # # 存入数据库
-            # # 怎么判断是不是同一个人
-            # # face_info =
-            # #
-            # # db.session.add(member_info)
-            # # db.session.commit()
-            #
             # filename_base, file_extension = os.path.splitext(image_path)
+            # id_list = []
+            # 存入数据库
+            # 怎么判断是不是同一个人
+            # face_info =
+            #
+            # db.session.add(member_info)
+            # db.session.commit()
 
+            filename_base, file_extension = os.path.splitext(image_path)
+            print(codeVerify.lower())
+            member_foreign = Member.objects.filter(codeVerify=codeVerify.lower())
+
+            if member_foreign is None:
+                ret.append({"info": '当前用户未识别'})
+                return HttpResponse(json.dumps(ret), content_type="application/json")
+
+            # 生成一条订单
+            if request.POST['param'] is None or request.POST['param'] == {}:
+                ret.append({"info": '订单错误'})
+                return HttpResponse(json.dumps(ret), content_type="application/json")
+
+            param = eval(request.POST['param'])
+            for kv in param.items():
+                comm = Commodity.objects.filter(id=kv[0])
+                Transaction.objects.create(rating=3,
+                                           num=kv[1],
+                                           member=member_foreign[0],
+                                           commodity=comm[0],
+                                           joined_date=datetime.datetime.now())
 
 
 
