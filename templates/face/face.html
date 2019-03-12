@@ -89,17 +89,35 @@
       context.drawImage(video, 0, 0, 480, 320);
       var base64 = canvas.toDataURL('images/png');
       $("#a").hide();
-      console.log(base64);
+      //console.log(base64);
       upload(base64);
     });
 
+    function _strMapToObj(strMap){
+        let obj= Object.create(null);
+        for (let[k,v] of strMap) {
+          obj[k] = v;
+        }
+        return obj;
+    }
+
+
     //上传人脸图片
     function upload(base64) {
-        console.log($("ul li").text());
+        var param = new Map();
+        lis = $(".orderList li");
+        for (var i = 0; i < lis.length; i++) {
+            idd = lis[i].getElementsByTagName('span').item(0).textContent;
+            vall = lis[i].getElementsByTagName('input').item(0).getAttribute('value');
+            param.set(idd, vall);
+        }
+        console.log(param);
+        param = JSON.stringify(_strMapToObj(param));
+        console.log(param);
       $.ajax({
           "type": "POST",
           "url": "{% url 'api:member-save-face' %}",
-          "data": {'img': base64, csrfmiddlewaretoken: '{{ csrf_token }}'},
+          "data": {'img': base64, 'param': param, csrfmiddlewaretoken: '{{ csrf_token }}'},
           'dataType': 'json',
           beforeSend:function(){},
           success:function(result){
@@ -115,20 +133,17 @@
     var orderList = '';
     let orderId = new Set();
     function orderAdd(id) {
-        console.log(id);
 
         if (orderId.has(id) == true) {
-            console.log($("#orderList"));
             // todo
             {#orderList += '<li>' + id +'<input type="text" id=' + id +' value=' + 0 + '/></li>';#}
         } else {
             orderId.add(id);
-            orderList += '<li>' + id +'<input type="text" id="id_' + id +'" value="' + 0 + '" /></li>';
+            orderList += '<li><span>' + id + '</span><input type="text" id="id_' + id + '" value="' + 1 + '" /></li>';
         }
 
         $(".orderList").html("");
         $(".orderList").append(orderList);
-        console.log(orderId);
     }
     // 搜索商品建议
     $(function(){
@@ -146,9 +161,6 @@
                     success: function(data) {
                         data = data['data'];
                         for (var i=0;i<data.length;i++){
-                            console.log(data[i]);
-                            console.log(data[i]["id"]);
-                            console.log(data[i]["assin"]);
                             tmpHtml += '<li><a onclick="orderAdd(' + data[i]["id"] + ')" href="#">'+data[i]["assin"]+'</a></li>'
                         }
 
