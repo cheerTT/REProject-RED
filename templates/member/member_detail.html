@@ -33,13 +33,19 @@
                   <button type="button" class="btn btn-primary btn-sm" title="返回" id="btnReturn">
                       <i class="fa fa-undo">返回</i>
                   </button>
-
                 </div>
            </div>
 
                <div class="table-responsive mailbox-messages">
                   <table class="table" id="tbWorkList"  style="white-space: nowrap;">
                     <tbody>
+                        <tr>
+                            <li>
+                                <a href="{{member.avatarUrl}}" target="_blank">
+                                <span class="mailbox-attachment-icon has-img"><img src="{{member.avatarUrl}}" alt=""></span>
+                                </a>
+                            </li>
+                        </tr>
                         <tr class="info">
                             <td width="10%"><strong>用户id</strong></td>
                             <td class="text-left">{{ member.id }}</td>
@@ -75,22 +81,6 @@
                   </table>
                 </div>
                <br>
-               <div class="box-footer">
-                  <ul class="mailbox-attachments clearfix">
-
-                    <li>
-                      <a href="{{member.avatarUrl}}" target="_blank">
-                        <span class="mailbox-attachment-icon has-img"><img src="/media/{{ member.pic_name }}" alt=""></span>
-                      </a>
-                    </li>
-                      <li>
-                      <a href="/media/image/{{ member.pic_name }}" target="_blank">
-                        <span class="mailbox-attachment-icon has-img"><img src="/media/{{ member.pic_name }}" alt=""></span>
-                      </a>
-                    </li>
-
-                  </ul>
-                </div>
             <!-- /.box-footer -->
             </div>
             <!-- /.box-body -->

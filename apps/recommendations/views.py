@@ -52,15 +52,15 @@ class RecommendationsDetailView(LoginRequiredMixin, View):
             commodityidlist = []
             for i in recommendations:
                 commodityidlist.append([i.product_id_1, i.product_id_2, i.product_id_3,i.product_id_4,i.product_id_5])
-            #print(commodityidlist)
             commoditylist = []
             for assin in commodityidlist[0]:
                 commodity = Commodity.objects.filter(assin=assin)
+
+                #commodity[0].description = commodity[0].description[0:10]
+
+                #print(commodity[0].description + "this is new")
+                #commodity[0].title= commodity[0].title[0:10]
                 commoditylist.append(commodity[0])
-            #print(commoditylist)
-            # print("this is ")
-            # print(commodity)
-            # ret['commodity'] = commodity[0]
             ret['commodity_1'] = commoditylist[0]
             ret['commodity_2'] = commoditylist[1]
             ret['commodity_3'] = commoditylist[2]

@@ -21,7 +21,7 @@ class Member(models.Model):
     state = models.CharField(max_length=4, choices=state_choices, default='0', verbose_name="会员状态")
     codeVerify = models.CharField(max_length=6, verbose_name="验证码", default='-1')
     type = models.CharField(max_length=4, choices=type_choices, default='0', verbose_name="会员级别")
-    last_login_date = models.DateField(null=True, blank=True, verbose_name="上次登录时间")
+    last_login_date = models.DateTimeField(null=True, blank=True, verbose_name="上次登录时间")
 
     class Meta:
         verbose_name = "会员基本信息"
