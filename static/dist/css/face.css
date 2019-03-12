@@ -1,0 +1,21 @@
+.video {
+    float: left;
+}
+
+.commodity {
+    margin-left: 100px;
+    float: left;
+}
+
+.commodity .dataList {
+    float: left;
+}
+
+.order {
+    margin-left: 100px;
+    float: left;
+}
+
+.order .orderList {
+    float: left;
+}
