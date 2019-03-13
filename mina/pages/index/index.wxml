@@ -1,0 +1,41 @@
+<!--start.wxml-->
+<view class="container">
+
+  <!--确认码框-->
+  <view class="search-view" style="background:{{ scrollTop === 0 ?'-webkit-linear-gradient(top, rgba(105,195,170, 1), rgba(105,195,170, 0.3))' :( scrollTop<200 ? 'rgba(105,195,170,'+(scrollTop/400+0.3) +')' : 'rgba(105,195,170,1)')  }} ">
+    <view class="search-content">
+      
+      <input placeholder="请输入搜索内容" class="search-input" maxlength="30" confirm-type="搜索" bindinput='listenerCodeInput'>
+      </input>
+     
+    </view>
+  </view>
+
+  <view class="remind-box" wx:if="{{remind}}">
+   <!--<image class="remind-img" src="/images/more/loading.gif"></image>-->
+  </view>
+
+  <block wx:else>
+    <!--<image class="title" src="/images/more/title8.png"></image>-->
+    <view class="content">
+      <view class="hd" style="transform:rotateZ({{angle}}deg);">
+      
+       <!-- <image class="logo" src="/images/more/logo.png"></image>
+        <image class="wave" src="/images/more/wave.png" mode="aspectFill"></image>
+        <image class="wave wave-bg" src="/images/more/wave.png" mode="aspectFill"></image>-->
+      </view>
+     
+      <view class="bd">
+         <!--<image class="smalltitle" src="/images/more/confirm-word1.png"></image>-->
+        <view class="confirm-btn" bindtap='goToIndex' wx:if="{{regFlag==true}}">
+          <text>走，逛逛去</text>
+        </view>
+        
+        <button class="confirm-btn"  open-type="getUserInfo" bindgetuserinfo="login" wx:if="{{regFlag==false}}">
+            授权登录
+        </button>
+        <text class="copyright">@cheertt</text>
+      </view>
+    </view>
+  </block>
+</view>
