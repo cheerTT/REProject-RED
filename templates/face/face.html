@@ -6,38 +6,58 @@
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title>摄像头拍照</title>
   <script src="{% static 'plugins/jQuery/jquery-2.2.3.min.js' %}"></script>
+  <script src="{% static 'plugins/layui/layui.js' %}"></script>
+  <link rel="stylesheet" href="{% static 'plugins/layui/layui.css' %}">
   <link rel="stylesheet" href="{% static 'dist/css/face.css' %}">
 </head>
 
 <body>
+    <div>
+        <ul class="layui-nav layui-bg-cyan">
+            <li class="layui-nav-item">
+
+              <a href="">
+                  <img style="width: 60px; height: 60px;" src="{% static 'media/logo.png' %}"/>
+                  <span style="font-size: 20px;">向日葵收款系统</span>
+              </a>
+            </li>
+            <li class="layui-nav-item" style="float: right;margin-left: 20px;"><span id="capture" style="font-size: 20px;color: #f7ff12;">确认收款</span></li>
+            <li class="layui-nav-item" style="float: right;">
+                <span class="total_money"></span>
+            </li>
+        </ul>
+    </div>
     <div class="video">
-        <video id="video" width="480" height="320" controls></video>
-        <div>
-            <button id="capture">拍照</button>
-        </div>
+        <video id="video" width="480" height="300" controls></video>
+
         <div id="a">
             <canvas id="canvas" width="480" height="320"></canvas>
         </div>
+
+
         {% csrf_token %}
     </div>
     <div class="commodity">
-        显示商品
         <div class="inputArea">
+            <div class="layui-inline">
+                <input type="text" class="layui-input searchInput" placeholder="请输入商品编号"/>
+                <div class="dataList_table">
+                    <table class="layui-table mytable">
+                        <tbody class="datalist">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
 
-            <input type="text" class="searchInput" />
-
-            <input type="button" class="searchButton" value="提交" onclick="add_search()" />
-
-            <ul class="dataList">
-
-            </ul>
         </div>
     </div>
     <div class="order">
-        订单结果
-        <ul class="orderList">
-
-        </ul>
+        <div class="inputArea">
+            <table class="layui-table mytable" lay-skin="nob">
+                <tbody class="orderList">
+                </tbody>
+            </table>
+        </div>
     </div>
 </body>
 
@@ -104,16 +124,27 @@
 
     //上传人脸图片
     function upload(base64) {
+        var total = 0;
         var param = new Map();
-        lis = $(".orderList li");
+        lis = $(".orderList tr");
+        console.log(lis);
+        console.log(lis.length);
+
         for (var i = 0; i < lis.length; i++) {
-            idd = lis[i].getElementsByTagName('span').item(0).textContent;
+
+            idd = lis[i].getElementsByTagName('td').item(1).textContent;
             vall = lis[i].getElementsByTagName('input').item(0).getAttribute('value');
+            pricee = lis[i].getElementsByTagName('td').item(3).textContent;
+            pricee = pricee.slice(1, pricee.length);
+            total += pricee * vall;
             param.set(idd, vall);
         }
         console.log(param);
         param = JSON.stringify(_strMapToObj(param));
         console.log(param);
+
+        $('.total_money').html(total.toFixed(2));
+        /*
       $.ajax({
           "type": "POST",
           "url": "{% url 'api:member-save-face' %}",
@@ -123,27 +154,44 @@
           success:function(result){
               console.log(result);
               // img_path = result.data.file_path
+              // 显示验证码-并跳转另一个页面
           }
       });
+        */
     }
 
 </script>
 
 <script type="application/javascript">
     var orderList = '';
+    var i = 1;
     let orderId = new Set();
-    function orderAdd(id) {
+    function orderAdd(id, assin, present_price) {
 
         if (orderId.has(id) == true) {
             // todo
             {#orderList += '<li>' + id +'<input type="text" id=' + id +' value=' + 0 + '/></li>';#}
         } else {
             orderId.add(id);
-            orderList += '<li><span>' + id + '</span><input type="text" id="id_' + id + '" value="' + 1 + '" /></li>';
+
+            orderList += '<tr><td>' + i++ + '</td>'
+                        + '<td>' + assin + '</td>'
+                        + '<td><input id="' + id + '" onkeyup="value=zhzs(this.value)" lay-verify="required|number" type="text" value="1" class="layui-input numInput" maxlength="3" /></td>'
+                        + '<td>￥' + present_price + '</td></tr>';
+
         }
 
         $(".orderList").html("");
         $(".orderList").append(orderList);
+    }
+
+    // 限制文本框只能输入正整数
+    function zhzs(value){
+        value = value.replace(/[^\d]/g,'');
+        if('' != value){
+            value = parseInt(value);
+        }
+        return value;
     }
     // 搜索商品建议
     $(function(){
@@ -161,15 +209,18 @@
                     success: function(data) {
                         data = data['data'];
                         for (var i=0;i<data.length;i++){
-                            tmpHtml += '<li><a onclick="orderAdd(' + data[i]["id"] + ')" href="#">'+data[i]["assin"]+'</a></li>'
+                            tmpHtml += '<tr><td rowspan="3"><img class="item_img" src="/media/' + data[i]['imUrl'] + '"></td>'
+                                    + '<td><a href="#" onclick="orderAdd(' + data[i]['id'] + ',\'' + data[i]["assin"]  + '\',' + data[i]["present_price"] + ')" id=' + data[i]['id'] + '>' + data[i]["assin"] + '</a></td></tr>'
+                                    + '<tr><td class="item_content">' + data[i]["title"] + '</td></tr>'
+                                    + '<tr><td>' + data[i]["present_price"] + '</td></tr>'
                         }
 
-                        $(".dataList").html("")
+                        $(".dataList").html("");
                         $(".dataList").append(tmpHtml);
                         if (data.length == 0){
-                            $('.dataList').hide()
+                            $('.dataList_table').hide()
                         }else {
-                            $('.dataList').show()
+                            $('.dataList_table').show()
                         }
 
                     }
@@ -179,7 +230,7 @@
 
     });
 
-    hideElement($('.dataList'), $('.searchInput'));
+    {#hideElement($('.dataList'), $('.searchInput'));#}
 
 
 
