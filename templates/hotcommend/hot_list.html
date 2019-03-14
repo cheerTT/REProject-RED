@@ -21,32 +21,43 @@
         </ol>
     </section>
   <section class="content">
+      <div id="devlist">
+          <div class="box box-primary" id="liebiao">
+            <div class="box-header">
+                <div class="btn-group">
+                    <button type="button" id="btnCreate" class="btn btn-primary">
+                        <i class="glyphicon glyphicon-plus"></i>添加推荐
+                    </button>
+                </div>
+            </div>
+          </div>
                 <table id="dtbList" class="display" cellspacing="0" width="100%">
                     <thead>
                     <tr valign="middle">
                         <th><input type="checkbox" id="checkAll"></th>
                         <th>商品ID</th>
                         <th>商品名称</th>
-                        <th>商品类别</th>
+                        <th>商品销量</th>
                         <th>撤销推荐</th>
                     </tr>
                     </thead>
                     <tbody>
                     </tbody>
                 </table>
+      </div>
 
-              <div class="box-header" align="center">
-                <div class="btn-group">
-                    <button type="button" id="btnCreate" class="btn btn-primary">
-                        <i class="glyphicon glyphicon-plus"></i>推荐
-                    </button>
-                </div>
-                <div class="btn-group">
-                    <button type="button" id="btnDelete" class="btn btn-danger">
-                        <i class="glyphicon glyphicon-trash"></i>撤下
-                    </button>
-                </div>
-              </div>
+              <!--<div class="box-header" align="center">-->
+                <!--<div class="btn-group">-->
+                    <!--<button type="button" id="btnCreate" class="btn btn-primary">-->
+                        <!--<i class="glyphicon glyphicon-plus"></i>推荐-->
+                    <!--</button>-->
+                <!--</div>-->
+<!--{#                <div class="btn-group">#}-->
+<!--{#                    <button type="button" id="btnDelete" class="btn btn-danger">#}-->
+<!--{#                        <i class="glyphicon glyphicon-trash"></i>撤下#}-->
+<!--{#                    </button>#}-->
+<!--{#                </div>#}-->
+              <!--</div>-->
 
   </section>
 
@@ -89,6 +100,7 @@ $(function() {
 								"data":function ( d ) {
 									d.assin=$("#assin").val();
 									d.title=$("#title").val();
+									d.sales_counts=$("#sales_count").val();
 									d.categories=$("#categories").val();
 								}
 						},
@@ -104,14 +116,17 @@ $(function() {
 									data : "title",
 								},
 
+                                // {#{#}
+								// {#	data : "categories",#}
+								// {#},#}
+
                                 {
-									data : "categories",
+									data : "sales_count",
 								},
 
 								{
 								    data : "assin",
-									{#data : "id",#}
-									{#width : "10%",#}
+									width : "10%",
 									bSortable : "false",
 									render : function(data, type, row, meta) {
 										var ret="<button title='删除' onclick='doDelete(\"" + data + "\")'><i class='glyphicon glyphicon-trash'></i></button>";
@@ -158,7 +173,6 @@ $(function() {
 				window.location.reload();
 			}
 		});
-           {#layer.full(div)#}
 	});
 
 
@@ -223,7 +237,7 @@ function doDelete(id){
                 cache: false,
                 success : function(msg) {
                     if (msg.result){
-                        layer.alert('删除成功',{icon: 1});
+                        {#layer.alert('删除成功',{icon: 1});#}
                         oDataTable.ajax.reload();
                     }else{
                         //alert(msg.message);

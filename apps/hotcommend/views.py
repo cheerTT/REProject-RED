@@ -3,6 +3,7 @@
 # @Remark  : 视图函数
 from django.shortcuts import render
 import json
+from datetime import datetime, timedelta
 import re
 
 from django.shortcuts import HttpResponse
@@ -28,24 +29,73 @@ class ItemRank(LoginRequiredMixin, View):
     """
     统计商品销量
     """
+    # def post(self, request):
+    #     ret=dict()
+    #     global your_date
+    #     your_date = request.POST['date']
+    #     print("post: ", your_date)
+    #
+    #     now_time = datetime.now().strftime('%Y-%m-%d')
+    #     day_3_ago = (datetime.now() + timedelta(days=-3)).strftime('%Y-%m-%d')
+    #     day_7_ago = (datetime.now() + timedelta(days=-7)).strftime('%Y-%m-%d')
+    #     day_30_ago = (datetime.now() + timedelta(days=-30)).strftime('%Y-%m-%d')
+    #     choose_date = {'3': day_3_ago, '7': day_7_ago, '30': day_30_ago}
+    #
+    #     ret = transaction_record.objects.all().values('item_id').annotate(counts=Count('id')).filter(date__gte=choose_date[your_date], date__lte=now_time).order_by('-counts')[:50]
+    #     print(ret.values('id', 'item_id', 'date', 'user_id', 'rating'))
+    #
+    #     # 为每个物品添加对应的title
+    #     for item in ret:
+    #         a = Commodity.objects.filter(assin=item['item_id'])
+    #         try:
+    #             item['title'] = a.values('title')[0]['title']
+    #         except IndexError:
+    #             print("don't found: ", item['item_id'])
+    #
+    #     ret = dict(data=list(ret))
+    #     ret = json.dumps(ret, cls=DjangoJSONEncoder)
+    #     return HttpResponse(ret, content_type='application/json')
+
     def get(self, request):
-        ret = transaction_record.objects.all().values('item_id').annotate(counts=Count('date')).order_by('-counts')[:100]
-        item_name= Commodity.objects.all().values('assin', 'title')
-        print(item_name)
-        # test = chain(item_name, ret)
-        # for item in test:
-        #     print(item)
-        #为每个物品添加对应的id
-        # for item in ret:
-        #     a = Commodity.objects.filter(assin=item['item_id'])
-        #
-        #     try:
-        #         item['id'] = a.values('id')[0]['id']
-        #     except IndexError:
-        #         print("don't found: ", item['item_id'])
+        """
+        按商品id统计指定时间内的商品销量，默认近7天的
+        """
+
+        now_time = datetime.now().strftime('%Y-%m-%d')
+        day_3_ago = (datetime.now() + timedelta(days=-3)).strftime('%Y-%m-%d')
+        day_7_ago = (datetime.now() + timedelta(days=-7)).strftime('%Y-%m-%d')
+        day_30_ago = (datetime.now() + timedelta(days=-30)).strftime('%Y-%m-%d')
+
+        # choose_date = {'3': day_3_ago, '7': day_7_ago, '30': day_30_ago}
+
+        filters = dict()
+        #接收根据assin查询传来的assin值
+        if 'assin' in request.GET and request.GET['assin']:
+            ret = transaction_record.objects.all().filter(assin=request.GET['assin']).values('assin').annotate(sales_count=Count('id')).filter(date__gte='2000-02-11', date__lte=now_time)[:50]
+            for item in ret:
+                a = Commodity.objects.filter(assin=item['assin'])
+                item['title'] = a.values('title')[0]['title']
+            ret = dict(data=list(ret))
+            ret = json.dumps(ret, cls=DjangoJSONEncoder)
+            return HttpResponse(ret, content_type='application/json')
+
+
+        ret = transaction_record.objects.all().filter(**filters).values('assin').annotate(sales_count=Count('id')).filter(date__gte='2007-02-11', date__lte=now_time).order_by('-sales_count')[:50]
+        # ret = dict(data=list(Commodity.objects.filter(**filters).values('id', 'item_id', 'date', 'user_id', 'rating')))
+        # print(ret.values('id', 'item_id', 'date', 'user_id', 'rating'))
+
+        # 为每个物品添加对应的title
+        for item in ret:
+            a = Commodity.objects.filter(assin=item['assin'])
+            try:
+                item['title'] = a.values('title')[0]['title']
+            except IndexError:
+                print("don't found: ", item['assin'])
+
         ret = dict(data=list(ret))
         ret = json.dumps(ret, cls=DjangoJSONEncoder)
         return HttpResponse(ret, content_type='application/json')
+
 
 class AddCommendation(LoginRequiredMixin, View):
     """
@@ -60,22 +110,22 @@ class HotAdd(LoginRequiredMixin, View):
     显示热门推荐列表
     """
     def get(self, request):
-        fields = ['assin', 'title', 'categories']
+        fields = ['assin', 'title', 'sales_count', 'categories']
         filters = dict()
         if 'assin' in request.GET and request.GET['assin']:
             filters['assin__icontains'] = request.GET['assin']
         if 'title' in request.GET and request.GET['title']:
             filters['title__icontains'] = request.GET['title']
+        if 'sales_count' in request.GET and request.GET['sales_count']:
+            filters['sales_count'] = request.GET['sales_count']
         if 'categories' in request.GET and request.GET['categories']:
             filters['categories'] = request.GET['categories']
-            # print(a.values('assin')[0]['assin'])
-            # hot_commodity = hot_list(assin=a.values('assin')[0][')
+
+        # print(a.values('assin')[0]['assin'])
+        # hot_commodity = hot_list(assin=a.values('assin')[0][')
         ret = dict(data=list(hot_list.objects.filter(**filters).values(*fields)))
         ret = json.dumps(ret, cls=DjangoJSONEncoder)
-        # if 'item_id' in request.POST and request.POST['item_id']:
-        #     a = Commodity.objects.filter(assin=request.POST['item_id']).values(*fields)
-        #     commodity = hot_list(assin=a.values('assin')[0]['assin'], title=a.values('title')[0]['title'], type=a.values('categories')[0]['categories'])
-        #     commodity.save()
+
         return HttpResponse(ret, content_type='application/json')
 
 
@@ -85,14 +135,19 @@ class ToTheList(LoginRequiredMixin, View):
     """
     def post(self, request):
         ret=dict()
-        fields = ['assin', 'title', 'categories']
-        if 'item_id' in request.POST and request.POST['item_id']:
-            a = Commodity.objects.filter(assin=request.POST['item_id']).values(*fields)
+        filters = dict()
+        now_time = datetime.now().strftime('%Y-%m-%d')
+        fields = ['assin', 'title', 'categories', 'present_price', 'imUrl']
 
-            #如果hot表中已经存在该商品，则不再放入
-            if hot_list.objects.filter(assin=a.values('assin')[0]['assin']).count() == 0:
-                hot_commodity = hot_list(assin=a.values('assin')[0]['assin'], title=a.values('title')[0]['title'], categories=a.values('categories')[0]['categories'])
-                hot_commodity.save()
+        #销量单独获取
+        sales_count = transaction_record.objects.all().filter(assin=request.POST['assin']).values('assin').annotate(counts=Count('id')).filter(date__gte='2000-02-11', date__lte=now_time)
+
+        a = Commodity.objects.filter(assin=request.POST['assin']).values(*fields)
+        #如果hot表中已经存在该商品，则不再放入
+        if hot_list.objects.filter(assin=a.values('assin')[0]['assin']).count() == 0:
+            hot_commodity = hot_list(assin=a.values('assin')[0]['assin'], title=a.values('title')[0]['title'], categories=a.values('categories')[0]['categories'],
+                                     imUrl=a.values('imUrl')[0]['imUrl'], present_price=a.values('present_price')[0]['present_price'], sales_count=sales_count.values('counts')[0]['counts'])
+            hot_commodity.save()
         return HttpResponse(ret, content_type='application/json')
 
 
@@ -109,3 +164,42 @@ class HotDeleteView(LoginRequiredMixin, View):
 
         ret['result'] = True
         return HttpResponse(json.dumps(ret), content_type='application/json')
+
+
+# class ChooseDays(LoginRequiredMixin, View):
+#     def get(self, request):
+#         """
+#         按商品id统计指定时间内的商品销量，默认近三天的
+#         """
+#         your_date = request.POST['date']
+#
+#         now_time = datetime.now().strftime('%Y-%m-%d')
+#         day_3_ago = (datetime.now() + timedelta(days=-3)).strftime('%Y-%m-%d')
+#         day_7_ago = (datetime.now() + timedelta(days=-7)).strftime('%Y-%m-%d')
+#         day_30_ago = (datetime.now() + timedelta(days=-30)).strftime('%Y-%m-%d')
+#         choose_date = {'3': day_3_ago, '7':day_7_ago, '30':day_30_ago}
+#         print(choose_date[your_date])
+#
+#
+#         print(request.POST['date'])
+#         # print(choose_date)
+#         ret = transaction_record.objects.all().values('item_id').annotate(counts=Count('id')).filter(date__gte=choose_date[your_date], date__lte=now_time).order_by('-counts')[:50]
+#         print(ret.values('id', 'item_id', 'date', 'user_id', 'rating'))
+#         # item_name= Commodity.objects.all().values('assin', 'title')
+#         # new_ret = chain(item_name)
+#
+#         # test = chain(item_name, ret)
+#         # for item in test:
+#         #     print(item)
+#
+#         # 为每个物品添加对应的title
+#         for item in ret:
+#             a = Commodity.objects.filter(assin=item['item_id'])
+#             try:
+#                 item['title'] = a.values('title')[0]['title']
+#             except IndexError:
+#                 print("don't found: ", item['item_id'])
+#
+#         ret = dict(data=list(ret))
+#         ret = json.dumps(ret, cls=DjangoJSONEncoder)
+#         return HttpResponse(ret, content_type='application/json')
