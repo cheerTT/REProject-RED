@@ -6,7 +6,7 @@ from django.views.decorators.csrf import csrf_exempt
 
 from api import views_member
 from api import views_commodity
-
+from api import views_recommendations
 urlpatterns = [
     # 会员信息增改删查操作
     url(r'^member/$', views_member.MemberView.as_view(), name="member"),
