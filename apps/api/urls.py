@@ -21,6 +21,9 @@ urlpatterns = [
     url(r'^commodity/commodity_list', views_commodity.CommodityListView.as_view(), name="commodity-list"),
     url(r'^commodity/commodity_info', views_commodity.CommodityInfoView.as_view(), name="commodity-info"),
 
+    url(r'^recommendations/toprecommendations', csrf_exempt(views_recommendations.TopRecommendationsView.as_view()), name="TopRecommendations"),
+    url(r'^recommendations/allrecommendations', csrf_exempt(views_recommendations.AllRecommendationsView.as_view()),
+        name="AllRecommendations"),
     # url(r'^user/list$', views.UserListView.as_view(), name="user-list"),
     # url(r'^user/create$', views.UserCreateView.as_view(), name="user-create"),
     # url(r'^user/enable$', views.UserEnableView.as_view(), name="user-enable"),
