@@ -21,7 +21,7 @@ class CommoditySearchView(View):
         # print("111111111111111111111111111111")
         print(request.GET['s'])
         s = request.GET['s']
-        fields = ['id', 'assin']
+        fields = ['id', 'assin', 'title', 'imUrl', 'present_price']
 
         comms = Commodity.objects.filter(assin__contains=s).values(*fields)
         ret = dict(data=list(comms))
@@ -52,9 +52,11 @@ class CommodityListView(View):
         if 'commodity_id' in request.GET and request.GET['commodity_id']:
             filters['categories'] = request.GET['commodity_id']
         if 'mix_kw' in request.GET and request.GET['mix_kw']:
-            filters['title__icontains'] = request.GET['title']
+            filters['title__icontains'] = request.GET['mix_kw']
+
 
         p = int(request.GET['p'])
+
         page_size = 10
         commodity_list = Commodity.objects.filter(**filters).values(*fields).order_by("id")
         paginator = Paginator(commodity_list, page_size)
@@ -65,5 +67,20 @@ class CommodityListView(View):
         ret = dict(data=list(commodity_pages))
         ret["has_more"] = commodity_pages.has_next()
         ret = json.dumps(ret, cls=DjangoJSONEncoder)
-        # print("ret:",ret)
+
+        return HttpResponse(ret, content_type='application/json')
+
+class CommodityInfoView(View):
+    def get(self, request):
+        fields = ['id', 'assin', 'title', 'brand', 'status', 'buyDate', 'present_price', 'categories__type_name',
+                  'imUrl','description']
+        filters = dict()
+        if 'id' in request.GET and request.GET['id']:
+            filters['id'] = request.GET['id']
+        commodity_info = Commodity.objects.filter(**filters).values(*fields)
+        ret = dict(data=list(commodity_info))
+        # ret["code"]=200
+        # ret["msg"]="操作成功~"
+        ret = json.dumps(ret, cls=DjangoJSONEncoder)
+        print("ret:", ret)
         return HttpResponse(ret, content_type='application/json')

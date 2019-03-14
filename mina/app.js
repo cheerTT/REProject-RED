@@ -3,12 +3,11 @@ App({
     onLaunch: function () {
     },
     globalData: {
-        userInfo: null,
-        version: "1.0",
-        shopName: "向日葵新零售",
-        // domain:"https://helianthus.chinacloudapp.cn/api"
-        domain: "http://127.0.0.1:8000/api",
-        imagePath: "http://127.0.0.1:8000/media"
+      userInfo: {},
+      version: "1.0",
+      shopName: "向日葵新零售",
+      // domain:"https://helianthus.chinacloudapp.cn/api"
+      domain: "http://127.0.0.1:8000/api"
     },
     tip: function (params) {
         var that = this;

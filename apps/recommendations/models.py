@@ -23,3 +23,15 @@ class Users_Recommendations(models.Model):
         表名
         """
         db_table = "users_recommendations"
+
+class Users_AllRecommendations(models.Model):
+    """
+    与User_Recommendations表中的字段相对应，
+    """
+    user_id = models.CharField(max_length=100, blank=False, null=False)
+    products_id = models.TextField(blank = False, null = False)
+    class Meta:
+        """
+        表名
+        """
+        db_table = "users_allrecommendations"
