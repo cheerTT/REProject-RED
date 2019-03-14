@@ -121,7 +121,7 @@ Page({
     //如果没有显示去光光按钮事件
     toIndexPage: function () {
         wx.switchTab({
-            url: "/pages/food/index"
+          url: "/pages/recommendations/index"
         });
     },
     //选中删除的数据
