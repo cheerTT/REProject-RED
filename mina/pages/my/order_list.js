@@ -1,19 +1,21 @@
 var app = getApp();
 Page({
     data: {
-        statusType: ["待付款", "待发货", "待收货", "待评价", "已完成","已关闭"],
-        status:[ "-8","-7","-6","-5","1","0" ],
-        currentType: 0,
-        tabClass: ["", "", "", "", "", ""]
+      userid : null,
+      orderlist : null,
+        // statusType: ["待付款", "待发货", "待收货", "待评价", "已完成","已关闭"],
+        // status:[ "-8","-7","-6","-5","1","0" ],
+        // currentType: 0,
+        // tabClass: ["", "", "", "", "", ""]
     },
-    statusTap: function (e) {
-        var curType = e.currentTarget.dataset.index;
-        this.data.currentType = curType;
-        this.setData({
-            currentType: curType
-        });
-        this.onShow();
-    },
+    // statusTap: function (e) {
+    //     var curType = e.currentTarget.dataset.index;
+    //     this.data.currentType = curType;
+    //     this.setData({
+    //         currentType: curType
+    //     });
+    //     this.onShow();
+    // },
     orderDetail: function (e) {
         wx.navigateTo({
             url: "/pages/my/order_info"
@@ -21,6 +23,19 @@ Page({
     },
     onLoad: function (options) {
         // 生命周期函数--监听页面加载
+        var that = this;
+        var userid = options.userid
+        // console.log("options:",options.userid) //43
+        this.setData({
+          userid:options.userid
+        })
+        // console.log("userid:",userid)
+        wx.getStorage({
+          key: 'userid',
+          success: function(res) {
+            // console.log("res.data:",res.data)
+          },
+        })
 
     },
     onReady: function () {
@@ -28,26 +43,40 @@ Page({
     },
     onShow: function () {
         var that = this;
-        that.setData({
-            order_list: [
-                {
-					status: -8,
-                    status_desc: "待支付",
-                    date: "2018-07-01 22:30:23",
-                    order_number: "20180701223023001",
-                    note: "记得周六发货",
-                    total_price: "85.00",
-                    goods_list: [
-                        {
-                            pic_url: "/images/food.jpg"
-                        },
-                        {
-                            pic_url: "/images/food.jpg"
-                        }
-                    ]
+        wx.request({
+          url: app.buildUrl("/member/order?userid="+this.data.userid),
+          header: app.getRequestHeader(),
+          success: function (res) {
+            var resp = res.data
+            console.log("resp",resp)
+            var map = {},
+              dest = [];
+            for (var i = 0; i < resp.length; i++) {
+              var ai = resp[i];
+              if (!map[ai.orderid]) { 
+                dest.push({
+                  id: ai.orderid, 
+                  data: [ai]
+                });
+                map[ai.orderid] = ai; 
+              } else {
+                for (var j = 0; j < dest.length; j++) {
+                  var dj = dest[j];
+                  if (dj.id == ai.orderid) { 
+                    dj.data.push(ai);
+                    break;
+                  }
                 }
-            ]
-        });
+              }
+            }
+            console.log(dest);
+            
+            that.setData({
+              orderlist:dest
+            })
+          }
+
+        })
     },
     onHide: function () {
         // 生命周期函数--监听页面隐藏

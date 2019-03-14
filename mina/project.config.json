@@ -11,7 +11,7 @@
 	"compileType": "miniprogram",
 	"libVersion": "1.9.94",
 	"appid": "wx56291ba66ff53a69",
-	"projectname": "mina",
+	"projectname": "model",
 	"isGameTourist": false,
 	"condition": {
 		"search": {
