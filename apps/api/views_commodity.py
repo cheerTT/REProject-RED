@@ -55,6 +55,7 @@ class CommodityListView(View):
             filters['title__icontains'] = request.GET['title']
 
         p = int(request.GET['p'])
+
         page_size = 10
         commodity_list = Commodity.objects.filter(**filters).values(*fields).order_by("id")
         paginator = Paginator(commodity_list, page_size)
