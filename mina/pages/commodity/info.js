@@ -1,66 +1,159 @@
-// pages/commodity/info.js
+//index.js
+//获取应用实例
+var app = getApp();
+var WxParse = require('../../wxParse/wxParse.js');
+var utils = require('../../utils/util.js');
 Page({
+    data: {
+        autoplay: true,
+        interval: 3000,
+        duration: 1000,
+        swiperCurrent: 0,
+        hideShopPopup: true,
+        buyNumber: 1,
+        buyNumMin: 1,
+        buyNumMax: 1,
+        canSubmit: false, //  选中时候是否允许加入购物车
+        good: {},
+        shopType: "addShopCar",//购物类型，加入购物车或立即购买，默认为加入购物车,
+        id: 0,
+        shopCarNum: 4,
+        commentCount: 2
+    },
+    onLoad: function (e) {
+        var that = this;
+        that.setData({
+            id: e.id
+        });
 
-  /**
-   * 页面的初始数据
-   */
-  data: {
+    },
+    onShow: function () {
+        this.getInfo();
+        // this.getComments();
+    },
+    goShopCar: function () {
+        wx.reLaunch({
+            url: "/pages/cart/index"
+        });
+    },
+    toAddShopCar: function () {
+        this.setData({
+            shopType: "addShopCar"
+        });
+        this.bindGuiGeTap();
+    },
+    tobuy: function () {
+        this.setData({
+            shopType: "tobuy"
+        });
+        this.bindGuiGeTap();
+    },
+    addShopCar: function () {
 
-  },
+    },
+    buyNow: function () {
+        wx.navigateTo({
+            url: "/pages/order/index"
+        });
+    },
+    /**
+     * 规格选择弹出框
+     */
+    bindGuiGeTap: function () {
+        this.setData({
+            hideShopPopup: false
+        })
+    },
+    /**
+     * 规格选择弹出框隐藏
+     */
+    closePopupTap: function () {
+        this.setData({
+            hideShopPopup: true
+        })
+    },
+    numJianTap: function () {
+        if (this.data.buyNumber <= this.data.buyNumMin) {
+            return;
+        }
+        var currentNum = this.data.buyNumber;
+        currentNum--;
+        this.setData({
+            buyNumber: currentNum
+        });
+    },
+    numJiaTap: function () {
+        if (this.data.buyNumber >= this.data.buyNumMax) {
+            return;
+        }
+        var currentNum = this.data.buyNumber;
+        currentNum++;
+        this.setData({
+            buyNumber: currentNum
+        });
+    },
+    //事件处理函数
+    swiperchange: function (e) {
+        this.setData({
+            swiperCurrent: e.detail.current
+        })
+    },
+    getInfo: function () {
+        var that = this;
+        wx.request({
+            url: app.buildUrl("/commodity/commodity_info"),
+            header: app.getRequestHeader(),
+            data: {
+                id: that.data.id
+            },
+            success: function (res) {
+                // console.log(res.data.data)
+                var resp = res.data;
+                // if (resp.code != 200) {
+                //     app.alert({"content": resp.msg});
+                //     wx.navigateTo({
+                //         url: "/pages/commodity/index"
+                //     });
+                //     return;
+                // }
 
-  /**
-   * 生命周期函数--监听页面加载
-   */
-  onLoad: function (options) {
+                that.setData({
+                    good: resp.data[0],
+                    // buyNumMax: resp.data.info.stock,
+                    // shopCarNum: resp.data.cart_number
+                });
+                // console.log(resp.data[0].imUrl)
 
-  },
+                // WxParse.wxParse('article', 'html', resp.data.info.summary, that, 5);
+            }
+        });
+    },
 
-  /**
-   * 生命周期函数--监听页面初次渲染完成
-   */
-  onReady: function () {
+     onShareAppMessage: function () {
+        var that = this;
+        console.log("分享")
+        // console.log(that.data.good.title)
+        return {
+            title: that.data.good.title,
+            path: '/pages/commodity/info?id=' + that.data.good.id,
+            success: function (res) {
+                // 转发成功
+                // wx.request({
+                //     url: app.buildUrl("/commodity/share"),
+                //     header: app.getRequestHeader(),
+                //     method: 'POST',
+                //     data: {
+                //         url: utils.getCurrentPageUrlWithArgs()
+                //     },
+                //     success: function (res) {
+                //
+                //     }
+                // });
+            },
+            fail: function (res) {
+                // 转发失败
+            }
+        }
+    }
 
-  },
-
-  /**
-   * 生命周期函数--监听页面显示
-   */
-  onShow: function () {
-
-  },
-
-  /**
-   * 生命周期函数--监听页面隐藏
-   */
-  onHide: function () {
-
-  },
-
-  /**
-   * 生命周期函数--监听页面卸载
-   */
-  onUnload: function () {
-
-  },
-
-  /**
-   * 页面相关事件处理函数--监听用户下拉动作
-   */
-  onPullDownRefresh: function () {
-
-  },
-
-  /**
-   * 页面上拉触底事件的处理函数
-   */
-  onReachBottom: function () {
-
-  },
-
-  /**
-   * 用户点击右上角分享
-   */
-  onShareAppMessage: function () {
-
-  }
-})
+});
