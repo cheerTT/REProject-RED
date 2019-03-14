@@ -82,5 +82,5 @@ class CommodityInfoView(View):
         # ret["code"]=200
         # ret["msg"]="操作成功~"
         ret = json.dumps(ret, cls=DjangoJSONEncoder)
-        print("ret:", ret)
+        # print("ret:", ret)
         return HttpResponse(ret, content_type='application/json')
