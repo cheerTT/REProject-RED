@@ -36,7 +36,7 @@
 
 .my-item{
     width: 100%;
-    background: url(http://cdn.static.54php.cn/mina_order/arrow-right.png) no-repeat 750rpx center;
+    background: url(images/arrow-right.png) no-repeat 750rpx center;
     background-size: 16rpx auto,750rpx auto;
     margin: 20rpx 0; 
     border-bottom: 1px solid #eee;

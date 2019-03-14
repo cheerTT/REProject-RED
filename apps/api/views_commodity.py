@@ -21,7 +21,7 @@ class CommoditySearchView(View):
         # print("111111111111111111111111111111")
         print(request.GET['s'])
         s = request.GET['s']
-        fields = ['id', 'assin']
+        fields = ['id', 'assin', 'title', 'imUrl', 'present_price']
 
         comms = Commodity.objects.filter(assin__contains=s).values(*fields)
         ret = dict(data=list(comms))
