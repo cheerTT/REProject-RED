@@ -174,7 +174,7 @@ class MemberInfoView(View):
 class MemberOrderView(View):
     def get(self, request):
         ret = []
-        fields = ['id','num','joined_date','commodity_id','member_id']
+        fields = ['id','num','joined_date','commodity_id','member_id','orderid']
         filters = dict()
         if 'userid' in request.GET and request.GET['userid']:# 要查询的订单列表的用户id #43
             filters['member_id'] = request.GET['userid']

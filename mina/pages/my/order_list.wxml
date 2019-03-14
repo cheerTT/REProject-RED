@@ -11,33 +11,32 @@
     </view>
     <view class="order-list" hidden="{{orderlist ? false : true}}">
         <view class="a-order" wx:for="{{orderlist}}" wx:key="{{index}}" wx:for-item="item" bindtap="orderDet1ail">
-            <view class="order-date">
-                <view class="date-box">下单时间：{{item.id}}</view>
+            <view class="order-date">7
+                <view class="goods-des">订单编号：{{item.id}}</view>
             </view>
-            <view >
-              <view wx:for="{{item.data}}" wx:for-item="itemGood">
-                <view class="goods-info"  data-id="{{itemGood.id}}">
-                  <view class="a-goods">
-                    <view class="img-box">
-                      <image src="/images/food.jpg" class="goods-img"></image>
+            <view>
+                <view wx:for="{{item.data}}" wx:for-item="itemGood">
+                    <view class="a-goods">
+                        <view class="img-box">
+                            <image src="/images/food.jpg" class="goods-img"></image>
+                            <view class="goods-name">{{itemGood.title}}</view>
+                        </view>
+                        <view class="text-box">
+                            <view class="arow arow01">
+
+                                <view class="goods-price">¥ {{itemGood.presentprice}}</view>
+                            </view>
+                            <view class="arow">
+                                <view class="goods-label"></view>
+                                <view class="goods-num">x {{itemGood.num}}</view>
+                            </view>
+                        </view>
                     </view>
-                    <view class="text-box">
-                      <view class="arow arow01">
-                        <view class="goods-name">{{itemGood.title}}</view>
-                        <view class="goods-price">¥ {{itemGood.presentprice}}</view>
-                      </view>
-                      <view class="arow">
-                          <view class="goods-label"></view>
-                          <view class="goods-num">x {{itemGood.num}}</view>
-                      </view>
-                    </view>
-                  </view>
                 </view>
-              </view>
             </view>
             <view class="price-box">
                 <view class="total-price">合计：¥ {{ itemGood.num}}*{{ itemGood.presentprice}}</view>
-            </view>  
+            </view>
         </view>
 
     </view>
