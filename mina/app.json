@@ -3,15 +3,19 @@
     "pages/index/index",
     "pages/recommendations/index",
     "pages/recommendations/info",
+    "pages/my/index",
+    "pages/food/index",
+    "pages/food/info",
     "pages/order/index",
-    "pages/cart/index",
     "pages/my/order_list",
     "pages/my/order_info",
+    "pages/my/creditList",
+    "pages/my/commentList"
     "pages/my/addressList",
     "pages/my/addressSet",
     "pages/my/commentList",
     "pages/my/index"
-    
+
   ],
   "window": {
     "backgroundTextStyle": "light",

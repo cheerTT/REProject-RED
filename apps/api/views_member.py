@@ -7,7 +7,7 @@ import json
 import uuid
 import datetime
 import tensorflow as tf
-
+from django.core import serializers
 from django.shortcuts import render
 from django.views.generic.base import View
 from django.http import HttpResponse, HttpResponseRedirect
@@ -23,7 +23,6 @@ from scipy import misc
 from api.models import Member
 from order.models import Transaction
 from commodity.models import Commodity
-
 
 os.environ["TF_CPP_MIN_LOG_LEVEL"]='2' # 只显示 warning 和 Error
 
@@ -111,10 +110,8 @@ class MemberCheckRegView(View):
         code = request.POST['code']
         codeVerify = request.POST['codeVerify'] if request.POST['codeVerify'] else ''
 
-        print('code')
-        print(code)
-        print('codeVerify')
-        print(codeVerify)
+        print('code:',code)
+        print('codeVerify:',codeVerify)
 
         if not code or len(code) < 1:
             ret['code'] = 500
@@ -152,14 +149,51 @@ class MemberCheckRegView(View):
 class MemberInfoView(View):
 
     def get(self, request):
-
+        ret={}
         ua = request.META.get("HTTP_AUTHORIZATION")
-        auth_cooike = WechatUtils.checkMemberLogin(request)
+        print("ua:",ua)
 
-        print('auth_cooike')
-        print(auth_cooike)
-        pass
+        auth_cookie = WechatUtils.checkMemberLogin(request)
+        print('auth_cookie:',auth_cookie)
 
+        ret['id'] = auth_cookie.id
+        ret['openid'] = auth_cookie.openid
+        ret['pic_name']= auth_cookie.pic_name
+        ret['nickname'] = auth_cookie.nickname
+        ret['gender'] = auth_cookie.gender
+        ret['city'] = auth_cookie.city
+        ret['province'] = auth_cookie.province
+        # ret['last_login_date'] = auth_cookie.last_login_date 不能json化
+        ret['avatarUrl'] = auth_cookie.avatarUrl
+        ret['codeVerify'] = auth_cookie.codeVerify
+        ret['type'] = auth_cookie.type
+
+        print("ret:",ret)
+        return HttpResponse(json.dumps(ret), content_type='application/json')
+
+class MemberOrderView(View):
+    def get(self, request):
+        ret = []
+        fields = ['id','num','joined_date','commodity_id','member_id','orderid']
+        filters = dict()
+        if 'userid' in request.GET and request.GET['userid']:# 要查询的订单列表的用户id #43
+            filters['member_id'] = request.GET['userid']
+            transaction=Transaction.objects.filter(**filters).values(*fields)
+            print("transaction:",transaction)
+            for order in transaction:
+                singleorder = {}
+                singleorder['commodity_id'] = order['commodity_id']
+                singleorder['id'] = order['id']
+                singleorder['orderid'] = order['orderid']
+                singleorder['num'] = order['num']
+                singleorder['joined_date'] = order['joined_date'].strftime("%m-%d %H:%M:%S")
+                singleorder['picurl'] = Commodity.objects.filter(id=order['commodity_id']).first().imUrl
+                singleorder['presentprice'] = Commodity.objects.filter(id=order['commodity_id']).first().present_price
+                singleorder['title'] = Commodity.objects.filter(id=order['commodity_id']).first().title
+                print("singleorder:",singleorder)
+                ret.append(singleorder)
+        print("ret:",ret)
+        return HttpResponse(json.dumps(ret), content_type='applications/json')
 
 class MemberView(LoginRequiredMixin, View):
 

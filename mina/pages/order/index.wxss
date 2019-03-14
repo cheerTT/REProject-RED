@@ -3,7 +3,7 @@
 }
 .address-box{
     width: 100%;
-    background: url(http://cdn.static.54php.cn/mina_order/arrow-right.png) no-repeat 705rpx center ,
+    background: url(images/arrow-right.png) no-repeat 705rpx center ,
                 url(http://cdn.static.54php.cn/mina_order/addr-line.png) no-repeat center bottom;
     background-size: 16rpx auto,750rpx auto;
     background-color: #fff;

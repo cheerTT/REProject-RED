@@ -21,7 +21,10 @@
                   <span style="font-size: 20px;">向日葵收款系统</span>
               </a>
             </li>
-            <li class="layui-nav-item" style="float: right;margin-left: 20px;"><span id="capture" style="font-size: 20px;color: #f7ff12;">确认收款</span></li>
+            <li class="layui-nav-item" style="float: right;margin-left: 20px;">
+{#                <span id="capture" style="font-size: 20px;color: #f7ff12;"><button>确认收款</button></span>#}
+                <button class="layui-btn" id="capture" style="margin: 12.59px;font-size: 20px;">确认收款</button>
+            </li>
             <li class="layui-nav-item" style="float: right;">
                 <span class="total_money"></span>
             </li>
@@ -127,24 +130,23 @@
         var total = 0;
         var param = new Map();
         lis = $(".orderList tr");
-        console.log(lis);
-        console.log(lis.length);
 
         for (var i = 0; i < lis.length; i++) {
 
-            idd = lis[i].getElementsByTagName('td').item(1).textContent;
+            idd = lis[i].getElementsByTagName('input').item(0).getAttribute('id');
+            assinn = lis[i].getElementsByTagName('td').item(1).textContent;
             vall = lis[i].getElementsByTagName('input').item(0).getAttribute('value');
             pricee = lis[i].getElementsByTagName('td').item(3).textContent;
             pricee = pricee.slice(1, pricee.length);
             total += pricee * vall;
+
             param.set(idd, vall);
         }
-        console.log(param);
         param = JSON.stringify(_strMapToObj(param));
         console.log(param);
 
-        $('.total_money').html(total.toFixed(2));
-        /*
+        $('.total_money').html("￥" + total.toFixed(2));
+
       $.ajax({
           "type": "POST",
           "url": "{% url 'api:member-save-face' %}",
@@ -157,7 +159,7 @@
               // 显示验证码-并跳转另一个页面
           }
       });
-        */
+
     }
 
 </script>
