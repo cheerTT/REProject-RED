@@ -14,7 +14,7 @@ urlpatterns = [
     url(r'^member/login', csrf_exempt(views_member.MemberLoginView.as_view()), name="member-login"),
     url(r'^member/checkreg', csrf_exempt(views_member.MemberCheckRegView.as_view()), name="member-checkreg"),
     url(r'^member/info', views_member.MemberInfoView.as_view(), name="member-info"),
-
+    url(r'^member/order', views_member.MemberOrderView.as_view(), name='member-order'),
     url(r'^commodity/search', views_commodity.CommoditySearchView.as_view(), name="commodity-search"),
     # url(r'^user/list$', views.UserListView.as_view(), name="user-list"),
     # url(r'^user/create$', views.UserCreateView.as_view(), name="user-create"),
