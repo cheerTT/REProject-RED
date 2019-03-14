@@ -1,6 +1,7 @@
 //index.js
 //获取应用实例
 var app = getApp();
+
 Page({
     data: {
         indicatorDots: true,
@@ -17,20 +18,27 @@ Page({
         searchInput: '',
         p: 1,
         processing: false,
-        imagePath:''
     },
     onLoad: function () {
         var that = this;
         wx.setNavigationBarTitle({
             title: app.globalData.shopName
         });
-        that.setData({
-            imagePath:app.globalData.imagePath,
-        });
+        // that.setData({
+        //     imagePath:app.globalData.imagePath
+        // });
+        //
+        // console.log("fdshfyuasgfy");
+        // console.log(imagePath);
 
     },
-    //解决切换不刷新维内托，每次展示都会调用这个方法
+    //每次展示都会调用这个方法
     onShow: function () {
+       this.setData({
+            p: 1,
+            goods: [],
+            loadingMoreHidden: true
+        });
         this.getType();
 
     },
@@ -94,11 +102,11 @@ Page({
         this.setData({
             activeCategoryId: e.currentTarget.id
         });
-        // this.setData({
-        //     loadingMoreHidden: true,
-        //     p: 1,
-        //     goods: []
-        // });
+        this.setData({
+            loadingMoreHidden: true,
+            p: 1,
+            goods: []
+        });
         this.getCommodityList();
     },
     onReachBottom: function () { //下拉刷新
@@ -134,19 +142,18 @@ Page({
             },
             success: function (res) {
                 console.log(res.data.data)
+                var goods=res.data.data;
                 that.setData({
-                    goods: res.data.data,
+                    goods: that.data.goods.concat(goods),
                     p: that.data.p + 1,
                     processing: false
                 });
 
-                if(res.data.has_more==false){
+                if (res.data.has_more == false) {
                     that.setData({
-                        loadingMoreHidden:false
+                        loadingMoreHidden: false
                     });
                 }
-
-
             }
 
 

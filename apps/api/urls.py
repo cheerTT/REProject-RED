@@ -19,6 +19,7 @@ urlpatterns = [
 
     url(r'^commodity/commodity_type', views_commodity.CommodityTypeView.as_view(), name="commodity-type"),
     url(r'^commodity/commodity_list', views_commodity.CommodityListView.as_view(), name="commodity-list"),
+    url(r'^commodity/commodity_info', views_commodity.CommodityInfoView.as_view(), name="commodity-info"),
 
     # url(r'^user/list$', views.UserListView.as_view(), name="user-list"),
     # url(r'^user/create$', views.UserCreateView.as_view(), name="user-create"),
