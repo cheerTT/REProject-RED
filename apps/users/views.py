@@ -1,3 +1,6 @@
+# @Author  : cheertt
+# @Time    : 2019/3/3 9:44
+# @Remark  : 超级管理员以及商家管理模块
 import json
 import re
 from django.shortcuts import render
@@ -10,7 +13,6 @@ from django.contrib.auth import authenticate, login, logout
 from django.core.urlresolvers import reverse
 from django.core.serializers.json import DjangoJSONEncoder
 from django.contrib.auth.hashers import make_password
-
 from django.db.models import Q
 from django.contrib.auth import get_user_model
 from django.contrib.auth.backends import ModelBackend
@@ -34,45 +36,51 @@ class UserBackend(ModelBackend):
 
 
 class IndexView(LoginRequiredMixin, View):
+    """
+    跳转首页视图，其中LoginRequiredMixin用于判断当前用户是否处于登陆状态
+    """
     def get(self, request):
-        # 判断当前用户是否登陆
-        # if request.user.is_authenticated():
-        #     return render(request, 'index.html')
-        # else:
-        #     return redirect('%s?next=%s' % (settings.LOGIN_URL, request.path))
         return HttpResponseRedirect('/personal/')
 
 
 class LoginView(View):
-    '''
+    """
     用户登录认证，通过form表单进行输入合规验证
     django使用会话和中间件来拦截认证系统中的请求对象。他们在每一个请求上都提供一个request.user属性，
     表示当前用户。如果当前用户没有接入，该属性将设置成AnonymousUser的一个实例，否则将会是User实例；
-    '''
+    """
     def get(self, request):
+        """
+        若用户没有被授权，则跳转到登陆页面，否则显示登陆成功主界面
+        :param request:
+        :return:
+        """
         if not request.user.is_authenticated():
-            # ret = (SystemSetup.getSystemSetupLastData())
             return render(request, 'users/login.html')
         else:
             return HttpResponseRedirect('/personal/')
 
     def post(self, request):
+        """
+        若用户状态为0，在登陆页面显示为未激活；
+        若输入用户名与密码与数据库不一致，在登陆界面显示用户名或密码错误；
+        若用户没有输入用户名或者密码，在登陆页面显示用户名或密码错误；
+        否则，用户登陆成功，保存用户信息至session，并显示跳转之后的主界面；
+        :param request:
+        :return:
+        """
         redirect_to = request.GET.get('next', '/personal/')
         login_form = LoginForm(request.POST)
-        # form实例的一个方法，用作做字段验证，当输入字段值合法时，将返回True
-        # 同时将表单的数据存放到cleaned_data属性中
         if login_form.is_valid():
             user_name = request.POST.get("username", "")
             pass_word = request.POST.get("password", "")
             # 认证用户，如果通过认证后端检查，则返回一个user对象
             user = authenticate(username=user_name, password=pass_word)
-
             if user is not None:
                 if user.is_active:
                     # 用来从视图中登陆一个用户，同时将用户id保存在session中
                     # 使用前必须使用authenticate成功认证这个用户
                     login(request, user)
-                    # 从定向访问，参数是重定向的地址
                     return HttpResponseRedirect(redirect_to)
                 else:
                     msg = "用户未激活！"
@@ -82,7 +90,6 @@ class LoginView(View):
                 msg = "用户名或密码错误！"
                 ret = {"msg": msg, "login_form": login_form}
                 return render(request, "users/login.html", ret)
-
         else:
             msg = "用户名和密码不能够为空！"
             ret = {"msg": msg, "login_form": login_form}
@@ -90,9 +97,9 @@ class LoginView(View):
 
 
 class LogoutView(View):
-    '''
-    用户登出
-    '''
+    """
+    用户登出,直接调用django内部方法
+    """
     def get(self, request):
         # 登出用户
         logout(request)
@@ -102,34 +109,30 @@ class LogoutView(View):
 
 class UserView(LoginRequiredMixin, View):
     """
-    用户管理
+    用户管理，跳转到管理员信息列表
     """
-
     def get(self, request):
-        # ret = SystemSetup.getSystemSetupLastData()
         return render(request, 'users/user-list.html')
 
 
 class UserListView(LoginRequiredMixin, View):
     """
     获取用户列表信息
+    包括，编号、名称、手机、邮件、路径、以及当前用户的状态
     """
-
     def get(self, request):
         fields = ['id', 'name', 'mobile', 'email', 'url', 'is_active']
         filters = dict()
         if 'select' in request.GET and request.GET.get('select'):
-            filters['is_active'] = request.GET.get('select')
-            # .exclude(username='cheertt')
+            filters['is_active'] = request.GET.get('select').exclude(username='cheertt')
         ret = dict(data=list(User.objects.filter(**filters).values(*fields)))
         return HttpResponse(json.dumps(ret, cls=DjangoJSONEncoder), content_type='application/json')
 
 
 class UserCreateView(LoginRequiredMixin, View):
     """
-    添加用户
+    添加用户，管理员添加商户信息
     """
-
     def get(self, request):
         users = User.objects.exclude(username='admin')
 
@@ -161,7 +164,6 @@ class UserEnableView(LoginRequiredMixin, View):
     """
     启用用户：单个或批量启用
     """
-
     def post(self, request):
         if 'id' in request.POST and request.POST['id']:
             id_nums = request.POST.get('id')
@@ -175,7 +177,6 @@ class UserDisableView(LoginRequiredMixin, View):
     """
     启用用户：单个或批量启用
     """
-
     def post(self, request):
         if 'id' in request.POST and request.POST['id']:
             id_nums = request.POST.get('id')
@@ -189,7 +190,6 @@ class UserDeleteView(LoginRequiredMixin, View):
     """
     删除数据：支持删除单条记录和批量删除
     """
-
     def post(self, request):
         id_nums = request.POST.get('id')
         User.objects.extra(where=["id IN (" + id_nums + ")"]).delete()
