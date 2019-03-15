@@ -40,7 +40,7 @@ class Matrix:
         # results = np.array(list)
         member_list = Member.objects.values_list().exclude(Q(face_json=None) | Q(face_json=''))
         print('member_list')
-        print(member_list)
+        # print(member_list)
         # if not member_list:
         #     print('Noneeqwewqewq')
         #     return None
