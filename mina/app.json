@@ -1,8 +1,7 @@
 {
   "pages": [
-    "pages/recommendations/index",
-    "pages/hotcommend/hot_commodity",
     "pages/index/index",
+    "pages/recommendations/index",
     "pages/commodity/index",
     "pages/commodity/info",
     "pages/recommendations/info",
@@ -36,9 +35,9 @@
         "text": "首页"
       },
       {
-        "pagePath": "pages/cart/index",
-        "iconPath": "images/nav/cart-off.png",
-        "selectedIconPath": "images/nav/cart-on.png",
+        "pagePath": "pages/commodity/index",
+        "iconPath": "images/nav/search-off.png",
+        "selectedIconPath": "images/nav/search-on.png",
         "text": "购物车"
       },
       {
