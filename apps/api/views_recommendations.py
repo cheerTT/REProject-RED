@@ -30,7 +30,7 @@ from django.core.paginator import Paginator
 class TopRecommendationsView(View):
     def get(self, request):
         user = WechatUtils.checkMemberLogin(request)
-        user_id = user.id
+        user_id = 45
         recommendations = Users_Recommendations.objects.filter(user_id=user_id)
         commodityidlist = []
 
@@ -52,7 +52,7 @@ class AllRecommendationsView(View):
     def get(self, request):
         p = int(request.GET['p'])
         user = WechatUtils.checkMemberLogin(request)
-        user_id = user.id
+        user_id = 45
         recommendations = Users_AllRecommendations.objects.filter(user_id=user_id)
         '''
         ※※※这里有个关键问题，由于后端算法和数据库的链接原因，这边得到的Commodityidlist实际上是String类型(只是看起来像list)，不能直接转

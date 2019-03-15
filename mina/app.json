@@ -38,7 +38,7 @@
         "pagePath": "pages/commodity/index",
         "iconPath": "images/nav/search-off.png",
         "selectedIconPath": "images/nav/search-on.png",
-        "text": "购物车"
+        "text": "搜索"
       },
       {
         "pagePath": "pages/my/index",
