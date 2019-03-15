@@ -10,7 +10,7 @@ Page({
         loadingHidden: false, // loading
         swiperCurrent: 0,
         categories: [],
-        activeCategoryId: 0,
+        activeCategoryId: '0',
         goods: [],
         scrollTop: "0",
         loadingMoreHidden: true,
@@ -20,6 +20,7 @@ Page({
         allrecommendations :[],
         imagePath : app.globalData.imagePath,
         processing: false,
+        p:1,
     },
     onLoad: function () {
         var that = this;
@@ -37,8 +38,7 @@ Page({
             }
             )
               }
-            
-            
+        
         });
         wx.setNavigationBarTitle({
             title: app.globalData.shopName
@@ -47,23 +47,46 @@ Page({
         that.setData({
            
             categories: [
-                {id: 0, name: "全部"},
+                {id: 0, name: "爆款！！！"},
                 {id: 1, name: "猜你喜欢"},
             ],
-            activeCategoryId: 0,
+            activeCategoryId: '0',
             //loadingMoreHidden: false
         });
     },
+    onShow: function () {
+      // this.getType();
+        this.setData({
+          p: 1,
+          goods: [],
+          loadingMoreHidden: true
+        });
+        this.getHotCommodityList();
+
+      },
+
     typeClick:function(e){
       var that  = this
       this.setData({
         activeCategoryId: e.currentTarget.id
       })
-      console.log(e.currentTarget.id)
       switch (e.currentTarget.id) {
         case "0":
-        break;
+          this.setData({
+            loadingMoreHidden: true,
+            goods: [],
+            activeCategoryId: e.currentTarget.id,
+            p: 1
+          });
+          that.getHotCommodityList()
+          break;
         case "1":
+          this.setData({
+            loadingMoreHidden: true,
+            goods: [],
+            activeCategoryId: e.currentTarget.id,
+            arpages:0
+          });
           that.getallrecommendations()
           break;
           default:
@@ -87,14 +110,6 @@ Page({
             searchInput: e.detail.value
         });
 	 },
-	 toSearch:function( e ){
-        this.setData({
-            p:1,
-            goods:[],
-            loadingMoreHidden:true
-        });
-        this.getFoodList();
-	},
     tapBanner: function (e) {
         if (e.currentTarget.dataset.id != 0) {
             wx.navigateTo({
@@ -109,9 +124,21 @@ Page({
     },
     onReachBottom: function () { //下拉刷新
       var that = this;
-      setTimeout(function () {
-        that.getallrecommendations();
-      }, 500);
+      console.log(that.data.activeCategoryId)
+      switch (that.data.activeCategoryId){
+        case '0':
+        console.log("fdgdfgf")
+        setTimeout(function () {
+          that.getHotCommodityList();
+        }, 500);
+        break;
+        case '1':
+          setTimeout(function () {
+            that.getallrecommendations();
+          }, 500);
+        break;
+        default:
+      }
     },
     getallrecommendations: function () {
       var that = this;
@@ -150,5 +177,45 @@ Page({
             }
             }
       });
-  }
+  },
+    getHotCommodityList: function () {
+    var that = this;
+    if (that.data.processing) {
+      return;
+    }
+
+    if (!that.data.loadingMoreHidden) {
+      return;
+    }
+
+    that.setData({
+      processing: true
+    });
+
+    wx.request({
+
+      url: app.buildUrl('/hotcommend/hot_commodity'),
+      header: app.getRequestHeader(),
+
+      data: {
+        p: that.data.p,
+      },
+      success: function (res) {
+        console.log(res.data.data);
+        var goods = res.data.data;
+        that.setData({
+          goods: that.data.goods.concat(goods),    //下拉增加商品
+          p: that.data.p + 1,
+          processing: false
+        });
+
+        if (res.data.has_more == false) {
+          that.setData({
+            loadingMoreHidden: false
+          });
+        }
+      }
+    });
+  },
+   
 });
