@@ -111,10 +111,14 @@ DATABASES = {
 #         'HOST': '127.0.0.1',
 #         'USER': 'root',
 #         'PASSWORD': 'root',
-#
 #         'PORT': '3306'
 #     }
 # }
+
+if 'test' in sys.argv:
+    DATABASES['default'] = {
+        'ENGINE': 'django.db.backends.sqlite3',
+    }
 
 # Password validation
 # https://docs.djangoproject.com/en/1.11/ref/settings/#auth-password-validators
