@@ -59,7 +59,7 @@ swiper-item image {
   line-height: 84rpx;
   text-align: center;
   display: inline-block;
-  /*overflow: hidden;*/
+  overflow: hidden;
 }
 .type-navbar-item{
   border-bottom: 4rpx solid #fff;

@@ -1,18 +1,16 @@
 {
   "pages": [
-    "pages/hotcommend/hot_commodity",
     "pages/index/index",
+    "pages/recommendations/index",
     "pages/commodity/index",
     "pages/commodity/info",
-    "pages/recommendations/index",
     "pages/recommendations/info",
     "pages/order/index",
     "pages/my/order_list",
     "pages/my/order_info",
     "pages/my/creditList",
     "pages/my/commentList",
-    "pages/my/addressList",
-    "pages/my/addressSet",
+
     "pages/my/index",
     "pages/cart/index"
 
@@ -31,15 +29,15 @@
     "box-shadow": "0 0 6px 0",
     "list": [
       {
-        "pagePath": "pages/hotcommend/hot_commodity",
+        "pagePath": "pages/recommendations/index",
         "iconPath": "images/nav/home-off.png",
         "selectedIconPath": "images/nav/home-on.png",
         "text": "首页"
       },
       {
-        "pagePath": "pages/cart/index",
-        "iconPath": "images/nav/cart-off.png",
-        "selectedIconPath": "images/nav/cart-on.png",
+        "pagePath": "pages/commodity/index",
+        "iconPath": "images/nav/search-off.png",
+        "selectedIconPath": "images/nav/search-on.png",
         "text": "购物车"
       },
       {

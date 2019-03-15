@@ -1,11 +1,10 @@
-# @Time    : 2019/3/10 21:03
-# @Author  : liyuming
-# @Remark  : 登录主界面信息展示处理
+# @Time   : 2019/3/10 21:03
+# @Author : liyuming
+# @Remark : 登录主界面信息展示处理
 import json
 import re
 import calendar
 from datetime import date, timedelta
-
 from django.shortcuts import render
 from django.views.generic.base import View
 from django.http import HttpResponse
@@ -24,9 +23,8 @@ User = get_user_model()
 
 class PersonalView(LoginRequiredMixin, View):
     """
-    我的工作台
+    我的工作台,用于显示个人信息，提高用户体验
     """
-
     def get(self, request):
 
         start_date = date.today().replace(day=1)
@@ -41,7 +39,6 @@ class PersonalView(LoginRequiredMixin, View):
         ret['month_member_count'] = result1
 
         result2 = get_member_gender(value=int(request.GET.get('value', 0)))[0]['count']
-        # print('result2:', result2)  # {'男生': 3, '女生': 1}
         ret['member_gender'] = result2
 
         return render(request, 'personal/personal_index.html', ret)
@@ -49,7 +46,7 @@ class PersonalView(LoginRequiredMixin, View):
 
 class UserInfoView(LoginRequiredMixin, View):
     """
-    个人中心：个人信息查看修改和修改
+    个人中心：个人信息查看和修改
     """
     def get(self, request):
         return render(request, 'personal/userinfo/user_info.html')

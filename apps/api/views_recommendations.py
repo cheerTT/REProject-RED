@@ -39,10 +39,12 @@ class TopRecommendationsView(View):
 
         commoditylist = []
         for assin in commodityidlist[0]:
-            commodity = Commodity.objects.filter(assin=assin).values()
-            commoditylist.append(list(commodity))
+            commodity = Commodity.objects.filter(assin=assin).values().first()
+            commoditylist.append(commodity)
 
         ret = dict(data = commoditylist)
+        print("11111111111111111111111111111111111")
+        print(ret)
         ret = json.dumps(ret, cls=DjangoJSONEncoder)
         return HttpResponse(ret, content_type='application/json')
 
@@ -80,14 +82,14 @@ class AllRecommendationsView(View):
             for i in range(have_been_showed_commodityid, len(commodityidlist) - have_been_showed_commodityid):
 
                 assin = commodityidlist[i]
-                commodity = Commodity.objects.filter(assin=assin.lstrip()).values()
-                commoditylist.append(list(commodity))
+                commodity = Commodity.objects.filter(assin=assin.lstrip()).values().first()
+                commoditylist.append(commodity)
         else :
             has_more = True
             for i in range(have_been_showed_commodityid, have_been_showed_commodityid + page_size):
                 assin = commodityidlist[i]
-                commodity = Commodity.objects.filter(assin=assin.lstrip()).values()
-                commoditylist.append(list(commodity))
+                commodity = Commodity.objects.filter(assin=assin.lstrip()).values().first()
+                commoditylist.append(commodity)
 
         ret = dict(data=commoditylist)
         ret["has_more"] = has_more
