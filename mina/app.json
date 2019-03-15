@@ -1,20 +1,20 @@
 {
   "pages": [
+    "pages/hotcommend/hot_commodity",
     "pages/index/index",
+    "pages/commodity/index",
+    "pages/commodity/info",
     "pages/recommendations/index",
     "pages/recommendations/info",
-    "pages/my/index",
-    "pages/food/index",
-    "pages/food/info",
     "pages/order/index",
     "pages/my/order_list",
     "pages/my/order_info",
     "pages/my/creditList",
-    "pages/my/commentList"
+    "pages/my/commentList",
     "pages/my/addressList",
     "pages/my/addressSet",
-    "pages/my/commentList",
-    "pages/my/index"
+    "pages/my/index",
+    "pages/cart/index"
 
   ],
   "window": {
@@ -31,7 +31,7 @@
     "box-shadow": "0 0 6px 0",
     "list": [
       {
-        "pagePath": "pages/recommendations/index",
+        "pagePath": "pages/hotcommend/hot_commodity",
         "iconPath": "images/nav/home-off.png",
         "selectedIconPath": "images/nav/home-on.png",
         "text": "首页"
