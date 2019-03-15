@@ -11,7 +11,7 @@ Page({
   },
   goToIndex:function(){
     wx.switchTab({
-      url: '/pages/commodity/index',
+      url: '/pages/recommendations/index',
     });
   },
   onLoad:function(){
