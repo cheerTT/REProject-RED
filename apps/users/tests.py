@@ -39,7 +39,7 @@ class UserViewTest(TestCase):
         :return:
         """
         response = self.client.get('/')
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 302)
 
     def test_loginView_get(self):
         """
