@@ -17,12 +17,6 @@ Page({
         header: app.getRequestHeader(),
         success: function (res) {
           var resp = res.data;
-          //console.log("user_info",user_info )
-          // if (resp.code != 200) {
-          //   app.alert({ "content": resp.msg });
-          //   return;
-          // }
-          // app.alert({ "content": resp.nickname });
           that.setData({
             userInfo: resp
           });
