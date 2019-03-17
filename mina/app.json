@@ -4,16 +4,12 @@
     "pages/my/index",
     "pages/recommendations/index",
     "pages/commodity/index",
-    "pages/hotcommend/hot_commodity",
     "pages/commodity/info",
     "pages/recommendations/info",
     "pages/order/index",
     "pages/my/order_list",
-    "pages/my/order_info",
     "pages/my/creditList",
     "pages/my/commentList",
-    "pages/my/addressList",
-    "pages/my/addressSet",
     "pages/cart/index"
 
   ],

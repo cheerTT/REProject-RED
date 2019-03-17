@@ -13,16 +13,39 @@ class Member(models.Model):
     joined_date1 = models.DateField(null=True, blank=True, verbose_name="人脸录入时间")
     joined_date2 = models.DateField(null=True, blank=True, verbose_name="用户注册时间")
 
-    nickname = models.CharField(max_length=20, verbose_name="昵称")
-    gender = models.CharField(max_length=4, choices=gender_choices, default='1', verbose_name="性别")
+    nickname = models.CharField(null=True, blank=True,max_length=20, verbose_name="昵称")
+    gender = models.CharField(null=True, blank=True,max_length=4, choices=gender_choices, verbose_name="性别")
     avatarUrl = models.CharField(max_length=200, verbose_name="头像链接", null=True, blank=True)
-    city = models.CharField(max_length=20, verbose_name="城市")
-    province = models.CharField(max_length=20, verbose_name="省份")
-    state = models.CharField(max_length=4, choices=state_choices, default='0', verbose_name="会员状态")
-    codeVerify = models.CharField(max_length=6, verbose_name="验证码", default='-1')
-    type = models.CharField(max_length=4, choices=type_choices, default='0', verbose_name="会员级别")
+    city = models.CharField(null=True, blank=True,max_length=20, verbose_name="城市")
+    province = models.CharField(null=True, blank=True,max_length=20, verbose_name="省份")
+    state = models.CharField(null=True, blank=True,max_length=4, choices=state_choices, default='0', verbose_name="会员状态")
+    codeVerify = models.CharField(null=True, blank=True,max_length=6, verbose_name="验证码", default='-1')
+    type = models.CharField(null=True, blank=True,max_length=4, choices=type_choices, default='0', verbose_name="会员级别")
     last_login_date = models.DateTimeField(null=True, blank=True, verbose_name="上次登录时间")
 
+    # def null_nickname(self):
+    #     if self.nickname ==  None:
+    #         return '暂无'
+    #     else:
+    #         return str(self.nickname)
+    #
+    # def null_gender(self):
+    #     if self.gender ==  None:
+    #         return '暂无'
+    #     else:
+    #         return str(self.nickname)
+    #
+    # def null_city(self):
+    #     if self.city ==  None:
+    #         return '暂无'
+    #     else:
+    #         return str(self.nickname)
+    #
+    # def null_province(self):
+    #     if self.province ==  None:
+    #         return '暂无'
+    #     else:
+    #         return str(self.nickname)
     class Meta:
         verbose_name = "会员基本信息"
         verbose_name_plural = verbose_name

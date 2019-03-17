@@ -72,7 +72,9 @@ class MemberListView(LoginRequiredMixin, View):
             filters['joined_date2__gte'] = request.GET['beginDate']
         if 'endDate' in request.GET and request.GET['endDate']:
             filters['joined_date2__lte'] = request.GET['endDate']
+
         ret = dict(data=list(Member.objects.filter(**filters).values(*fields)))
+
         return HttpResponse(json.dumps(ret, cls=DjangoJSONEncoder), content_type='application/json')
 
 
