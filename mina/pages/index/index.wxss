@@ -192,9 +192,9 @@ page{
 }
 
 .userinfo-avatar {
-  margin: 20% 30% 10%;
-  width: 128rpx;
-  height: 128rpx;
+  margin: 20% 10% 10%;
+  width: 256rpx;
+  height: 256rpx;
   border-radius: 50%;
 }
 

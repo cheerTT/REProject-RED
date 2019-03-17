@@ -25,7 +25,6 @@ class CommoditySearchView(View):
 
         comms = Commodity.objects.filter(assin__contains=s).values(*fields)
         ret = dict(data=list(comms))
-        print(ret)
         return HttpResponse(json.dumps(ret, cls=DjangoJSONEncoder), content_type='application/json')
 
     def post(self, request):

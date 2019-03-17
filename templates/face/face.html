@@ -32,7 +32,11 @@
     </div>
     <div class="video">
         <video id="video" width="480" height="300" controls></video>
-
+        <br/>
+        <br/>
+        <br/>
+        <br/>
+        <span id="codeShow" style="font-size: 40px; color: red;"></span>
         <div id="a">
             <canvas id="canvas" width="480" height="320"></canvas>
         </div>
@@ -157,6 +161,16 @@
               console.log(result);
               // img_path = result.data.file_path
               // 显示验证码-并跳转另一个页面
+              console.log(result.type);
+              console.log(result.codeVerify);
+              if (result.type == 0) {
+                  $('#codeShow').html("<font color=green>老会员：</font>" + result.codeVerify);
+              } else if (result.type == 1) {
+                  $('#codeShow').html("<font color=green>新会员：</font>" + result.codeVerify);
+              } else {
+                  $('#codeShow').html("您的浏览器被攻击了");
+              }
+
           }
       });
 
