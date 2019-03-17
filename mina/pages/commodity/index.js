@@ -18,6 +18,8 @@ Page({
         searchInput: '',
         p: 1,
         processing: false,
+      imagePath: app.globalData.imagePath,
+
     },
     onLoad: function () {
         var that = this;
