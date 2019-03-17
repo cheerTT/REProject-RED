@@ -166,7 +166,7 @@ $(function() {
 								},
                                 {   data : "gender",
                                    render : function(data, type, row, meta) {
-										if (data==2){
+										if (data==0){
                                             var ret="<button class='btn btn-primary btn-xs'>女</button>";
 											return ret;
 										}if(data==1){
@@ -217,10 +217,6 @@ $(function() {
                                     render:function (data) {
                                         return data.replace("T"," ")
                                     }
-                                },
-
-                                {
-                                    data: 'codeVerify',
                                 },
 
 								{
