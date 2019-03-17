@@ -4,3 +4,5 @@
 项目运行路径：https://helianthus.chinacloudapp.cn
 
 用户名：cheertt 密码：123456
+
+在mina文件夹更新小程序功能
