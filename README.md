@@ -1,7 +1,4 @@
-# REProject-RED
-
-a scrm management system based on face recognition
-
+scrm
 
 
 
@@ -115,3 +112,4 @@ git 测试
 定制单元测试规则，编写商品管理视图层的单元测试代码
 
 更新
+
