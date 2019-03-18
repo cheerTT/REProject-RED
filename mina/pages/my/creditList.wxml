@@ -73,3 +73,5 @@
     <view class="confirm-btn" catchtap="hideIntegralRule">确定</view>
   </view>
 </view>
+
+

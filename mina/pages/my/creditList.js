@@ -1,6 +1,7 @@
 
 var app = getApp()
 
+
 Page({
   data: {
     integralPage: 0, // 控制是否展开 0:显示主页 1:显示积分规则页
