@@ -1,0 +1,196 @@
+<!--
+@Time    : 2019年3月5日19:54:50
+@Author  : xie Liangcai
+@Remark  : 更新商品详细信息页面
+
+-->
+
+
+{% extends 'base-layer.html' %}
+{% load staticfiles %}
+
+{% block css %}
+<link rel="stylesheet" href="{%static 'plugins/select2/select2.min.css' %}">
+<link rel="stylesheet" href="{% static 'js/plugins/layer/skin/layer.css' %}">
+<link rel="stylesheet" href="{% static 'bootstrap/css/bootstrap-datetimepicker.min.css' %}">
+{% endblock %}
+
+{% block main %}
+<div class="box box-danger">
+	<form class="form-horizontal" id="addForm" method="post">
+
+		{% csrf_token %}
+		<div class="box-body">
+          <fieldset>
+            <legend>
+            </legend>
+            <div class="form-group has-feedback">
+                <input class="form-control" name="operator" type="hidden" value="{{ commodity.operator }}"/>
+                <input class="form-control" name="id" type="hidden" value="{{ commodity.id }}"/>
+                <label class="col-sm-2 control-label">商品编号</label>
+                <div class="col-sm-3">
+                    <input class="form-control" name="assin" type="text" value="{{ commodity.assin }}"/>
+                </div>
+                <label class="col-sm-2 control-label">类型</label>
+                <div class="col-sm-3">
+                  <select class="form-control select2" style="width:100%;" name="categories">
+                  <option value="{{commodity.categories_id}}">{{ commodity.categories.type_name }}</option>
+                  {% for type in commodity_type %}
+                  <option value="{{ type.id }}">{{ type.type_name }}</option>
+                  {% endfor %}
+                 </select>
+                </div>
+            </div>
+            <div class="form-group has-feedback">
+                <label class="col-sm-2 control-label">商品名称</label>
+                <div class="col-sm-3">
+                    <input class="form-control" name="title" type="text" value="{{ commodity.title }}"/>
+                </div>
+                <label class="col-sm-2 control-label">品牌</label>
+                <div class="col-sm-3">
+                    <input class="form-control" name="brand" type="text" value="{{ commodity.brand }}"/>
+                </div>
+
+            </div>
+            <div class="form-group has-feedback">
+                <label class="col-sm-2 control-label">购买日期</label>
+                <div class="col-sm-3">
+                    <input type="text" class="form-control pull-right form_datetime" name="buyDate" value="{{ commodity.buyDate|date:'Y-m-d' }}"/>
+                </div>
+                <label class="col-sm-2 control-label">质保日期</label>
+                <div class="col-sm-3">
+                    <input type="text" class="form-control pull-right form_datetime" name="warrantyDate" value="{{ commodity.warrantyDate |date:'Y-m-d' }}"/>
+                </div>
+            </div>
+            <div class="form-group has-feedback">
+
+                 <label class="col-sm-2 control-label">价格</label>
+                <div class="col-sm-3">
+                    <input class="form-control" name="present_price" type="text" value="{{ commodity.present_price | default_if_none:"" }}"/>
+                </div>
+
+                <label class="col-sm-2 control-label">商品状态</label>
+                <div class="col-sm-3">
+                  <select class="form-control select2" style="width:100%;" name="status">
+                  <option value="{{ commodity.status }}">{{ commodity.get_status_display }}</option>
+                  {% for status in status_list %}
+                  <option value="{{ status.item }}">{{ status.value }}</option>
+                  {% endfor %}
+                 </select>
+                </div>
+
+            </div>
+
+
+
+            <div class="form-group has-feedback">
+                <label class="col-sm-2 control-label">备注信息</label>
+                <div class="col-sm-3">
+                    <textarea class="form-control" name="description" rows="5" value="{{ commodity.description }}">{{ commodity.description }}</textarea>
+                </div>
+                <label class="col-sm-2 control-label">商品图片</label>
+                <div class="col-sm-3">
+{#                    <a href="/media/{{ commodity.imUrl }}" target="_blank">#}
+                        <span class="mailbox-attachment-icon has-img"><img src="/media/{{ commodity.imUrl }}" alt="" width="300px" height="300px "></span>
+{#                      </a>#}
+{#                    <button type="button" id="btnImport"  class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">#}
+{#						修改图片#}
+{#					</button>#}
+                </div>
+            </div>
+
+          </fieldset>
+		</div>
+		<div class="box-footer ">
+			<div class="row span7 text-center ">
+              <button type="button" id="btnCancel" class="btn btn-default margin-right " >重置</button>
+              <button type="button" id="btnSave" class="btn btn-info margin-right " >保存</button>
+			</div>
+		</div>
+
+	</form>
+</div>
+
+
+{% endblock %}
+
+{% block javascripts %}
+<script src="{% static 'plugins/select2/select2.full.min.js' %}"></script>
+<script src="{% static 'bootstrap/js/bootstrap-datetimepicker.js' %}"></script>
+<script type="text/javascript">
+
+	$("#btnSave").click(function(){
+		var data = $("#addForm").serialize();
+		$.ajax({
+			type: $("#addForm").attr('method'),
+			url : "{% url 'commodity:update' %}",
+			data : data,
+			cache: false,
+			success : function(msg) {
+				if (msg.status == 'success'){
+					layer.alert('数据保存成功！', {icon: 1},function(index){
+					    parent.layer.closeAll(); //关闭所有弹窗
+                    });
+				}else if (msg.status == 'fail'){
+					layer.alert(msg.commodity_form_errors, {icon: 5});
+				}
+				return ;
+			}
+		});
+	});
+
+	/*点取消刷新新页面*/
+    $("#btnCancel").click(function () {
+	    window.location.reload();
+
+    })
+
+/*通过按钮关闭弹layer弹出的页面窗口*/
+{#    $(document).ready(function(){#}
+{#        $("#btnCancel").click(function(){#}
+{#            var index = parent.layer.getFrameIndex(window.name); //获取窗口索引#}
+{#            parent.layer.close(index);//关闭窗口#}
+{#        });#}
+{#    });#}
+
+/*input 时间输入选择*/
+    $(".form_datetime").datetimepicker({
+            language:  'zh',
+            minView: 'month', //选择范围知道日期，不选择时分
+            //weekStart: 1,
+            //todayBtn:  1,
+            autoclose: 1,
+            todayHighlight: 1,
+            //startView: 2,
+            forceParse: 0,
+            showMeridian: 1,
+            format: 'yyyy-mm-dd'
+        }).on('changeDate', function (ev) {
+            $(this).datetimepicker('hide');
+    });
+
+// select2
+  $(function () {
+    //Initialize Select2 Elements
+    $(".select2").select2();
+  });
+
+  //上传头像图片
+$(document).on('ready', function() {
+    $("#input-b9").fileinput({
+        showPreview: true,
+        showUpload: true,
+        uploadExtraData: {'csrfmiddlewaretoken': '{{ csrf_token }}'},
+        language: "zh",
+        elErrorContainer: '#kartik-file-errors',
+        allowedFileExtensions: ["jpg", "png", "gif"],
+        uploadUrl: '{% url "commodity:commodity-uploadimage" %}',
+        maxImageWidth: 500,
+        maxImageHeight: 500,
+
+    });
+});
+
+</script>
+
+{% endblock %}

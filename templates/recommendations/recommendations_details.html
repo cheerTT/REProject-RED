@@ -1,0 +1,144 @@
+# @Time    : 2019/3/6 20:00
+# @Author  : Virus
+# @Remark  :
+{% extends "base-left.html" %}
+{% load staticfiles %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'js/plugins/layer/skin/layer.css' %}">
+{% endblock %}
+
+{% block content %}
+
+
+    <!-- Main content -->
+
+  <section class="content">
+      <div class="row">
+       <div class="col-md-12">
+        <div class="box box-primary">
+            <div class="box-header with-border">
+
+              <div class="box-tools">
+                <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
+                </button>
+              </div>
+            </div>
+            <div class="box-body no-padding">
+                <div class="btn-group pull-right margin-b-10 margin-r-5">
+
+                  <button type="button" class="btn btn-primary btn-sm" title="返回" id="btnReturn">
+                      <i class="fa fa-undo"> 返回</i>
+                  </button>
+
+                </div>
+           </div>
+            <div class="panel panel-primary">
+              <div class="panel-heading">
+                <h3 class="panel-title">商品推荐详情</h3>
+              </div>
+              <div class="panel-body">
+                <div class="row">
+                    <div class="col-lg-4">
+                      <img class="img-circle" src="{{ commodity_1.imUrl }}" alt="Generic placeholder image" width="140" height="140">
+                      <h2>{{ commodity_1.short_title }}</h2>
+                      <p>{{ commodity_1.short_description }}</p>
+                      <p><a class="btn btn-default" href="#" role="button" id = "btn1" onclick = 'doDetail({{ commodity_1.id }})'>View details »</a></p>
+                    </div><!-- /.col-lg-4 -->
+                    <div class="col-lg-4">
+                      <img class="img-circle" src="{{ commodity_2.imUrl }}" alt="Generic placeholder image" width="140" height="140">
+                      <h2>{{ commodity_2.short_title }}</h2>
+                      <p>{{ commodity_2.short_description }}</p>
+                      <p><a class="btn btn-default" href="#" role="button" id="btn2" onclick = 'doDetail({{ commodity_2.id }})'>View details »</a></p>
+                    </div><!-- /.col-lg-4 -->
+                    <div class="col-lg-4">
+                      <img class="img-circle" src="{{ commodity_3.imUrl }}" alt="Generic placeholder image" width="140" height="140">
+                      <h2>{{ commodity_3.short_title }}</h2>
+                      <p>{{ commodity_3.short_description }}</p>
+                      <p><a class="btn btn-default" href="#" role="button" id = "btn3" onclick = 'doDetail({{ commodity_3.id }})'>View details »</a></p>
+                    </div><!-- /.col-lg-4 -->
+
+                    <div class="col-lg-4">
+                      <img class="img-circle" src="{{ commodity_4.imUrl }}" alt="Generic placeholder image" width="140" height="140">
+                      <h2>{{ commodity_4.short_title }}</h2>
+                      <p>{{ commodity_4.short_description }}</p>
+                      <p><a class="btn btn-default" href="#" role="button" id = "btn4" onclick = 'doDetail({{ commodity_4.id }})'>View details »</a></p>
+                    </div><!-- /.col-lg-4 -->
+
+                    <div class="col-lg-4">
+                      <img class="img-circle" src="{{ commodity_5.imUrl }}" alt="Generic placeholder image" width="140" height="140">
+                      <h2>{{ commodity_5.short_title }}</h2>
+                      <p>{{ commodity_5.short_description }}</p>
+                      <p><a class="btn btn-default" href="#" role="button" id = "btn5" onclick = 'doDetail({{ commodity_5.id }})'>View details »</a></p>
+                    </div><!-- /.col-lg-4 -->
+                  </div>
+              </div>
+            </div>
+
+
+
+               <br>
+               <div class="box-footer">
+                  <ul class="mailbox-attachments clearfix">
+
+                    <li >
+                      <a href="{{ commodity.imUrl }}" target="_blank">
+                        <span class="mailbox-attachment-icon has-img" width="70px" height="1000px"><img src="{{ commodity.imUrl }}" alt=""></span>
+                      </a>
+                    </li>
+
+                  </ul>
+                </div>
+
+            <!-- /.box-footer -->
+            </div>
+            <!-- /.box-body -->
+          </div>
+      </div>
+        <!-- /.col -->
+     <!-- TO DO List -->
+
+          <!-- /.box -->
+
+    </section>
+
+    <!-- /.content -->
+
+{% endblock %}
+
+{% block javascripts %}
+  <script src="{% static 'js/plugins/layer/layer.js' %}"></script>
+  <script type="text/javascript">
+  	$(function() {
+	    $('#ADM-ASSET').addClass('active');
+
+	});
+  	//返回
+    $("#btnReturn").click(function(){
+		history.back();
+	});
+
+    function doDetail(id) {
+            window.location.href = "{% url 'commodity:detail' %}?id=" + id;
+    }
+
+    function doUpdate(id){
+	var div=layer.open({
+		type : 2,
+		title : '修改商品信息',
+		shadeClose : false,
+    	maxmin : true,
+		area : [ '800px', '580px' ],
+		content : "{% url 'commodity:update' %}"+'?id='+id,
+		end : function() {
+			//oDataTable.ajax.reload();
+            window.location.reload();
+
+		}
+	});
+	layer.full(div)
+}
+
+</script>
+
+{% endblock %}

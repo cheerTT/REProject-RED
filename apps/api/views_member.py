@@ -357,6 +357,7 @@ with tf.Graph().as_default():
                                            commodity=comm[0],
                                            joined_date=datetime.datetime.now())
 
+            print('结果展示')
             print(ret)
             return HttpResponse(json.dumps(ret), content_type="application/json")
 

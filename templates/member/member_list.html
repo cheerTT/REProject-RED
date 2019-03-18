@@ -1,0 +1,374 @@
+<!--
+@Author:ttwen
+@Time:2019年3月7日10:45:35
+@Description: 会员管理的列表页面
+-->
+{% extends "base-left.html" %}
+{% load staticfiles %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'bootstrap/css/bootstrap-datetimepicker.min.css' %}">
+<link rel="stylesheet" href="{% static 'plugins/datatables/jquery.dataTables.min.css' %}">
+<link rel="stylesheet" href="{% static 'js/plugins/layer/skin/layer.css' %}">
+<link rel="stylesheet" href="{% static 'plugins/select2/select2.min.css' %}">
+<!-- iCheck for checkboxes and radio inputs -->
+{% endblock %}
+
+{% block content %}
+
+<!-- Content Header (Page header) -->
+<section class="content-header margin-bottom">
+    <ol class="breadcrumb">
+        <li><a href=""><i class="fa fa-dashboard"></i>办公平台</a></li>
+        <li class="active"><a href="{% url 'users:user' %}">系统</a></li>
+        <li class="active"><a href="">用户管理</a></li>
+    </ol>
+</section>
+
+    <!-- Main content -->
+  <section class="content">
+     <div id="devlist">
+        <div class="box box-primary" id="liebiao">
+
+            <div class="box-header">
+                <div>
+                        <div class="btn-group pull-left">&nbsp</div>
+                        <div class="btn-group pull-left">
+                            <button type="button" id="btnEnable" class="btn btn-default">
+                                <i class="glyphicon glyphicon-ok-circle"></i>正常
+                            </button>
+                            <button type="button" id="btnDisable" class="btn btn-default">
+                                <i class="glyphicon glyphicon-ban-circle"></i>锁定
+                            </button>
+                        </div>
+                </div>
+                <br/>
+                <br/>
+                <br/>
+                <div>
+                    <form class="form-inline" id="queryForm">
+                        <div class="form-group searchArea margin-r-5 margin-top-5">
+                            <label>用户昵称：</label>
+                            <input type="text" name="nickname" class="form-control inputText" id="nickname">
+                        </div>
+
+
+                        <div class="form-group searchArea margin-r-5 margin-top-5">
+                            <label>用户类型：</label>
+                             <select class="form-control inputText select2" name="state" id="state">
+                                <option></option>
+                                {% for state in state_list %}
+                                    <option value={{ state.item }}>{{ state.value }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <div class="form-group searchArea margin-r-5 margin-top-5">
+                            <label>用户状态：</label>
+                            <select class="form-control inputText select2" name="type", id="type">
+                                <option></option>
+                                {% for type in type_list %}
+                                    <option value={{ type.item }}>{{ type.value }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                         <div class="form-group searchArea margin-r-5 margin-top-5">
+                            <label>开始时间：</label>
+                             <input type="text" class ="form-control inputText form_datetime"  name="beginDate" id="beginDate"/>
+                         </div>
+                         <div class="form-group searchArea margin-r-5 margin-top-5">
+                            <label>结束时间：</label>
+                             <input type="text" class ="form-control inputText form_datetime"  name="endDate" id="endDate"/>
+                         </div>
+
+                        <button type="button" id="btnMemberSearch" class="btn btn-default">
+                            <i class="glyphicon glyphicon-search"></i>查询
+                        </button>
+                    </form>
+
+                </div>
+
+            </div>
+             <div class="box-body">
+                <table id="dtbList" class="display" cellspacing="0" width="100%">
+                    <thead>
+                    <tr valign="middle">
+                        <th><input type="checkbox" id="checkAll"></th>
+                        <th>用户ID</th>
+                        <th>用户昵称</th>
+                        <th>性别</th>
+                        <th>省</th>
+                        <th>市</th>
+                        <th>用户类型</th>
+                        <th>用户状态</th>
+                        <th>注册日期</th>
+                        <th>上次登录时间</th>
+                        <th>验证码</th>
+                        <th>操作</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+                <br> <br>
+            </div>
+        </div>
+     </div>
+  </section>
+
+    <!-- /.content -->
+
+{% endblock %}
+
+{% block javascripts %}
+  <script src="{% static 'plugins/datatables/jquery.dataTables.min.js' %}"></script>
+  <script src="{% static 'plugins/datatables/dataTables.const.js' %}"></script>
+  <script src="{% static 'plugins/datatables/moment.min.js' %}"></script>
+  <script src="{% static 'js/plugins/layer/layer.js' %}"></script>
+  <script src="{% static 'plugins/select2/select2.full.min.js' %}"></script>
+  <script src="{% static 'bootstrap/js/bootstrap-datetimepicker.js' %}"></script>
+  <!-- iCheck 1.0.1 -->
+  <script type="text/javascript">
+	$(function() {
+	    $('#COOMDITY-LIST').addClass('active');
+
+	});
+  </script>
+
+    <script type="text/javascript">
+var oDataTable=null;
+$(function() {
+	oDataTable = initTable();
+	function initTable() {
+		var oTable=$('#dtbList').DataTable($.extend(true,{},
+						DATATABLES_CONSTANT.DATA_TABLES.DEFAULT_OPTION,
+						{
+							ajax : {
+								"url":"{% url 'member:member-list' %}",
+								"data":function ( d ) {
+                                    d.nickname=$("#nickname").val();
+                                    d.type=$("#type").val();
+                                    d.state=$("#state").val();
+                                    d.beginDate=$("#beginDate").val();
+                                    d.endDate=$("#endDate").val();
+								}
+						},
+
+						columns : [
+								DATATABLES_CONSTANT.DATA_TABLES.COLUMN.CHECKBOX,
+                                {
+									data : "id",
+                                    width : '5%',
+								},
+								{
+									data : "nickname",
+                                    width : '10%',
+								},
+                                {   data : "gender",
+                                   render : function(data, type, row, meta) {
+										if (data==2){
+                                            var ret="<button class='btn btn-primary btn-xs'>女</button>";
+											return ret;
+										}if(data==1){
+											var ret="<button class='btn  btn-success btn-xs'>男</button>";
+											return ret;
+
+										}
+									},
+                                    width :'5%'
+								},
+                                {
+                                    data:"province"
+                                },
+                                {
+									data : "city",
+								},
+
+                                {   data : "state",
+                                   render : function(data, type, row, meta) {
+										if (data==0){
+                                            var ret="<button class='btn btn-primary btn-xs'>正常</button>";
+											return ret;
+										}if(data==1){
+											var ret="<button class='btn  btn-success btn-xs'>锁定</button>";
+											return ret;
+
+										}
+									}
+								},
+                                {   data : "type",
+                                   render : function(data, type, row, meta) {
+										if (data==0){
+                                            var ret="<button class='btn btn-primary btn-xs'>普通用户</button>";
+											return ret;
+										}if(data==1){
+											var ret="<button class='btn  btn-success btn-xs'>高级用户</button>";
+											return ret;
+
+										}
+									}
+								},
+
+                                {
+									data : "joined_date2",
+								},
+                                {
+                                    data: "last_login_date",
+                                    render:function (data) {
+                                        return data.replace("T"," ")
+                                    }
+                                },
+
+                                {
+                                    data: 'codeVerify',
+                                },
+
+								{
+									data : "id",
+									bSortable : "false",
+									render : function(data, type, row, meta) {
+										var ret="<button title='详情' onclick='doDetail("
+										+ data + ")'><i class='glyphicon glyphicon-list-alt'></i></button>";
+										return ret;
+									}
+								} ],
+						}));
+		return oTable;
+	}
+
+   //刷新页面GET查询请求
+    $("#btnMemberSearch").click(function(){
+            oDataTable.ajax.reload();
+        });
+
+
+	//select选择后刷新页面GET请求
+    $("#select").change(function(){
+		oDataTable.ajax.reload();
+	});
+	//checkbox全选
+    $("#checkAll").on("click", function () {
+        if ($(this).prop("checked") === true) {
+            $("input[name='checkList']").prop("checked", $(this).prop("checked"));
+            $('#example tbody tr').addClass('selected');
+        } else {
+            $("input[name='checkList']").prop("checked", false);
+            $('#example tbody tr').removeClass('selected');
+        }
+    });
+
+    //批量恢复正常
+	$("#btnEnable").click(function() {
+		if ($("input[name='checkList']:checked").length == 0){
+			layer.msg("请选择要启用的用户");
+			return ;
+		}
+
+		var arrId= new Array();
+		$("input[name='checkList']:checked").each(function(){
+			arrId.push($(this).val());
+		});
+
+		sId=arrId.join(',');
+
+		layer.alert('确定启用吗？', {
+			title:'提示'
+			,icon: 3 //0:感叹号 1：对号 2：差号 3：问号 4：小锁 5：哭脸 6：笑脸
+			,time: 0 //不自动关闭
+			,btn: ['YES', 'NO']
+			,yes: function(index){
+			 	layer.close(index);
+			 	$.ajax({
+					type: "POST",
+					url : "{% url "member:member-enable" %}",
+					data : {"id":sId, csrfmiddlewaretoken: '{{ csrf_token }}'},
+					cache: false,
+					success : function(msg) {
+						if (msg.result){
+							layer.alert("启用用户成功", {icon: 1});
+							oDataTable.ajax.reload();
+						}else{
+							layer.alert("启用用户失败", {icon: 5});
+						}
+						return ;
+					}
+				});
+			}
+		});
+	});
+
+	//批量锁定
+	$("#btnDisable").click(function() {
+		if ($("input[name='checkList']:checked").length == 0){
+			layer.msg("请选择要锁定的用户");
+			return ;
+		}
+
+		var arrId= new Array();
+		$("input[name='checkList']:checked").each(function(){
+			//alert($(this).val());
+			arrId.push($(this).val());
+		});
+
+		sId=arrId.join(',');
+
+		layer.alert('确定锁定吗？', {
+			title:'提示'
+			,icon: 3 //0:感叹号 1：对号 2：差号 3：问号 4：小锁 5：哭脸 6：笑脸
+			,time: 0 //不自动关闭
+			,btn: ['YES', 'NO']
+			,yes: function(index){
+			 	layer.close(index);
+			 	$.ajax({
+					type: "POST",
+					url : "{% url "member:member-disable" %}",
+					data : {"id":sId, csrfmiddlewaretoken: '{{ csrf_token }}'},
+					cache: false,
+					success : function(msg) {
+						if (msg.result){
+							layer.alert("锁定用户成功", {icon: 1});
+							oDataTable.ajax.reload();
+						}else{
+							//alert(msg.message);
+							layer.alert("锁定用户失败", {icon: 5});
+						}
+						return ;
+					}
+				});
+			}
+		});
+	});
+
+});
+
+function doDetail(id){
+    window.location.href="{% url 'member:member-detail' %}?id="+id;
+}
+
+
+</script>
+
+<script>
+        /*input 时间输入选择*/
+        $(".form_datetime").datetimepicker({
+            language: 'zh',
+            minView: 'month', //选择范围知道日期，不选择时分
+            //weekStart: 1,
+            //todayBtn:  1,
+            autoclose: 1,
+            todayHighlight: 1,
+            //startView: 2,
+            forceParse: 0,
+            showMeridian: 1,
+            format: 'yyyy-mm-dd'
+        }).on('changeDate', function (ev) {
+            $(this).datetimepicker('hide');
+        });
+
+        //select2
+      $(function () {
+        //Initialize Select2 Elements
+        $(".select2").select2();
+      });
+</script>
+{% endblock %}
