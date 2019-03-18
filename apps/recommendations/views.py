@@ -19,8 +19,10 @@ from django.db.models import Q
 from django.contrib.auth import get_user_model
 from django.contrib.auth.backends import ModelBackend
 from commodity.models import Commodity
-
+from order.models import Transaction
+import pandas as pd
 class RecommendationsView(LoginRequiredMixin, View):
+
     """
     推荐页面列表
     """
@@ -32,6 +34,7 @@ class RecommendationsDetailView(LoginRequiredMixin, View):
     """
     推荐页面详情
     """
+
 
     def get(self, request):
         """
@@ -55,18 +58,54 @@ class RecommendationsDetailView(LoginRequiredMixin, View):
             commoditylist = []
             for assin in commodityidlist[0]:
                 commodity = Commodity.objects.filter(assin=assin)
-
-                #commodity[0].description = commodity[0].description[0:10]
-
-                #print(commodity[0].description + "this is new")
-                #commodity[0].title= commodity[0].title[0:10]
                 commoditylist.append(commodity[0])
+
             ret['commodity_1'] = commoditylist[0]
             ret['commodity_2'] = commoditylist[1]
             ret['commodity_3'] = commoditylist[2]
             ret['commodity_4'] = commoditylist[3]
             ret['commodity_5'] = commoditylist[4]
+
+
+
+
+
+            boughtitems = Transaction.objects.filter(member_id=request.GET['user_id'])
+            boughtitemkindlist =[]
+
+            boughtitemdict = {
+                'Baby': 0,
+                'Beauty': 0,
+                'Grocery_and_Gourmet_Food': 0,
+                'Electronics': 0,
+                'Office_Products': 0,
+                'Pet_Supplies': 0,
+                'Sports_and_Outdoors': 0,
+                'Home_and_Kitchen': 0,
+            }
+
+            sum_of_boughtitem = len(boughtitems)
+            for boughtitem in boughtitems:
+                boughtitemkindlist.append(boughtitem.commodity.categories.type_name)
+                boughtitemdict[boughtitem.commodity.categories.type_name] += 1
+            print(boughtitemkindlist)
+            print(boughtitemdict)
+
+            for i in boughtitemdict:
+                ret[i] = boughtitemdict[i]
+
+            ret['sum_of_boughtitem'] = sum_of_boughtitem
+
         return render(request, 'recommendations/recommendations_details.html', ret)
+
+
+
+
+
+
+
+
+
 
 class RecommendationsListView(LoginRequiredMixin, View):
     """

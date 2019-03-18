@@ -4,26 +4,26 @@ var app = getApp()
 
 Page({
   data: {
-    integralPage: 0, // 控制是否展开 0:显示主页 1:显示积分规则页
+    integralPage: 0, // 控制是否展开 0:显示主页 1:显示积分规则�?
     canUseIntegral: 0, // 现有积分
-    totalIntegral: 0, // 总积分
+    totalIntegral: 0, // 总积�?
     integralFontSize: 60, // 根据积分长度改变积分字体大小
     currentMessageType: 'income', // income:收入 / outcome:支出
     // navStyle: '',
-    navFixed: false, // 固定导航条
+    navFixed: false, // 固定导航�?
     // 积分规则
     integralRule: {
-      convertNum: 100, // xx积分对应1元
-      consumeNum: 0, // 消费xx元积累1积分
+      convertNum: 100, // xx积分对应1�?
+      consumeNum: 0, // 消费xx元积�?1积分
       loginNum: 0, // 每天登录送xx积分
       postCommentNum: 0, // 商品评论送xx积分
       shareNum: 0, // 推荐好友送xx积分
     },
     /*
       xxxBranch 对象
-      data: 对应分支的数据
-      isMore: 是否拥有更多的新的数据
-      currentPage: 当前已经加载到页数
+      data: 对应分支的数�?
+      isMore: 是否拥有更多的新的数�?
+      currentPage: 当前已经加载到页�?
       onload: 是否处在数据加载中， true加载中，false加载完毕
     */
     incomeBranch: {
@@ -142,7 +142,7 @@ Page({
     let that = this;
     switch (that.data.currentMessageType) {
       case 'income':
-        // 有更多数据 并且 不在加载中时 执行
+        // 有更多数�? 并且 不在加载中时 执行
         if ((that.data.incomeBranch.isMore != 0) && (!that.data.incomeBranch.onload)) {
           that.getMessageData('income', (that.data.incomeBranch.currentPage + 1));
           that.setData({
@@ -151,7 +151,7 @@ Page({
         }
         break;
       case 'outcome':
-        // 有更多数据 并且 不在加载中时 执行
+        // 有更多数�? 并且 不在加载中时 执行
         if ((that.data.outcomeBranch.isMore != 0) && (!that.data.outcomeBranch.onload)) {
           that.getMessageData('outcome', (that.data.outcomeBranch.currentPage + 1));
           that.setData({
@@ -161,7 +161,7 @@ Page({
         break;
     }
   },
-  // 固定消息导航条
+  // 固定消息导航�?
   fixedMessageNav: function (event) {
     var that = this;
     if (event.detail.scrollTop <= 135) {
@@ -176,13 +176,13 @@ Page({
       });
     }
   },
-  // 切换显示的消息类型
+  // 切换显示的消息类�?
   setCurrentMessageType: function (event) {
     this.setData({
       'currentMessageType': event.target.dataset.type
     });
   },
-  // 积分规则：打开积分详情
+  // 积分规则：打�?积分详情
   showIntegralRule: function () {
     // 设置页面标题
     app.setPageTitle('积分规则');
@@ -191,7 +191,7 @@ Page({
       'integralPage': 1
     });
   },
-  // 积分规则：关闭积分详情(返回:个人积分主页)
+  // 积分规则：关闭积分详�?(返回:个人积分主页)
   hideIntegralRule: function () {
     // 设置页面标题
     app.setPageTitle('个人积分');

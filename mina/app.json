@@ -1,7 +1,6 @@
 {
   "pages": [
     "pages/index/index",
-    "pages/my/index",
     "pages/recommendations/index",
     "pages/commodity/index",
     "pages/commodity/info",
@@ -10,7 +9,8 @@
     "pages/my/order_list",
     "pages/my/creditList",
     "pages/my/commentList",
-    "pages/cart/index"
+    "pages/my/index",
+
 
   ],
   "window": {
@@ -37,7 +37,6 @@
         "iconPath": "images/nav/search-off.png",
         "selectedIconPath": "images/nav/search-on.png",
         "text": "搜索"
-
       },
       {
         "pagePath": "pages/my/index",
