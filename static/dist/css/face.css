@@ -1,0 +1,55 @@
+.video {
+    margin-left: 100px;
+    margin-top: 20px;
+    float: left;
+}
+
+.commodity {
+    margin-left: 100px;
+    margin-top: 20px;
+    float: left;
+}
+
+.commodity .dataList {
+    float: left;
+}
+
+.order {
+    margin-right: 100px;
+    margin-top: 20px;
+    float: right;
+}
+
+.order .orderList {
+    float: right;
+}
+
+.mytable tbody tr:hover{
+    background-color: #fff;
+}
+
+.item_img {
+    width: 100px;
+    height: 100px;
+}
+
+.item_content {
+    width:200px;
+    height:12px;
+    font-size: 20px;
+    color: #2aabd2;
+}
+
+.numInput {
+    width:50px;
+}
+
+.total_money {
+    font-size: 20px;
+    color: #fff;
+}
+
+.btn_money {
+    margin-left: 20px;
+    cursor: pointer;
+}
