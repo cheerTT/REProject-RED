@@ -41,8 +41,8 @@
                     <tbody>
                         <tr>
                             <li>
-                                <a href="{{member.avatarUrl}}" target="_blank">
-                                <span class="mailbox-attachment-icon has-img"><img src="{{member.avatarUrl}}" alt=""></span>
+                                <a target="_blank">
+                                <span class="mailbox-attachment-icon has-img"><img align="left" id="avatarUrl" src="{{member.avatarUrl}}" alt=""></span>
                                 </a>
                             </li>
                         </tr>
@@ -50,19 +50,19 @@
                             <td width="10%"><strong>用户id</strong></td>
                             <td class="text-left">{{ member.id }}</td>
                             <td><strong>注册时间</strong></td>
-                            <td>{{ member.joined_date2 }}</td>
+                            <td id="joined_date2">{{ member.joined_date2 }}</td>
                         </tr>
                         <tr>
                             <td><strong>昵称</strong></td>
-                            <td>{{ member.nickname }}</td>
-                            <td width="10%"><strong>性别</strong></td>
+                            <td id="nickname">{{ member.nickname }}</td>
+                            <td width="10%" id="gender"><strong>性别</strong></td>
                             <td class="text-left" id="gender">{{ member.get_gender_display }}</td>
                         </tr>
                         <tr class="info">
                             <td><strong>省</strong></td>
-                            <td>{{ member.province }}</td>
+                            <td id="province">{{ member.province }}</td>
                             <td><strong>市</strong></td>
-                            <td>{{ member.city }}</td>
+                            <td id="city">{{ member.city }}</td>
                         </tr>
                         <tr>
                             <td><strong>用户类型</strong></td>
@@ -73,7 +73,7 @@
                         <tr class="info">
 
                             <td><strong>上次登录时间</strong></td>
-                            <td>{{ member.last_login_date }}</td>
+                            <td id="last_login_time">{{ member.last_login_date }}</td>
                              <td><strong>加入人脸时间</strong></td>
                             <td>{{ member.joined_date1 }}</td>
                         </tr>
@@ -103,13 +103,27 @@
   	$(function() {
 	    $('#ADM-ASSET').addClass('active');
 
+	    if(document.getElementById('nickname').innerText == ''){
+            document.getElementById('nickname').innerText = '暂无'}
+        if(document.getElementById("province").innerText == ''){
+            document.getElementById('province').innerText = '暂无'}
+        if(document.getElementById("city").innerText == ''){
+            document.getElementById('city').innerText = '暂无'}
+        if(document.getElementById("joined_date2").innerText == 'None'){
+            document.getElementById('joined_date2').innerText = '2019年1月1日'}
+
+        if($("#avatarUrl").attr('src')=='None'){
+            $("#avatarUrl").attr('src', '/static/media/image/default_avatar.jpg');
+        }
+
+
 	});
   	//返回
     $("#btnReturn").click(function(){
 		history.back();
 	});
 
-    $("#gender").innerText="sss"
+
 
 </script>
 

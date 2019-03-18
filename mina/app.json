@@ -7,12 +7,10 @@
     "pages/recommendations/info",
     "pages/order/index",
     "pages/my/order_list",
-    "pages/my/order_info",
     "pages/my/creditList",
     "pages/my/commentList",
-
     "pages/my/index",
-    "pages/cart/index"
+
 
   ],
   "window": {

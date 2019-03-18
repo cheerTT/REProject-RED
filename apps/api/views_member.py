@@ -21,7 +21,7 @@ from reporjectred.settings import BASE_DIR, MODELPATH, MAX_DISTINCT, APPID, SECR
 from facenet.align.detect_face import create_mtcnn
 from facenet.facenet import get_model_filenames
 from scipy import misc
-from api.models import Member
+from api.models import Member, Credit
 from order.models import Transaction
 from commodity.models import Commodity
 
@@ -132,10 +132,28 @@ class MemberCheckRegView(View):
             return HttpResponse(json.dumps(ret), content_type='application/json')
 
         bind_info = Member.objects.filter(openid=openid)
+
+
         if not bind_info:
             ret['code'] = 500
             ret['msg'] = '未绑定'
             return HttpResponse(json.dumps(ret), content_type='application/json')
+
+        now = datetime.datetime.now()
+        # Member.objects.filter(id=bind_info[0].id)
+
+        Member.objects.filter(id=bind_info[0].id).update(
+            last_login_date=datetime.datetime.now()) # 每次登陆更新last_login_date
+
+
+        # print("credit insert:")
+        # Credit.objects.create(
+        #     behave=0,
+        #     points=2,
+        #     type=0,
+        #     createtime=datetime.datetime.now(),
+        #     userid_id=43
+        # )
 
         token = "%s#%s" % (WechatUtils.geneAuthCode(
             id=bind_info.values_list()[0][0],
@@ -169,7 +187,6 @@ class MemberInfoView(View):
         ret['codeVerify'] = auth_cookie.codeVerify
         ret['type'] = auth_cookie.type
 
-        print("ret:",ret)
         return HttpResponse(json.dumps(ret), content_type='application/json')
 
 class MemberOrderView(View):
@@ -200,7 +217,6 @@ class MemberView(LoginRequiredMixin, View):
 
     def get(self, request):
         return render(request, 'api/member/member.html')
-
 
 # 前方高能
 # 该段代码占用过多CPU资源，放在全局供其他函数调用
@@ -259,11 +275,13 @@ with tf.Graph().as_default():
             images = image_array_align_data(img, image_path, pnet, rnet, onet, detect_multiple_faces=False)
 
             # 设置返回结果
+
             ret = {}
 
             # 判断如果如图没有检测到人脸则直接返回
             if len(images.shape) < 4:
                 ret['info'] = '没有人脸信息,请重新输入，以确保有人脸信息'
+
                 print(ret)
                 return HttpResponse(json.dumps(ret), content_type="application/json")
 
@@ -309,6 +327,8 @@ with tf.Graph().as_default():
                                               joined_date1=datetime.datetime.now(),
                                               codeVerify=codeVerify.lower()
                                               )
+
+
                     ret['type'] = 1  # 表示新用户
                     ret['codeVerify'] = codeVerify
                     ret['info'] = 'success, add a face new'
@@ -324,6 +344,7 @@ with tf.Graph().as_default():
                 #     ret.append({"state": "success, add a face update"})
             else:
                 # 更新操作  已知用户
+
                 ret['type'] = 0  # 表示老用户
                 ret['codeVerify'] = Member.objects.filter(faceid=ret['faceid']).first().codeVerify
                 ret['info'] = 'update'
@@ -341,11 +362,14 @@ with tf.Graph().as_default():
 
             if member_foreign is None:
                 ret['state'] = '当前用户未识别'
+
                 return HttpResponse(json.dumps(ret), content_type="application/json")
 
             # 生成一条订单
             if request.POST['param'] is None or request.POST['param'] == {}:
+
                 ret['state'] = '订单错误'
+
                 return HttpResponse(json.dumps(ret), content_type="application/json")
 
             param = eval(request.POST['param'])
@@ -356,6 +380,7 @@ with tf.Graph().as_default():
                                            member=member_foreign,
                                            commodity=comm[0],
                                            joined_date=datetime.datetime.now())
+
 
             print('结果展示')
             print(ret)
