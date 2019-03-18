@@ -1,4 +1,7 @@
-scrm
+# REProject-RED
+
+a scrm management system based on face recognition
+
 
 
 
@@ -105,7 +108,7 @@ git 测试
 #### 2019-3-14 CatherineXX
 完善小程序商品分类展示效果，在个人中心查看订单
 
-#### 2019-3-17 cheertt
+#### 2019-2-14 cheertt
 定制单元测试规则，编写用户表所有视图层的单元测试代码
 
 #### 2019-3-17 CatherineXX
@@ -113,3 +116,7 @@ git 测试
 
 更新
 
+
+
+#### 2019-3-18 cheertt
+项目代码恢复

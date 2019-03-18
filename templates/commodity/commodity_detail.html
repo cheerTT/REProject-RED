@@ -1,0 +1,144 @@
+<!--
+@Time    : 2019年3月5日19:54:50
+@Author  : xie Liangcai
+@Remark  : 显示商品详细信息页面
+
+-->
+
+{% extends "base-left.html" %}
+{% load staticfiles %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'js/plugins/layer/skin/layer.css' %}">
+{% endblock %}
+
+{% block content %}
+
+
+    <!-- Main content -->
+
+  <section class="content">
+      <div class="row">
+       <div class="col-md-12">
+        <div class="box box-primary">
+            <div class="box-header with-border">
+              <h3 class="box-title">商品详情</h3>
+
+              <div class="box-tools">
+                <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
+                </button>
+              </div>
+            </div>
+            <div class="box-body no-padding">
+                <div class="btn-group pull-right margin-b-10 margin-r-5">
+
+                  <button type="button" class="btn btn-primary btn-sm" title="返回" id="btnReturn">
+                      <i class="fa fa-undo"> 返回</i>
+                  </button>
+                  <button type="button" class="btn btn-info btn-sm" title="编辑" id="doUpdate"
+                          onclick="doUpdate({{ commodity.id }})">
+                      <i class="fa fa-pencil"> 编辑</i>
+                  </button>
+                </div>
+           </div>
+
+               <div class="table-responsive mailbox-messages">
+                  <table class="table" id="tbWorkList"  style="white-space: nowrap;">
+                    <tbody>
+                        <tr class="info">
+                            <td width="10%"><strong>商品编号</strong></td>
+                            <td class="text-left" width="50%">{{ commodity.assin }}</td>
+                            <td width="10%"><strong>商品类型</strong></td>
+                            <td class="text-left">{{ commodity.categories.type_name }}</td>
+                        </tr>
+                        <tr>
+                            <td><strong>名称</strong></td>
+                            <td>{{ commodity.title }}</td>
+                            <td><strong>品牌</strong></td>
+                            <td>{{ commodity.brand }}</td>
+                        </tr>
+                        <tr class="info">
+                            <td><strong>购买日期</strong></td>
+                            <td>{{ commodity.buyDate }}</td>
+                            <td><strong>质保日期</strong></td>
+                            <td>{{ commodity.warrantyDate }}</td>
+                        </tr>
+                        <tr>
+                            <td><strong>价格/元</strong></td>
+                            <td>{{ commodity.present_price | default_if_none:"" }}</td>
+                            <td><strong>状态</strong></td>
+                            <td>{{ commodity.get_status_display }}</td>
+                        </tr>
+
+
+                        <tr class="info">
+
+                            <td><strong>描述</strong></td>
+                            <td > <textarea class="form-control" name="description" rows="3">{{ commodity.description }}</textarea></td>
+                        </tr>
+
+                    </tbody>
+                  </table>
+
+                </div>
+               <br>
+               <div class="box-footer">
+                  <ul class="mailbox-attachments clearfix">
+
+                    <li >
+                      <a href="/media/{{ commodity.imUrl }}" target="_blank">
+                        <span class="mailbox-attachment-icon has-img" width="300px" height="300px "><img src="/media/{{ commodity.imUrl }}" alt=""></span>
+                      </a>
+                    </li>
+
+                  </ul>
+                </div>
+
+            <!-- /.box-footer -->
+            </div>
+            <!-- /.box-body -->
+          </div>
+      </div>
+        <!-- /.col -->
+     <!-- TO DO List -->
+
+          <!-- /.box -->
+
+    </section>
+
+    <!-- /.content -->
+
+{% endblock %}
+
+{% block javascripts %}
+  <script src="{% static 'js/plugins/layer/layer.js' %}"></script>
+  <script type="text/javascript">
+  	$(function() {
+	    $('#ADM-ASSET').addClass('active');
+
+	});
+  	//返回
+    $("#btnReturn").click(function(){
+		history.back();
+	});
+
+    function doUpdate(id){
+	var div=layer.open({
+		type : 2,
+		title : '修改商品信息',
+		shadeClose : false,
+    	maxmin : true,
+		area : [ '800px', '580px' ],
+		content : "{% url 'commodity:update' %}"+'?id='+id,
+		end : function() {
+			//oDataTable.ajax.reload();
+            window.location.reload();
+
+		}
+	});
+	layer.full(div)
+}
+
+</script>
+
+{% endblock %}

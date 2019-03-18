@@ -1,0 +1,116 @@
+<!--
+@Author:ttwen
+@Time:2019年3月7日10:45:35
+@Description: 会员管理的详情页面
+-->
+{% extends "base-left.html" %}
+{% load staticfiles %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'js/plugins/layer/skin/layer.css' %}">
+{% endblock %}
+
+{% block content %}
+
+
+    <!-- Main content -->
+
+  <section class="content">
+      <div class="row">
+       <div class="col-md-12">
+        <div class="box box-primary">
+            <div class="box-header with-border">
+              <h3 class="box-title">用户详情</h3>
+
+              <div class="box-tools">
+                <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
+                </button>
+              </div>
+            </div>
+            <div class="box-body no-padding">
+                <div class="btn-group pull-right margin-b-10 margin-r-5">
+
+                  <button type="button" class="btn btn-primary btn-sm" title="返回" id="btnReturn">
+                      <i class="fa fa-undo">返回</i>
+                  </button>
+                </div>
+           </div>
+
+               <div class="table-responsive mailbox-messages">
+                  <table class="table" id="tbWorkList"  style="white-space: nowrap;">
+                    <tbody>
+                        <tr>
+                            <li>
+                                <a href="{{member.avatarUrl}}" target="_blank">
+                                <span class="mailbox-attachment-icon has-img"><img src="{{member.avatarUrl}}" alt=""></span>
+                                </a>
+                            </li>
+                        </tr>
+                        <tr class="info">
+                            <td width="10%"><strong>用户id</strong></td>
+                            <td class="text-left">{{ member.id }}</td>
+                            <td><strong>注册时间</strong></td>
+                            <td>{{ member.joined_date2 }}</td>
+                        </tr>
+                        <tr>
+                            <td><strong>昵称</strong></td>
+                            <td>{{ member.nickname }}</td>
+                            <td width="10%"><strong>性别</strong></td>
+                            <td class="text-left" id="gender">{{ member.get_gender_display }}</td>
+                        </tr>
+                        <tr class="info">
+                            <td><strong>省</strong></td>
+                            <td>{{ member.province }}</td>
+                            <td><strong>市</strong></td>
+                            <td>{{ member.city }}</td>
+                        </tr>
+                        <tr>
+                            <td><strong>用户类型</strong></td>
+                            <td id="type">{{ member.get_type_display }}</td>
+                            <td><strong>用户状态</strong></td>
+                            <td id="state">{{ member.get_state_display }}</td>
+                        </tr>
+                        <tr class="info">
+
+                            <td><strong>上次登录时间</strong></td>
+                            <td>{{ member.last_login_date }}</td>
+                             <td><strong>加入人脸时间</strong></td>
+                            <td>{{ member.joined_date1 }}</td>
+                        </tr>
+                    </tbody>
+                  </table>
+                </div>
+               <br>
+            <!-- /.box-footer -->
+            </div>
+            <!-- /.box-body -->
+          </div>
+      </div>
+        <!-- /.col -->
+     <!-- TO DO List -->
+
+          <!-- /.box -->
+
+    </section>
+
+    <!-- /.content -->
+
+{% endblock %}
+
+{% block javascripts %}
+  <script src="{% static 'js/plugins/layer/layer.js' %}"></script>
+  <script type="text/javascript">
+  	$(function() {
+	    $('#ADM-ASSET').addClass('active');
+
+	});
+  	//返回
+    $("#btnReturn").click(function(){
+		history.back();
+	});
+
+    $("#gender").innerText="sss"
+
+</script>
+
+{% endblock %}
