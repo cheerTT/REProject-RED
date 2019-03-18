@@ -60,7 +60,7 @@ class MemberListView(LoginRequiredMixin, View):
         '''
         fields = ['id', 'openid', 'pic_name', 'nickname', 'gender', 'city', 'province', 'state', 'last_login_date', 'faceid', 'joined_date1', 'joined_date2', 'avatarUrl', 'codeVerify', 'type',]
         filters = dict()
-        # print("test:",request.GET['nickname'])
+
         if 'nickname' in request.GET and request.GET['nickname']:
             filters['nickname__icontains'] = request.GET['nickname']
         if 'type' in request.GET and request.GET['type']:
@@ -73,8 +73,25 @@ class MemberListView(LoginRequiredMixin, View):
         if 'endDate' in request.GET and request.GET['endDate']:
             filters['joined_date2__lte'] = request.GET['endDate']
 
-        ret = dict(data=list(Member.objects.filter(**filters).values(*fields)))
-
+        member_list = Member.objects.filter(**filters).values(*fields)
+        for member in member_list:
+            if member['openid'] == None:
+                member['openid'] = 0
+            if member['nickname'] == '':
+                member['nickname'] = '暂无'
+            if member['gender'] == '暂无':
+                member['gender'] = 0
+            if member['city'] == '':
+                member['city'] = '暂无'
+            if member['province'] == '':
+                member['province'] = '暂无'
+            if member['last_login_date'] == None:
+                member['city'] = '2019-01-01'
+            if member['joined_date2'] == None:
+                member['joined_date2'] = '2019-01-01'
+            if member['codeVerify'] == None:
+                member['codeVerify'] = '暂无'
+        ret = dict(data=list(member_list))
         return HttpResponse(json.dumps(ret, cls=DjangoJSONEncoder), content_type='application/json')
 
 
@@ -98,8 +115,8 @@ class MemberDetailView(LoginRequiredMixin, View):
         '''
         ret = dict()
         if 'id' in request.GET and request.GET['id']:
-            member = get_object_or_404(Member, pk=request.GET.get('id'))
-            ret['member'] = member
+            member = Member.objects.filter(id=request.GET['id'])
+            ret['member'] = member[0]
         return render(request, 'member/member_detail.html', ret)
 
 class MemberEnableView(LoginRequiredMixin, View):
