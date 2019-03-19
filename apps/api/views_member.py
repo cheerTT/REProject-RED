@@ -108,7 +108,6 @@ class MemberCheckRegView(View):
     def post(self, request):
 
         ret = {'code':200, 'msg':'操作成功', 'data':{}}
-
         code = request.POST['code']
         codeVerify = request.POST['codeVerify'] if request.POST['codeVerify'] else ''
 
@@ -145,7 +144,6 @@ class MemberCheckRegView(View):
             type=bind_info.values_list()[0][14],
         ), bind_info.values_list()[0][0])
         ret['data'] = {'token': token}
-        ret['user_id'] = bind_info.values_list()[0][0]
         return HttpResponse(json.dumps(ret), content_type='application/json')
 
 

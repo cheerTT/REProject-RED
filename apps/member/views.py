@@ -10,8 +10,6 @@ from django.views.generic.base import View
 from api.models import Member
 from django.http import HttpResponse
 from django.core.serializers.json import DjangoJSONEncoder
-from order.models import Transaction
-
 
 import json
 
@@ -21,7 +19,6 @@ class MemberView(LoginRequiredMixin, View):
     '''
     会员查询
     '''
-
     def get(self, request):
         '''
         get方法
@@ -101,34 +98,6 @@ class MemberDetailView(LoginRequiredMixin, View):
         if 'id' in request.GET and request.GET['id']:
             member = get_object_or_404(Member, pk=request.GET.get('id'))
             ret['member'] = member
-
-        boughtitems = Transaction.objects.filter(member_id=request.GET['id'])
-        boughtitemkindlist = []
-
-        boughtitemdict = {
-            'Baby': 0,
-            'Beauty': 0,
-            'Grocery_and_Gourmet_Food': 0,
-            'Electronics': 0,
-            'Office_Products': 0,
-            'Pet_Supplies': 0,
-            'Sports_and_Outdoors': 0,
-            'Home_and_Kitchen': 0,
-        }
-
-        sum_of_boughtitem = len(boughtitems)
-        for boughtitem in boughtitems:
-            boughtitemkindlist.append(boughtitem.commodity.categories.type_name)
-            boughtitemdict[boughtitem.commodity.categories.type_name] += 1
-        print(boughtitemkindlist)
-        print(boughtitemdict)
-
-        for i in boughtitemdict:
-            ret[i] = boughtitemdict[i]
-
-        ret['sum_of_boughtitem'] = sum_of_boughtitem
-        ret['boughtitemdict'] = boughtitemdict
-
         return render(request, 'member/member_detail.html', ret)
 
 class MemberEnableView(LoginRequiredMixin, View):
