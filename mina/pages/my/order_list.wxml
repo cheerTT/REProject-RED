@@ -18,7 +18,7 @@
                 <view wx:for="{{item.data}}" wx:for-item="itemGood">
                     <view class="a-goods">
                         <view class="img-box">
-                            <image src="/images/{{itemGood.picurl}}" class="goods-img"></image>
+                            <image src="{{imagePath}}/{{itemGood.picurl}}" class="goods-img"></image>
 
                         </view>
                         <view class="text-box">
