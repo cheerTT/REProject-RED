@@ -1,4 +1,10 @@
 <view class="container">
+    <!-- <view class="status-box">
+        <view bindtap="statusTap" class="status-label {{index == currentType ? 'active' : ''}}" wx:for-items="{{statusType}}" wx:key="{{index}}" data-index="{{index}}">
+            {{item}}
+            <view class="{{tabClass[index]}}"></view>
+        </view>
+    </view> -->
     <view class="no-order" hidden="{{orderlist ? true : false}}">
         <image src="/images/no-order.png" class="no-order-img"></image>
         <view class="text">暂无订单</view>
@@ -10,9 +16,9 @@
             </view>
             <view>
                 <view wx:for="{{item.data}}" wx:for-item="itemGood">
-                    <view class="a-goods" bindtap="toDetailsTap" data-id="{{itemGood.commodity_id}}">
+                    <view class="a-goods">
                         <view class="img-box">
-                            <image src="/images/{{itemGood.picurl}}" class="goods-img"></image>
+                            <image src="{{imagePath}}/{{itemGood.picurl}}" class="goods-img"></image>
 
                         </view>
                         <view class="text-box">
@@ -29,7 +35,7 @@
                 </view>
             </view>
             <view class="price-box">
-                <view class="total-price">合计：¥ {{ item.orderprice }}</view>
+                <view class="total-price">合计：¥ {{ itemGood.num}}*{{ itemGood.presentprice}}</view>
             </view>
         </view>
 

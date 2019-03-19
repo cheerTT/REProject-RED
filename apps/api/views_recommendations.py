@@ -63,14 +63,6 @@ class AllRecommendationsView(View):
 
         commoditylist = []
 
-        # for assin in commodityidlist:
-        #     commodity = Commodity.objects.filter(assin=assin.lstrip()).values()
-        #     '''
-        #     这里用strip去除一下头部的空格符号。
-        #     '''
-        #
-        #     commoditylist.append(list(commodity))
-        #
         page_size = 10 #每页显示的商品数量
         '''
         前端会返回一个值，p：当前页数，以下代码判断该次Get行为是否会超出列表长度。

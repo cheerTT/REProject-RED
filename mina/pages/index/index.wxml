@@ -1,7 +1,7 @@
 <!--start.wxml-->
 <view class="container">
   <view class="avatar-show">
-    <image class="userinfo-avatar" src="../../images/food.jpg" mode="cover"></image>
+    <image class="userinfo-avatar" src="../../images/food.png" mode="cover"></image>
   </view>
 
 

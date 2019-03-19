@@ -93,6 +93,12 @@ Page({
       }
 
     },
+
+    toDetailsTap: function (e) {
+      wx.navigateTo({
+        url: "/pages/commodity/info?id=" + e.currentTarget.dataset.id
+      });
+    },
     scroll: function (e) {
         var that = this, scrollTop = that.data.scrollTop;
         that.setData({
@@ -113,13 +119,14 @@ Page({
     tapBanner: function (e) {
         if (e.currentTarget.dataset.id != 0) {
             wx.navigateTo({
-              url: "/pages/recommendations/info?id=" + e.currentTarget.dataset.id
+              url: "/pages/commodity/info?id=" + e.currentTarget.dataset.id
             });
         }
     },
     toDetailsTap: function (e) {
+      console.log(e.currentTarget.dataset.id)
         wx.navigateTo({
-          url: "/pages/recommendations/info?id=" + e.currentTarget.dataset.id
+          url: "/pages/commodity/info?id=" + e.currentTarget.dataset.id
         });
     },
     onReachBottom: function () { //下拉刷新
@@ -127,7 +134,6 @@ Page({
       console.log(that.data.activeCategoryId)
       switch (that.data.activeCategoryId){
         case '0':
-        console.log("fdgdfgf")
         setTimeout(function () {
           that.getHotCommodityList();
         }, 500);

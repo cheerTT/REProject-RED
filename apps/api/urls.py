@@ -4,18 +4,21 @@
 from django.conf.urls import url
 from django.views.decorators.csrf import csrf_exempt
 
-from api import views_member
+from api import views_member, views_credit
 from api import views_commodity
 from api import views_recommendations
 from api import views_hotcommend
 urlpatterns = [
     # 会员信息增改删查操作
     url(r'^member/$', views_member.MemberView.as_view(), name="member"),
-    #url(r'^member/savepic', views_member.MemberUploadFace.as_view(), name="member-save-face"),
+    url(r'^member/savepic', views_member.MemberUploadFace.as_view(), name="member-save-face"),
     url(r'^member/login', csrf_exempt(views_member.MemberLoginView.as_view()), name="member-login"),
     url(r'^member/checkreg', csrf_exempt(views_member.MemberCheckRegView.as_view()), name="member-checkreg"),
     url(r'^member/info', views_member.MemberInfoView.as_view(), name="member-info"),
     url(r'^member/order', views_member.MemberOrderView.as_view(), name='member-order'),
+    url(r'^member/credit_create', views_credit.CreditCreateView.as_view(), name='credit-create'),
+    url(r'^member/credit_list', views_credit.CreditListView.as_view(), name='credit-list'),
+
     url(r'^commodity/search', views_commodity.CommoditySearchView.as_view(), name="commodity-search"),
 
     url(r'^commodity/commodity_type', views_commodity.CommodityTypeView.as_view(), name="commodity-type"),

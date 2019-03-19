@@ -54,7 +54,7 @@
 
 
                         <div class="form-group searchArea margin-r-5 margin-top-5">
-                            <label>用户类型：</label>
+                            <label>用户状态：</label>
                              <select class="form-control inputText select2" name="state" id="state">
                                 <option></option>
                                 {% for state in state_list %}
@@ -64,7 +64,7 @@
                         </div>
 
                         <div class="form-group searchArea margin-r-5 margin-top-5">
-                            <label>用户状态：</label>
+                            <label>用户类型：</label>
                             <select class="form-control inputText select2" name="type", id="type">
                                 <option></option>
                                 {% for type in type_list %}
@@ -169,11 +169,14 @@ $(function() {
 										if (data==2){
                                             var ret="<button class='btn btn-primary btn-xs'>女</button>";
 											return ret;
-										}if(data==1){
+										}else if(data==1){
 											var ret="<button class='btn  btn-success btn-xs'>男</button>";
 											return ret;
 
-										}
+										}else{
+										    var ret="<button class='btn  btn-success btn-xs'>暂无</button>";
+											return ret;
+                                        }
 									},
                                     width :'5%'
 								},
@@ -189,10 +192,9 @@ $(function() {
 										if (data==0){
                                             var ret="<button class='btn btn-primary btn-xs'>正常</button>";
 											return ret;
-										}if(data==1){
+										}else if(data==1){
 											var ret="<button class='btn  btn-success btn-xs'>锁定</button>";
 											return ret;
-
 										}
 									}
 								},
