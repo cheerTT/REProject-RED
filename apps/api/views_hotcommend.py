@@ -28,7 +28,7 @@ class HotCommodityView(View):
         p = int(request.GET['p'])
         page_size = 10
 
-        hot_commodity = hot_list.objects.values(*fields)
+        hot_commodity = hot_list.objects.values(*fields).order_by("id")
 
         paginator = Paginator(hot_commodity, page_size)
         print("hottttttttttttttttttttttt")
@@ -37,7 +37,6 @@ class HotCommodityView(View):
         # # print("是否有下一页：",commodity_pages.has_next())
         ret = dict(data=list(hot_commodity_pages))
         ret["has_more"] = hot_commodity_pages.has_next()  #是否有下一页
-        print(ret)
         # ret = dict(data=list(hot_commodity))
         ret = json.dumps(ret, cls=DjangoJSONEncoder)
         # print("ret:",ret)
