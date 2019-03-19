@@ -21,6 +21,7 @@ class CommendView(LoginRequiredMixin, View):
     转入热门推荐页
     """
     def get(self, request):
+
         return render(request, 'hotcommend/hot_list.html')
 
 
@@ -71,18 +72,43 @@ class ItemRank(LoginRequiredMixin, View):
         filters = dict()
         #接收根据assin查询传来的assin值
         if 'assin' in request.GET and request.GET['assin']:
-            ret = transaction_record.objects.all().filter(assin=request.GET['assin']).values('assin').annotate(sales_count=Count('id')).filter(date__gte='2000-02-11', date__lte=now_time)[:50]
-            for item in ret:
-                a = Commodity.objects.filter(assin=item['assin'])
-                item['title'] = a.values('title')[0]['title']
-            ret = dict(data=list(ret))
-            ret = json.dumps(ret, cls=DjangoJSONEncoder)
-            return HttpResponse(ret, content_type='application/json')
 
+            ret = Commodity.objects.filter(assin=request.GET['assin']).values('assin', 'title', 'status')
+
+            # assin = ""
+            # try:
+            #     assin = ret.values('assin')[0]['assin']
+            # except:
+            #     print("assin")
+
+            status = '0'
+            try:
+                status = ret.values('status')[0]['status']
+            except IndexError:
+                pass
+
+            #判断商品是否下架
+            if status == '1':
+                sales_count = transaction_record.objects.all().filter(assin=request.GET['assin']).values('assin').annotate(sales_count=Count('id')).filter(date__gte='2000-02-11', date__lte=now_time)
+                try:
+                    count = sales_count.values('sales_count')[0]['sales_count']
+                except IndexError:
+                    count = 0
+                    print("无销售记录")
+                for item in ret:
+                    # a = Commodity.objects.filter(assin=item['assin'])
+                    item['sales_count'] = count
+                ret = dict(data=list(ret))
+                ret = json.dumps(ret, cls=DjangoJSONEncoder)
+                return HttpResponse(ret, content_type='application/json')
+            else:
+                print("不存在")
+                ret = dict()
+                ret = json.dumps(ret, cls=DjangoJSONEncoder)
+                return HttpResponse(ret, content_type='application/json')
 
         ret = transaction_record.objects.all().filter(**filters).values('assin').annotate(sales_count=Count('id')).filter(date__gte='2007-02-11', date__lte=now_time).order_by('-sales_count')[:50]
-        # ret = dict(data=list(Commodity.objects.filter(**filters).values('id', 'item_id', 'date', 'user_id', 'rating')))
-        # print(ret.values('id', 'item_id', 'date', 'user_id', 'rating'))
+
 
         # 为每个物品添加对应的title
         for item in ret:
@@ -110,7 +136,7 @@ class HotAdd(LoginRequiredMixin, View):
     显示热门推荐列表
     """
     def get(self, request):
-        fields = ['assin', 'title', 'sales_count', 'categories']
+        fields = ['assin', 'title', 'sales_count', 'categories', 'id']
         filters = dict()
         if 'assin' in request.GET and request.GET['assin']:
             filters['assin__icontains'] = request.GET['assin']
@@ -120,9 +146,22 @@ class HotAdd(LoginRequiredMixin, View):
             filters['sales_count'] = request.GET['sales_count']
         if 'categories' in request.GET and request.GET['categories']:
             filters['categories'] = request.GET['categories']
+        if 'id' in request.GET and request.GET['id']:
+            filters['id'] = request.GET['id']
 
-        # print(a.values('assin')[0]['assin'])
-        # hot_commodity = hot_list(assin=a.values('assin')[0][')
+
+        #将昨天销量前20的自动加入hot_list表中
+        now_time = datetime.now().strftime('%Y-%m-%d')
+        yesterday = (datetime.now() + timedelta(days=-1)).strftime('%Y-%m-%d')
+        yesterday_count = transaction_record.objects.all().values('assin').annotate(counts=Count('id')).filter(date__gte=yesterday, date__lte=now_time)[:20]
+        for item in yesterday_count:
+            if hot_list.objects.filter(assin=item['assin']).count() == 0:
+                b = Commodity.objects.filter(assin=item['assin']).values('id', 'assin', 'title', 'categories', 'present_price', 'imUrl')
+                hot_commodity = hot_list(assin=b.values('assin')[0]['assin'], title=b.values('title')[0]['title'], categories=b.values('categories')[0]['categories'],
+                                         imUrl=b.values('imUrl')[0]['imUrl'], present_price=b.values('present_price')[0]['present_price'],
+                                         sales_count=item['counts'], id=b.values('id')[0]['id'])
+                hot_commodity.save()
+
         ret = dict(data=list(hot_list.objects.filter(**filters).values(*fields)))
         ret = json.dumps(ret, cls=DjangoJSONEncoder)
 
@@ -135,19 +174,24 @@ class ToTheList(LoginRequiredMixin, View):
     """
     def post(self, request):
         ret=dict()
-        filters = dict()
         now_time = datetime.now().strftime('%Y-%m-%d')
-        fields = ['assin', 'title', 'categories', 'present_price', 'imUrl']
+        fields = ['id', 'assin', 'title', 'categories', 'present_price', 'imUrl', 'status']
 
         #销量单独获取
-        sales_count = transaction_record.objects.all().filter(assin=request.POST['assin']).values('assin').annotate(counts=Count('id')).filter(date__gte='2000-02-11', date__lte=now_time)
-
+        sales_count = transaction_record.objects.all().filter(assin=request.POST['assin']).values('assin').annotate(sales_count=Count('id')).filter(date__gte='2000-02-11', date__lte=now_time)
+        try:
+            count = sales_count.values('sales_count')[0]['sales_count']
+        except IndexError:
+            count = 0
         a = Commodity.objects.filter(assin=request.POST['assin']).values(*fields)
+
         #如果hot表中已经存在该商品，则不再放入
-        if hot_list.objects.filter(assin=a.values('assin')[0]['assin']).count() == 0:
-            hot_commodity = hot_list(assin=a.values('assin')[0]['assin'], title=a.values('title')[0]['title'], categories=a.values('categories')[0]['categories'],
-                                     imUrl=a.values('imUrl')[0]['imUrl'], present_price=a.values('present_price')[0]['present_price'], sales_count=sales_count.values('counts')[0]['counts'])
-            hot_commodity.save()
+        if a.values('status')[0]['status'] == '1':
+            if hot_list.objects.filter(assin=a.values('assin')[0]['assin']).count() == 0:
+                hot_commodity = hot_list(assin=a.values('assin')[0]['assin'], title=a.values('title')[0]['title'], categories=a.values('categories')[0]['categories'],
+                                         imUrl=a.values('imUrl')[0]['imUrl'], present_price=a.values('present_price')[0]['present_price'],
+                                         sales_count=count, id=a.values('id')[0]['id'])
+                hot_commodity.save()
         return HttpResponse(ret, content_type='application/json')
 
 
@@ -158,12 +202,24 @@ class HotDeleteView(LoginRequiredMixin, View):
     def post(self, request):
 
         ret = dict(result=False)
-        if 'assin' in request.POST and request.POST['assin']:
-            delete_item = request.POST.get('assin')
-            hot_list.objects.filter(assin=delete_item).delete()
+        if 'id' in request.POST and request.POST['id']:
+            delete_item = request.POST.get('id').split(',')
+            hot_list.objects.filter(id__in=delete_item).delete()
 
         ret['result'] = True
         return HttpResponse(json.dumps(ret), content_type='application/json')
+
+
+class IncreaseRateView(LoginRequiredMixin, View):
+    def get(self, request):
+        print(transaction_record.objects.all().values())
+
+
+        ret = dict(data=list(transaction_record.objects.all().values()))
+        ret = json.dumps(ret, cls=DjangoJSONEncoder)
+
+        return HttpResponse(ret, content_type='application/json')
+
 
 
 # class ChooseDays(LoginRequiredMixin, View):
