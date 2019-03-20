@@ -25,6 +25,7 @@ Page({
     onLoad: function () {
         var that = this;
         this.getHotCommodityList();
+        console.log(getApp().globalData.user_id)
         if (getApp().globalData.user_id == "not_user")
         {
         }
