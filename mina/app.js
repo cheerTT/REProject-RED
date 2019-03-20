@@ -8,7 +8,7 @@ App({
       shopName: "向日葵新零售",
 
       domain: "http://127.0.0.1:8000/api",
-      imagePath:"http://127.0.0.1:8000/media"
+      imagePath:"http://127.0.0.1:8000/media",
       //domain:"https://helianthus.chinacloudapp.cn/api",
       //imagePath:"https://helianthus.chinacloudapp.cn/media"
       user_id: "not_user"
