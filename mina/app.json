@@ -10,6 +10,9 @@
     "pages/my/orderList",
     "pages/my/commentList",
     "pages/my/creditList"
+    "pages/my/comment",
+    "pages/my/index"
+
   ],
   "window": {
     "backgroundTextStyle": "light",
