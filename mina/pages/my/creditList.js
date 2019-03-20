@@ -1,203 +1,69 @@
-
 var app = getApp()
 
-
 Page({
-  data: {
-    integralPage: 0, // 控制是否展开 0:显示主页 1:显示积分规则�?
-    canUseIntegral: 0, // 现有积分
-    totalIntegral: 0, // 总积�?
-    integralFontSize: 60, // 根据积分长度改变积分字体大小
-    currentMessageType: 'income', // income:收入 / outcome:支出
-    // navStyle: '',
-    navFixed: false, // 固定导航�?
-    // 积分规则
-    integralRule: {
-      convertNum: 100, // xx积分对应1�?
-      consumeNum: 0, // 消费xx元积�?1积分
-      loginNum: 0, // 每天登录送xx积分
-      postCommentNum: 0, // 商品评论送xx积分
-      shareNum: 0, // 推荐好友送xx积分
+    data: {
+      userid : null,
+      creditlist : null,
+      totalpoints :0,
     },
-    /*
-      xxxBranch 对象
-      data: 对应分支的数�?
-      isMore: 是否拥有更多的新的数�?
-      currentPage: 当前已经加载到页�?
-      onload: 是否处在数据加载中， true加载中，false加载完毕
-    */
-    incomeBranch: {
-      data: [],
-      isMore: 0,
-      currentPage: 1,
-      onload: false
+
+    onLoad: function (options) {
+        // 生命周期函数--监听页面加载
+        var that = this;
+        var userid = options.userid;
+
+        this.setData({
+          userid:options.userid,
+        })
+        wx.getStorage({
+          key: 'userid',
+          success: function(res) {
+            //console.log("res.data:",res.data)
+          },
+        })
+
     },
-    outcomeBranch: {
-      data: [],
-      isMore: 0,
-      currentPage: 1,
-      onload: false
+    onReady: function () {
+        // 生命周期函数--监听页面初次渲染完
     },
-  },
-  onLoad: function () {
-    this.getIntegralDetailData();
-    this.getIntegralRuleData();
-    this.getMessageData('income');
-    this.getMessageData('outcome');
-  },
-  // onShow: function(){
-  //   app.checkIfBindPhone();
-  // },
-  // 获得积分详情数据
-  getIntegralDetailData: function () {
-    let that = this;
-    app.sendRequest({
-      url: '/index.php?r=AppShop/GetIntegralInfo',
-      // data: {
-      //   'id': app.getUserInfo().id
-      // },
-      success: function (res) {
-        let integralLength = ('' + res.data.can_use_integral).length + ('' + res.data.total_integral).length
-        let fontSize = integralLength > 0 ? 60 - integralLength * 2 : 60
-        that.setData({
-          'canUseIntegral': res.data.can_use_integral,
-          'totalIntegral': res.data.total_integral,
-          'integralFontSize': fontSize
-        });
-      }
-    });
-  },
-  // 获得积分规则数据
-  getIntegralRuleData: function () {
-    let that = this;
-    app.sendRequest({
-      url: '/index.php?r=AppShop/IntegralRule',
-      success: function (res) {
-        that.setData({
-          'integralRule.convertNum': res.data.convert_num || 0,
-          'integralRule.consumeNum': res.data.consume_num,
-          'integralRule.loginNum': res.data.login_num || 0,
-          'integralRule.postCommentNum': res.data.post_comment_num,
-          'integralRule.shareNum': res.data.share_num
-        });
-      }
-    });
-  },
-  // 获取对应消息数据
-  getMessageData: function (type, page) {
-    let that = this;
-    let action = '';
-    if (type == 'income') {
-      action = 'add';
-    } else if (type = 'outcome') {
-      action = 'minus';
-    }
-    app.sendRequest({
-      url: '/index.php?r=AppShop/UserIntegralAction',
-      data: {
-        'action': action,
-        'page': page || 1
-      },
-      success: function (res) {
-        switch (type) {
-          // 收入消息
-          case 'income':
+    onShow: function () {
+        var that = this;
+        wx.request({
+          url: app.buildUrl("/member/credit_list?userid="+this.data.userid),
+          header: app.getRequestHeader(),
+          success: function (res) {
+            var resp = res.data
+              console.log("resp:",resp)
+              console.log("resp.data",resp.data)
+              var totalpoints = 0
+            for (var i = 0; i < resp.data.length; i++) {
+                var ai = resp.data[i];
+                console.log(ai)
+                if(ai.credittype=='0'){
+                    totalpoints += parseInt(ai.creditpoints)
+                    ai.creditpoints = "+"+ai.creditpoints
+                }else{
+                    totalpoints -= parseInt(ai.creditpoints)
+                    ai.creditpoints = "-"+ai.creditpoints
+                }
+                if(ai.behave == '0'){
+                    ai.behave = "每日首次登录送积分"
+                } else if(ai.behave == '1'){
+                    ai.behave = '消费送积分'
+                } else if(ai.behave == '2'){
+                    ai.behave = '每日首次分享送积分'
+                }else if(ai.behave == '3'){
+                    ai.behave = '发表评论送积分'
+                }else if(ai.behave == '4'){
+                    ai.behave = '消费抵扣积分'
+                }
+                ai.createtime = ai.createtime.substr(0,[19]) //截取时间
+            }
             that.setData({
-              'incomeBranch.data': (that.data.incomeBranch.data ? that.data.incomeBranch.data.concat(that.parseMessageData(res.data)) : that.parseMessageData(res.data)) || "",
-              'incomeBranch.isMore': res.is_more,
-              'incomeBranch.currentPage': res.current_page || '',
-              'incomeBranch.onload': false,
-            });
-            break;
-          // 支出消息
-          case 'outcome':
-            that.setData({
-              'outcomeBranch.data': (that.data.outcomeBranch.data ? that.data.outcomeBranch.data.concat(that.parseMessageData(res.data)) : that.parseMessageData(res.data)) || '',
-              'outcomeBranch.isMore': res.is_more,
-              'outcomeBranch.currentPage': res.current_page || '',
-              'outcomeBranch.onload': false,
+                creditlist:resp,
+                totalpoints: totalpoints
             })
-            break;
-        }
-      }
-    });
-  },
-  // 解析对应消息数据
-  parseMessageData: function (data) {
-    var that = this;
-    let array = [];
-    let item = {};
-    for (var i = 0; i < data.length; i++) {
-      item = {
-        content: data[i].content,
-        num: data[i].num,
-        time: data[i].time
-      }
-      array.push(item);
-    }
-    return array;
-  },
-  // 底部触发是否获取数据
-  checkMoreMessageData: function () {
-    let that = this;
-    switch (that.data.currentMessageType) {
-      case 'income':
-        // 有更多数�? 并且 不在加载中时 执行
-        if ((that.data.incomeBranch.isMore != 0) && (!that.data.incomeBranch.onload)) {
-          that.getMessageData('income', (that.data.incomeBranch.currentPage + 1));
-          that.setData({
-            'incomeBranch.onload': true
-          });
-        }
-        break;
-      case 'outcome':
-        // 有更多数�? 并且 不在加载中时 执行
-        if ((that.data.outcomeBranch.isMore != 0) && (!that.data.outcomeBranch.onload)) {
-          that.getMessageData('outcome', (that.data.outcomeBranch.currentPage + 1));
-          that.setData({
-            'outcomeBranch.onload': true
-          });
-        }
-        break;
-    }
-  },
-  // 固定消息导航�?
-  fixedMessageNav: function (event) {
-    var that = this;
-    if (event.detail.scrollTop <= 135) {
-      that.setData({
-        // navStyle: ''
-        navFixed: false
-      });
-    } else {
-      that.setData({
-        // navStyle: 'position: fixed; top: 0; left: 0;'
-        navFixed: true
-      });
-    }
-  },
-  // 切换显示的消息类�?
-  setCurrentMessageType: function (event) {
-    this.setData({
-      'currentMessageType': event.target.dataset.type
-    });
-  },
-  // 积分规则：打�?积分详情
-  showIntegralRule: function () {
-    // 设置页面标题
-    app.setPageTitle('积分规则');
-    // 请求数据
-    this.setData({
-      'integralPage': 1
-    });
-  },
-  // 积分规则：关闭积分详�?(返回:个人积分主页)
-  hideIntegralRule: function () {
-    // 设置页面标题
-    app.setPageTitle('个人积分');
-    // 回到系统通知页面,清空表单数据
-    this.setData({
-      'integralPage': 0
-    });
-  }
+          }
+        })
+    },
 })

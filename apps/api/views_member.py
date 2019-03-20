@@ -139,21 +139,25 @@ class MemberCheckRegView(View):
             ret['msg'] = '未绑定'
             return HttpResponse(json.dumps(ret), content_type='application/json')
 
-        now = datetime.datetime.now()
-        # Member.objects.filter(id=bind_info[0].id)
+        now = datetime.datetime.now() #现在的时间
+        last_login_date = Member.objects.get(id=bind_info[0].id).last_login_date #上次登录的时间
+
+        if(now.strftime('%Y-%m-%d') != last_login_date.strftime('%Y-%m-%d')):
+            #今天第一次登陆
+            print("今天第一次登录")
+            ret['first_time_login'] = '恭喜你，今天首次登陆获得2积分'
+            print("credit insert:")
+            Credit.objects.create(
+                behave=0,
+                creditpoints=2,
+                credittype=0,
+                createtime=datetime.datetime.now(),
+                userid_id=bind_info[0].id
+            )
 
         Member.objects.filter(id=bind_info[0].id).update(
             last_login_date=datetime.datetime.now()) # 每次登陆更新last_login_date
 
-
-        # print("credit insert:")
-        # Credit.objects.create(
-        #     behave=0,
-        #     points=2,
-        #     type=0,
-        #     createtime=datetime.datetime.now(),
-        #     userid_id=43
-        # )
 
         token = "%s#%s" % (WechatUtils.geneAuthCode(
             id=bind_info.values_list()[0][0],
@@ -197,7 +201,7 @@ class MemberOrderView(View):
         if 'userid' in request.GET and request.GET['userid']:# 要查询的订单列表的用户id #43
             filters['member_id'] = request.GET['userid']
             transaction=Transaction.objects.filter(**filters).values(*fields)
-            print("transaction:",transaction)
+            # print("transaction:",transaction)
             for order in transaction:
                 singleorder = {}
                 singleorder['commodity_id'] = order['commodity_id']
@@ -208,9 +212,9 @@ class MemberOrderView(View):
                 singleorder['picurl'] = Commodity.objects.filter(id=order['commodity_id']).first().imUrl
                 singleorder['presentprice'] = Commodity.objects.filter(id=order['commodity_id']).first().present_price
                 singleorder['title'] = Commodity.objects.filter(id=order['commodity_id']).first().title
-                print("singleorder:",singleorder)
+                # print("singleorder:",singleorder)
                 ret.append(singleorder)
-        print("ret:",ret)
+        # print("ret:",ret)
         return HttpResponse(json.dumps(ret), content_type='applications/json')
 
 class MemberView(LoginRequiredMixin, View):
@@ -275,13 +279,11 @@ with tf.Graph().as_default():
             images = image_array_align_data(img, image_path, pnet, rnet, onet, detect_multiple_faces=False)
 
             # 设置返回结果
-
-            ret = {}
+            ret = []
 
             # 判断如果如图没有检测到人脸则直接返回
             if len(images.shape) < 4:
-                ret['info'] = '没有人脸信息,请重新输入，以确保有人脸信息'
-
+                ret.append({"info": '没有人脸信息,请重新输入，以确保有人脸信息'})
                 print(ret)
                 return HttpResponse(json.dumps(ret), content_type="application/json")
 
@@ -298,7 +300,7 @@ with tf.Graph().as_default():
                 codeVerify = WechatUtils.genCode()
 
             if codeVerify == '-1':
-                ret['info'] = '验证码非法操作'
+                ret.append({"info": '验证码非法操作'})
                 return HttpResponse(json.dumps(ret), content_type="application/json")
 
             # 分别获取距离该图片中人脸最相近的人脸信息
@@ -309,9 +311,12 @@ with tf.Graph().as_default():
             pic_min_scores, pic_min_names, pic_min_uid = face_query.get_socres(emb_array)
             for i in range(0, len(pic_min_scores)):
                 if pic_min_scores[i] < MAX_DISTINCT:
-                    ret['faceid'] = pic_min_uid[i]
-                    ret['distance'] = pic_min_scores[i]
-                    ret['picname'] = pic_min_names[i]
+                    rdict = {'uid': pic_min_uid[i],
+                             'distance': pic_min_scores[i],
+                             'pic_name': pic_min_names[i],
+                             'codeVerify': codeVerify}
+                    # 根据uid查询对应的用户信息
+                    ret.append(rdict)
 
             if len(ret) == 0:
                 # 新建一个用户
@@ -327,12 +332,7 @@ with tf.Graph().as_default():
                                               joined_date1=datetime.datetime.now(),
                                               codeVerify=codeVerify.lower()
                                               )
-
-
-                    ret['type'] = 1  # 表示新用户
-                    ret['codeVerify'] = codeVerify
-                    ret['info'] = 'success, add a face new'
-
+                    ret.append({"state": "success, add a face new"})
                 # else:
                 #     for j in range(0, len(emb_array)):
                 #         Member.objects.filter(id=isVideo.first().id).update(
@@ -344,46 +344,50 @@ with tf.Graph().as_default():
                 #     ret.append({"state": "success, add a face update"})
             else:
                 # 更新操作  已知用户
+                ret.append({"state": "update"})
 
-                ret['type'] = 0  # 表示老用户
-                ret['codeVerify'] = Member.objects.filter(faceid=ret['faceid']).first().codeVerify
-                ret['info'] = 'update'
-
-            # 作为一个多次购物的用户，
-            # 作为一个第一次注册的用户，
-            member_foreign = Member.objects.filter(codeVerify=ret['codeVerify'].lower()).first()
+            # filename_base, file_extension = os.path.splitext(image_path)
+            # id_list = []
+            # 存入数据库
+            # 怎么判断是不是同一个人
+            # face_info =
+            #
+            # db.session.add(member_info)
+            # db.session.commit()
 
             filename_base, file_extension = os.path.splitext(image_path)
-
-            # 不能用于检验验证码
-
-            print('member_foreign')
-            print(member_foreign)
+            print(codeVerify.lower())
+            member_foreign = Member.objects.filter(codeVerify=codeVerify.lower())
 
             if member_foreign is None:
-                ret['state'] = '当前用户未识别'
-
+                ret.append({"info": '当前用户未识别'})
                 return HttpResponse(json.dumps(ret), content_type="application/json")
 
             # 生成一条订单
             if request.POST['param'] is None or request.POST['param'] == {}:
-
-                ret['state'] = '订单错误'
-
+                ret.append({"info": '订单错误'})
                 return HttpResponse(json.dumps(ret), content_type="application/json")
 
             param = eval(request.POST['param'])
+            credits = 0
             for kv in param.items():
                 comm = Commodity.objects.filter(id=kv[0])
+                credits += Commodity.objects.get(id=kv[0]).present_price
                 Transaction.objects.create(rating=3,
                                            num=kv[1],
-                                           member=member_foreign,
+                                           member=member_foreign[0],
                                            commodity=comm[0],
                                            joined_date=datetime.datetime.now())
+
+            #插入积分记录
+            Credit.objects.create(behave=1,
+                                  creditpoints=123,
+                                  credittype=int(credits),
+                                  createtime=datetime.datetime.now(),
+                                  userid=member_foreign[0]
+                                  )
 
 
             print('结果展示')
             print(ret)
             return HttpResponse(json.dumps(ret), content_type="application/json")
-
-

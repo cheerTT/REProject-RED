@@ -43,8 +43,8 @@ class TopRecommendationsView(View):
             commoditylist.append(commodity)
 
         ret = dict(data = commoditylist)
-        print("11111111111111111111111111111111111")
-        print(ret)
+        # print("11111111111111111111111111111111111")
+        # print(ret)
         ret = json.dumps(ret, cls=DjangoJSONEncoder)
         return HttpResponse(ret, content_type='application/json')
 
