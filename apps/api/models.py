@@ -23,29 +23,7 @@ class Member(models.Model):
     type = models.CharField(null=True, blank=True,max_length=4, choices=type_choices, default='0', verbose_name="会员级别")
     last_login_date = models.DateTimeField(null=True, blank=True, verbose_name="上次登录时间", default='2019-01-01')
 
-    # def null_nickname(self):
-    #     if self.nickname ==  None:
-    #         return '暂无'
-    #     else:
-    #         return str(self.nickname)
-    #
-    # def null_gender(self):
-    #     if self.gender ==  None:
-    #         return '暂无'
-    #     else:
-    #         return str(self.nickname)
-    #
-    # def null_city(self):
-    #     if self.city ==  None:
-    #         return '暂无'
-    #     else:
-    #         return str(self.nickname)
-    #
-    # def null_province(self):
-    #     if self.province ==  None:
-    #         return '暂无'
-    #     else:
-    #         return str(self.nickname)
+
     class Meta:
         verbose_name = "会员基本信息"
         verbose_name_plural = verbose_name
@@ -64,7 +42,7 @@ class Remark(models.Model):
 class Credit(models.Model):
 
     '''
-    0：每日首次登陆送积分：+2分/次
+    √0：每日首次登陆获得积分：+2分/次
     1：消费送积分：+1分/元
     2：每日首次转发送积分：+3分/次
     3：发表评论送积分：+2分/条
@@ -74,8 +52,8 @@ class Credit(models.Model):
     bahave_choices = (('0', '每日首次登陆加积分'),('1', '消费送积分'),('2', '转发送积分'),('3','发表评论送积分'),('4', '消费抵扣积分'))
 
     behave = models.CharField(null=True, blank=True, max_length=50, choices=bahave_choices, verbose_name='产生积分变动的行为')
-    points = models.IntegerField(null=True, blank=True, verbose_name='每条行为对应的积分')
-    type = models.CharField(null=True, blank=True, max_length=4, choices=type_choices, verbose_name='积分变动类型')
+    creditpoints = models.IntegerField(null=True, blank=True, verbose_name='每条行为对应的积分')
+    credittype = models.CharField(null=True, blank=True, max_length=4, choices=type_choices, verbose_name='积分变动类型')
     createtime = models.DateTimeField(null=True, blank=True, verbose_name='积分变动时间')
     userid = models.ForeignKey(Member, on_delete=models.CASCADE, null=True, blank=True, verbose_name='产生积分变动的用户id')
 

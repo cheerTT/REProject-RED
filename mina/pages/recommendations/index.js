@@ -45,7 +45,7 @@ Page({
               }
               )
                 }
-          
+
           });
         }
 
@@ -64,7 +64,7 @@ Page({
         }
         else{
           that.setData({
-            
+
               categories: [
                   {id: 0, name: "爆款！！！"},
                   {id: 1, name: "猜你喜欢"},

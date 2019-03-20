@@ -33,6 +33,7 @@ ALLOWED_HOSTS = ['*']
 # Application definition
 
 INSTALLED_APPS = [
+    'django.contrib.sites',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -47,8 +48,9 @@ INSTALLED_APPS = [
     'apps.hotcommend.apps.HotCommendConfig',
     'apps.api.apps.ApiConfig',
     'apps.order.apps.OrderConfig',
-    'apps.comment.apps.CommentConfig'
+    'apps.comment.apps.CommentConfig',
 ]
+SITE_ID = 1
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',

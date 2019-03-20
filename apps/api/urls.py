@@ -16,14 +16,16 @@ urlpatterns = [
     url(r'^member/checkreg', csrf_exempt(views_member.MemberCheckRegView.as_view()), name="member-checkreg"),
     url(r'^member/info', views_member.MemberInfoView.as_view(), name="member-info"),
     url(r'^member/order', views_member.MemberOrderView.as_view(), name='member-order'),
-    url(r'^member/credit_create', views_credit.CreditCreateView.as_view(), name='credit-create'),
     url(r'^member/credit_list', views_credit.CreditListView.as_view(), name='credit-list'),
+    url(r'^member/credit_share', views_credit.ShareView.as_view(), name='credit-share'),
 
+    url(r'^commodity/comment_add', views_commodity.CommentAddView.as_view(), name='comment-add'),
     url(r'^commodity/search', views_commodity.CommoditySearchView.as_view(), name="commodity-search"),
 
     url(r'^commodity/commodity_type', views_commodity.CommodityTypeView.as_view(), name="commodity-type"),
     url(r'^commodity/commodity_list', views_commodity.CommodityListView.as_view(), name="commodity-list"),
     url(r'^commodity/commodity_info', views_commodity.CommodityInfoView.as_view(), name="commodity-info"),
+    url(r'^commodity/commodity_comments', views_commodity.CommodityCommentsView.as_view(), name="commodity-comments"),
 
     url(r'^recommendations/toprecommendations', csrf_exempt(views_recommendations.TopRecommendationsView.as_view()), name="TopRecommendations"),
     url(r'^recommendations/allrecommendations', csrf_exempt(views_recommendations.AllRecommendationsView.as_view()),

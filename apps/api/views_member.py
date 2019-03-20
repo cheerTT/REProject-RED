@@ -1,4 +1,4 @@
-# @Author  : cheertt
+# @Author  : cheertt && ttwen
 # @Time    : 2019/3/8 8:22
 # @Remark  : 收银界面以及小程序会员登陆注册与个人信息显示部分信息
 import os
@@ -140,21 +140,25 @@ class MemberCheckRegView(View):
             ret['msg'] = '未绑定'
             return HttpResponse(json.dumps(ret), content_type='application/json')
 
-        now = datetime.datetime.now()
-        # Member.objects.filter(id=bind_info[0].id)
+        now = datetime.datetime.now() #现在的时间
+        last_login_date = Member.objects.get(id=bind_info[0].id).last_login_date #上次登录的时间
+
+        if(now.strftime('%Y-%m-%d') != last_login_date.strftime('%Y-%m-%d')):
+            #今天第一次登陆
+            print("今天第一次登录")
+            ret['first_time_login'] = '恭喜你，今天首次登陆获得2积分'
+            print("credit insert:")
+            Credit.objects.create(
+                behave=0,
+                creditpoints=2,
+                credittype=0,
+                createtime=datetime.datetime.now(),
+                userid_id=bind_info[0].id
+            )
 
         Member.objects.filter(id=bind_info[0].id).update(
             last_login_date=datetime.datetime.now()) # 每次登陆更新last_login_date
 
-
-        # print("credit insert:")
-        # Credit.objects.create(
-        #     behave=0,
-        #     points=2,
-        #     type=0,
-        #     createtime=datetime.datetime.now(),
-        #     userid_id=43
-        # )
 
         token = "%s#%s" % (WechatUtils.geneAuthCode(
             id=bind_info.values_list()[0][0],
@@ -172,10 +176,10 @@ class MemberInfoView(View):
     def get(self, request):
         ret={}
         ua = request.META.get("HTTP_AUTHORIZATION")
-        print("ua:",ua)
+        # print("ua:",ua)
 
         auth_cookie = WechatUtils.checkMemberLogin(request)
-        print('auth_cookie:',auth_cookie)
+        # print('auth_cookie:',auth_cookie)
 
         ret['id'] = auth_cookie.id
         ret['openid'] = auth_cookie.openid
@@ -199,7 +203,7 @@ class MemberOrderView(View):
         if 'userid' in request.GET and request.GET['userid']:# 要查询的订单列表的用户id #43
             filters['member_id'] = request.GET['userid']
             transaction=Transaction.objects.filter(**filters).values(*fields)
-            print("transaction:",transaction)
+            # print("transaction:",transaction)
             for order in transaction:
                 singleorder = {}
                 singleorder['commodity_id'] = order['commodity_id']
@@ -210,9 +214,9 @@ class MemberOrderView(View):
                 singleorder['picurl'] = Commodity.objects.filter(id=order['commodity_id']).first().imUrl
                 singleorder['presentprice'] = Commodity.objects.filter(id=order['commodity_id']).first().present_price
                 singleorder['title'] = Commodity.objects.filter(id=order['commodity_id']).first().title
-                print("singleorder:",singleorder)
+                # print("singleorder:",singleorder)
                 ret.append(singleorder)
-        print("ret:",ret)
+        # print("ret:",ret)
         return HttpResponse(json.dumps(ret), content_type='applications/json')
 
 class MemberView(LoginRequiredMixin, View):
@@ -374,6 +378,8 @@ with tf.Graph().as_default():
 
                 return HttpResponse(json.dumps(ret), content_type="application/json")
 
+            orderid = str(int(time.time()*1000)) + str(uuid.uuid1()).replace('-', '')[0:10]
+
             param = eval(request.POST['param'])
             for kv in param.items():
                 comm = Commodity.objects.filter(id=kv[0])
@@ -381,11 +387,10 @@ with tf.Graph().as_default():
                                            num=kv[1],
                                            member=member_foreign,
                                            commodity=comm[0],
-                                           joined_date=datetime.datetime.now())
+                                           joined_date=datetime.datetime.now(),
+                                           orderid=orderid)
 
 
             print('结果展示')
             print(ret)
             return HttpResponse(json.dumps(ret), content_type="application/json")
-
-
