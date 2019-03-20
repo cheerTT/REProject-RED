@@ -13,9 +13,7 @@
   <view class="my-item">
     <navigator url="/pages/my/creditList" hover-class="navigator-hover">我的积分</navigator>
   </view>
-
   <view style="height:20rpx;background: #eee;width:100%;"></view>
   <view class="version">Powered by 向日葵</view>
   <view style="height:20rpx;background: #eee;width:100%;"></view>
-
 </view>
