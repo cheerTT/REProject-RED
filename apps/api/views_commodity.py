@@ -15,7 +15,7 @@ from django.core.paginator import Paginator
 from commodity.models import Commodity, CommodityType
 from utils.wechat_utils import WechatUtils
 from apps.comment.models import Comment
-
+import django.utils.timezone as timezone
 
 class CommoditySearchView(View):
 
@@ -99,15 +99,14 @@ class CommodityCommentsView(View):
         # auth_cookie = WechatUtils.checkMemberLogin(request)
 
         # ret['id'] = auth_cookie.id
-        print("commodity_id", commodity_id)
+        # print("commodity_id", commodity_id)
         comment_list = Comment.objects.filter(commodity_id=commodity_id).values(*fields)
 
-        print("type:", type(comment_list[0]))
         for comment in comment_list:
-            print(comment)
+            # print(comment)
             member = Member.objects.filter(id=comment['member_id'])
             # print("member:", type(member))
-            print(member.values('pic_name')[0]['pic_name'])
+            # print(member.values('pic_name')[0]['pic_name'])
             comment['nickname'] = member.values('nickname')[0]['nickname']
             comment['avatarUrl'] = member.values('avatarUrl')[0]['avatarUrl']
 
@@ -118,4 +117,17 @@ class CommodityCommentsView(View):
 
 class CommentAddView(View):
     def get(self,request):
-        pass
+        ret = {}
+
+        commodity_id = request.GET['id']
+        auth_cookie = WechatUtils.checkMemberLogin(request)
+        print("score:",request.GET['score'])
+        content=request.GET['content']
+        print("member_id",auth_cookie.id)
+        Comment.objects.create(
+            content=content,
+            joined_date=timezone.now,
+            commodity_id=commodity_id,
+            member_id=auth_cookie.id
+        )
+        return HttpResponse(ret, content_type='application/json')
