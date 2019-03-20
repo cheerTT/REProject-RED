@@ -86,31 +86,25 @@
             <!-- /.box-body -->
           </div>
           <div class="box-body">
-               <div class="row">
-                   <div class="col-md-8">
-                       <div id="pie_container" style="height: 500px; width: 1248px;"></div>
-                   </div>
-               </div>
+              <div class="row">
+                  <div class="col-md-8">
+                      <div id="pie_container" style="height: 600px; width: 1100px;"></div>
+                  </div>
+                  <div class="col-md-4">
+                      <div id="polygon" style="height: 600px; width: auto"></div>
+                  </div>
            </div>
+            <!-- 为 ECharts 准备一个具备大小（宽高）的 DOM -->
           <div class="panel panel-default">
               <div class="panel-heading">
                 <h3 class="panel-title">用户标签</h3>
               </div>
               <div class="panel-body">
                   {% for key,value in boughtitemdict.items %}
-                      {% if value >= 2  %}
-                            <span class="label label-success">{{ key }}</span>
+                      {% if value.value >= 2  %}
+                            <span class="label label-primary">{{ value.label }}</span>
                        {% endif %}
-                    {{ value }}
                 {% endfor %}
-                       <div class="bs-example" data-example-id="label-variants">
-                           <span class="label label-default">Default</span>
-                            <span class="label label-primary">Primary</span>
-                            <span class="label label-success">Success</span>
-                            <span class="label label-info">Info</span>
-                            <span class="label label-warning">Warning</span>
-                            <span class="label label-danger">Danger</span>
-                    </div>
           </div>
         </div>
       </div>
@@ -155,6 +149,7 @@
 
 
 var mypieChart = echarts.init(document.getElementById('pie_container'));
+var mypolygon = echarts.init(document.getElementById('polygon'));
 
 
 var labelTop = {
@@ -210,8 +205,8 @@ option = {
         ]
     },
     title : {
-        text: 'The App World',
-        subtext: 'from global web index',
+        text: '用户购买详情',
+        subtext: '截至至最近一次购买',
         x: 'center'
     },
     toolbox: {
@@ -252,8 +247,8 @@ option = {
             x: '0%', // for funnel
             itemStyle : labelFromatter,
             data : [
-                {name:'other', value:1, itemStyle : labelBottom},
-                {name:'有娃', value:{{Baby}},itemStyle : labelTop}
+                {name:'other', value:{{ sum_of_boughtitem }} - {{boughtitemdict.Baby.value}}, itemStyle : labelBottom},
+                {name:'有娃', value:{{boughtitemdict.Baby.value}},itemStyle : labelTop}
             ]
         },
         {
@@ -263,8 +258,8 @@ option = {
             x:'20%', // for funnel
             itemStyle : labelFromatter,
             data : [
-                {name:'other', value:56, itemStyle : labelBottom},
-                {name:'美妆', value:{{Beauty}},itemStyle : labelTop}
+                {name:'other', value:{{ sum_of_boughtitem }} - {{boughtitemdict.Beauty.value}} , itemStyle : labelBottom},
+                {name:'美妆', value:{{boughtitemdict.Beauty.value}},itemStyle : labelTop}
             ]
         },
         {
@@ -274,8 +269,8 @@ option = {
             x:'40%', // for funnel
             itemStyle : labelFromatter,
             data : [
-                {name:'other', value:65, itemStyle : labelBottom},
-                {name:'美食', value:{{Grocery_and_Gourmet_Food}},itemStyle : labelTop}
+                {name:'other', value:{{ sum_of_boughtitem }} - {{boughtitemdict.Grocery_and_Gourmet_Food.value}}, itemStyle : labelBottom},
+                {name:'美食', value:{{boughtitemdict.Grocery_and_Gourmet_Food.value}},itemStyle : labelTop}
             ]
         },
         {
@@ -285,8 +280,8 @@ option = {
             x:'60%', // for funnel
             itemStyle : labelFromatter,
             data : [
-                {name:'other', value:70, itemStyle : labelBottom},
-                {name:'电子', value:{{Electronics}},itemStyle : labelTop}
+                {name:'other', value:{{ sum_of_boughtitem }} - {{boughtitemdict.Electronics.value}}, itemStyle : labelBottom},
+                {name:'电子', value:{{boughtitemdict.Electronics.value}},itemStyle : labelTop}
             ]
         },
         {
@@ -296,8 +291,8 @@ option = {
             x:'80%', // for funnel
             itemStyle : labelFromatter,
             data : [
-                {name:'other', value:73, itemStyle : labelBottom},
-                {name:'办公用品', value:{{Office_Products}},itemStyle : labelTop}
+                {name:'other', value:{{ sum_of_boughtitem }} - {{boughtitemdict.Office_Products.value}}, itemStyle : labelBottom},
+                {name:'办公用品', value:{{boughtitemdict.Office_Products.value}},itemStyle : labelTop}
             ]
         },
         {
@@ -308,8 +303,8 @@ option = {
             x: '0%',    // for funnel
             itemStyle : labelFromatter,
             data : [
-                {name:'other', value:78, itemStyle : labelBottom},
-                {name:'宠物用品', value:{{Pet_Supplies}},itemStyle : labelTop}
+                {name:'other', value:{{ sum_of_boughtitem }} - {{boughtitemdict.Pet_Supplies.value}}, itemStyle : labelBottom},
+                {name:'宠物用品', value:{{boughtitemdict.Pet_Supplies.value}},itemStyle : labelTop}
             ]
         },
         {
@@ -320,8 +315,8 @@ option = {
             x:'20%',    // for funnel
             itemStyle : labelFromatter,
             data : [
-                {name:'other', value:78, itemStyle : labelBottom},
-                {name:'运动户外', value:{{Sports_and_Outdoors}},itemStyle : labelTop}
+                {name:'other', value:{{ sum_of_boughtitem }} -{{boughtitemdict.Sports_and_Outdoors.value}}, itemStyle : labelBottom},
+                {name:'运动户外', value:{{boughtitemdict.Sports_and_Outdoors.value}},itemStyle : labelTop}
             ]
         },
         {
@@ -332,15 +327,169 @@ option = {
             x:'40%', // for funnel
             itemStyle : labelFromatter,
             data : [
-                {name:'other', value:78, itemStyle : labelBottom},
-                {name:'家用厨具', value:{{Home_and_Kitchen}},itemStyle : labelTop}
+                {name:'other', value:{{ sum_of_boughtitem }} - {{boughtitemdict.Home_and_Kitchen.value}}, itemStyle : labelBottom},
+                {name:'家用厨具', value:{{boughtitemdict.Home_and_Kitchen.value}},itemStyle : labelTop}
             ]
         },
 
 
     ]
 };
-mypieChart.setOption(option);
+
+
+option2 = {
+    title: {
+        text: '基础雷达图'
+    },
+    tooltip: {},
+    legend: {
+        data: [ '实际开销（Actual Spending）']
+    },
+    radar: {
+        // shape: 'circle',
+        name: {
+            textStyle: {
+                color: '#fff',
+                backgroundColor: '#999',
+                borderRadius: 3,
+                padding: [3, 5]
+           }
+        },
+        indicator: [
+           { name: '消费能力', max: 200},
+           { name: '购物频率', max: 20},
+           { name: '购物偏向性', max: 1},
+           { name: '购物评分', max: 5},
+           { name: '年龄', max: 80},
+        ]
+    },
+    series: [{
+        name: '开销（Budget vs spending）',
+        type: 'radar',
+        // areaStyle: {normal: {}},
+        data : [
+             {
+                value : [{{sum_of_price}}, {{ sum_of_boughtitem}}, {{ rate_of_type }}, {{ ave_of_ratings }}, {{ predict_age }}],
+                name : '实际开销（Actual Spending）'
+            }
+        ]
+    }]
+};
+mypolygon.setOption(option2);
+
+
+option3 = {
+    tooltip: {
+        trigger: 'item',
+        formatter: "{a} <br/>{b}: {c} ({d}%)"
+    },
+    legend: {
+        orient: 'vertical',
+        x: 'left',
+        data:['女性偏好','美食','男性偏好','家庭','宝宝用品','美妆','美食','电子','办公用品',
+             '运动户外','宠物用品', '家用厨具']
+    },
+    series: [
+        {
+            name:'访问来源',
+            type:'pie',
+            selectedMode: 'single',
+            radius: [0, '30%'],
+
+            label: {
+                normal: {
+                    position: 'inner'
+                }
+            },
+            labelLine: {
+                normal: {
+                    show: false
+                }
+            },
+            data:[
+                {value:{{ boughtitemdict.Baby.value }}+{{ boughtitemdict.Beauty.value }}
+                    , name:'女性偏好', selected:true},
+                {value:{{ boughtitemdict.Grocery_and_Gourmet_Food.value}}
+                    , name:'美食', selected:true},
+                {value:{{ boughtitemdict.Electronics.value }}+ {{ boughtitemdict.Office_Products.value }}+{{ boughtitemdict.Sports_and_Outdoors.value }},name:'男性偏好'},
+                {value:{{ boughtitemdict.Pet_Supplies.value }} + {{ boughtitemdict.Home_and_Kitchen.value }}, name:'家庭'}
+            ]
+        },
+        {
+            name:'数值统计',
+            type:'pie',
+            radius: ['40%', '55%'],
+            label: {
+                normal: {
+                    formatter: '{a|{a}}{abg|}\n{hr|}\n  {b|{b}：}{c}  {per|{d}%}  ',
+                    backgroundColor: '#eee',
+                    borderColor: '#aaa',
+                    borderWidth: 1,
+                    borderRadius: 4,
+                    // shadowBlur:3,
+                    // shadowOffsetX: 2,
+                    // shadowOffsetY: 2,
+                    // shadowColor: '#999',
+                    // padding: [0, 7],
+                    rich: {
+                        a: {
+                            color: '#999',
+                            lineHeight: 22,
+                            align: 'center'
+                        },
+                        // abg: {
+                        //     backgroundColor: '#333',
+                        //     width: '100%',
+                        //     align: 'right',
+                        //     height: 22,
+                        //     borderRadius: [4, 4, 0, 0]
+                        // },
+                        hr: {
+                            borderColor: '#aaa',
+                            width: '100%',
+                            borderWidth: 0.5,
+                            height: 0
+                        },
+                        b: {
+                            fontSize: 16,
+                            lineHeight: 33
+                        },
+                        per: {
+                            color: '#eee',
+                            backgroundColor: '#334455',
+                            padding: [2, 4],
+                            borderRadius: 2
+                        }
+                    }
+                }
+            },
+            data:[
+                {value:{{ boughtitemdict.Baby.value }}, name:'宝宝用品'},
+                {value:{{ boughtitemdict.Beauty.value }}, name:'美妆'},
+                {value:{{ boughtitemdict.Grocery_and_Gourmet_Food.value }}, name:'美食'},
+                {value:{{ boughtitemdict.Electronics.value }}, name:'电子'},
+                {value:{{ boughtitemdict.Office_Products.value }}, name:'办公用品'},
+                {value:{{ boughtitemdict.Sports_and_Outdoors.value }}, name:'运动户外'},
+                {value:{{ boughtitemdict.Pet_Supplies.value }}, name:'宠物用品'},
+                {value:{{ boughtitemdict.Home_and_Kitchen.value }}, name:'家用厨具'}
+            ]
+        }
+    ]
+};
+mypieChart.setOption(option3);
+
+
+
+
+
 </script>
+
+
+
+
+
+
+
+
 
 {% endblock %}
