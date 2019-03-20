@@ -73,7 +73,7 @@ Page({
     tapBanner: function (e) {
         if (e.currentTarget.dataset.id != 0) {
             wx.navigateTo({
-                url: "/pages/food/info?id=" + e.currentTarget.dataset.id
+                url: "/pages/commodity/info?id=" + e.currentTarget.dataset.id
             });
         }
     },
