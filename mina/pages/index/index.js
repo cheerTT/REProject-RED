@@ -67,6 +67,7 @@ Page({
                 return;
             }
             console.log('checkLogin')
+
             console.log('11' + that.data.codeVerify)
             wx.request({
               url: app.buildUrl('/member/checkreg'),

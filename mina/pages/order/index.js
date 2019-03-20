@@ -39,7 +39,7 @@ Page({
         wx.showLoading();
         var that = this;
         wx.navigateTo({
-            url: "/pages/my/order_list"
+            url: "/pages/my/orderlist"
         });
     },
     addressSet: function () {

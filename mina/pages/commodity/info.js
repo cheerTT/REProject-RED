@@ -155,23 +155,22 @@ Page({
      onShareAppMessage: function () {
         var that = this;
         console.log("分享")
-        // console.log(that.data.good.title)
         return {
             title: that.data.good.title,
             path: '/pages/commodity/info?id=' + that.data.good.id,
             success: function (res) {
-                // 转发成功
-                // wx.request({
-                //     url: app.buildUrl("/commodity/share"),
-                //     header: app.getRequestHeader(),
-                //     method: 'POST',
-                //     data: {
-                //         url: utils.getCurrentPageUrlWithArgs()
-                //     },
-                //     success: function (res) {
-                //
-                //     }
-                // });
+                //转发成功
+                wx.request({
+                    url: app.buildUrl("/member/credit_share"),
+                    header: app.getRequestHeader(),
+                    method: 'POST',
+                    data: {
+                        url: utils.getCurrentPageUrlWithArgs()
+                    },
+                    success: function (res) {
+
+                    }
+                });
             },
             fail: function (res) {
                 // 转发失败
