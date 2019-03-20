@@ -1,6 +1,6 @@
 {# @Time    : 2019/3/10 19:48#}
 {# @Author  : Sutrue#}
-{# @Remark  : 热门推荐页}
+{# @Remark  : 热门推荐页}#}
 
 {% extends "base-left.html" %}
 {% load staticfiles %}
@@ -21,32 +21,48 @@
         </ol>
     </section>
   <section class="content">
+      <div id="devlist">
+          <div class="box box-primary" id="liebiao">
+            <div class="box-header">
+                <div class="btn-group">
+                    <button type="button" id="btnCreate" class="btn btn-primary">
+                        <i class="glyphicon glyphicon-plus"></i>添加推荐
+                    </button>
+                </div>
+                <div class="btn-group">
+                    <button type="button" id="btnDelete" class="btn btn-danger">
+                        <i class="glyphicon glyphicon-trash"></i>删除
+                    </button>
+                </div>
+            </div>
+          </div>
                 <table id="dtbList" class="display" cellspacing="0" width="100%">
                     <thead>
                     <tr valign="middle">
                         <th><input type="checkbox" id="checkAll"></th>
                         <th>商品ID</th>
                         <th>商品名称</th>
-                        <th>商品类别</th>
+                        <th>商品销量</th>
                         <th>撤销推荐</th>
                     </tr>
                     </thead>
                     <tbody>
                     </tbody>
                 </table>
+      </div>
 
-              <div class="box-header" align="center">
-                <div class="btn-group">
-                    <button type="button" id="btnCreate" class="btn btn-primary">
-                        <i class="glyphicon glyphicon-plus"></i>推荐
-                    </button>
-                </div>
-                <div class="btn-group">
-                    <button type="button" id="btnDelete" class="btn btn-danger">
-                        <i class="glyphicon glyphicon-trash"></i>撤下
-                    </button>
-                </div>
-              </div>
+              <!--<div class="box-header" align="center">-->
+                <!--<div class="btn-group">-->
+                    <!--<button type="button" id="btnCreate" class="btn btn-primary">-->
+                        <!--<i class="glyphicon glyphicon-plus"></i>推荐-->
+                    <!--</button>-->
+                <!--</div>-->
+<!--{#                <div class="btn-group">#}-->
+<!--{#                    <button type="button" id="btnDelete" class="btn btn-danger">#}-->
+<!--{#                        <i class="glyphicon glyphicon-trash"></i>撤下#}-->
+<!--{#                    </button>#}-->
+<!--{#                </div>#}-->
+              <!--</div>-->
 
   </section>
 
@@ -63,11 +79,12 @@
     <script src="{% static 'plugins/fileinput/zh.js' %}"></script>
     <script src="{% static 'plugins/combo-select/jquery.combo.select.js' %}"></script>
 
-      <script src="{% static 'plugins/datatables/jquery.dataTables.min.js' %}"></script>
-      <script src="{% static 'plugins/datatables/dataTables.const.js' %}"></script>
-      <script src="{% static 'plugins/datatables/moment.min.js' %}"></script>
-      <script src="{% static 'js/plugins/layer/layer.js' %}"></script>
-      <script src="{% static 'plugins/select2/select2.full.min.js' %}"></script>
+    <script src="{% static 'plugins/datatables/jquery.dataTables.min.js' %}"></script>
+    <script src="{% static 'plugins/datatables/dataTables.const.js' %}"></script>
+    <script src="{% static 'plugins/datatables/moment.min.js' %}"></script>
+    <script src="{% static 'js/plugins/layer/layer.js' %}"></script>
+    <script src="{% static 'plugins/select2/select2.full.min.js' %}"></script>
+    <script type="text/javascript" src="../../static/plugins/echarts/echarts.min.js"></script>
   <!-- iCheck 1.0.1 -->
   <script type="text/javascript">
 	$(function() {
@@ -76,55 +93,130 @@
 	});
   </script>
 
+
     <script type="text/javascript">
-var oDataTable=null;
-$(function() {
-	oDataTable = initTable();
-	function initTable() {
-		var oTable=$('#dtbList').DataTable($.extend(true,{},
-						DATATABLES_CONSTANT.DATA_TABLES.DEFAULT_OPTION,
-						{
-							ajax : {
-								"url":"{% url 'hotcommend:hot_add' %}",
-								"data":function ( d ) {
-									d.assin=$("#assin").val();
-									d.title=$("#title").val();
-									d.categories=$("#categories").val();
-								}
-						},
+        $.get('data/asset/data/aqi-beijing.json', function (data) {
+            myChart.setOption(option = {
+                title: {
+                    text: 'Beijing AQI'
+                },
+                tooltip: {
+                    trigger: 'axis'
+                },
+                xAxis: {
+                    data: data.map(function (item) {
+                        return item[0];
+                    })
+                },
+                yAxis: {
+                    splitLine: {
+                        show: false
+                    }
+                },
+                toolbox: {
+                    left: 'center',
+                    feature: {
+                        dataZoom: {
+                            yAxisIndex: 'none'
+                        },
+                        restore: {},
+                        saveAsImage: {}
+                    }
+                },
+                dataZoom: [{
+                    startValue: '2014-06-01'
+                }, {
+                    type: 'inside'
+                }],
+                visualMap: {
+                    top: 10,
+                    right: 10,
+                    pieces: [{
+                        gt: 0,
+                        lte: 500,
+                        color: '#096'
+                    }],
+                },
+                series: {
+                    name: 'Beijing AQI',
+                    type: 'line',
+                    data: data.map(function (item) {
+                        return item[1];
+                    }),
+                    markLine: {
+                        silent: true,
+                        data: [{
+                            yAxis: 50
+                        }, {
+                            yAxis: 100
+                        }, {
+                            yAxis: 150
+                        }, {
+                            yAxis: 200
+                        }, {
+                            yAxis: 300
+                        }]
+                    }
+                }
+            });
+        });
 
-						columns : [
-								DATATABLES_CONSTANT.DATA_TABLES.COLUMN.CHECKBOX,
 
-								{
-									data : "assin",
-								},
 
+        var oDataTable=null;
+        $(function() {
+            oDataTable = initTable();
+            function initTable() {
+                var oTable=$('#dtbList').DataTable($.extend(true,{},
+                                DATATABLES_CONSTANT.DATA_TABLES.DEFAULT_OPTION,
                                 {
-									data : "title",
-								},
+                                    ajax : {
+                                        "url":"{% url 'hotcommend:hot_add' %}",
+                                        "data":function ( d ) {
+                                            d.assin=$("#assin").val();
+                                            d.title=$("#title").val();
+                                            d.sales_counts=$("#sales_count").val();
+                                            d.categories=$("#categories").val();
+                                        }
+                                },
 
-                                {
-									data : "categories",
-								},
+                                columns : [
+                                        DATATABLES_CONSTANT.DATA_TABLES.COLUMN.CHECKBOX,
 
-								{
-								    data : "assin",
-									{#data : "id",#}
-									{#width : "10%",#}
-									bSortable : "false",
-									render : function(data, type, row, meta) {
-										var ret="<button title='删除' onclick='doDelete(\"" + data + "\")'><i class='glyphicon glyphicon-trash'></i></button>";
-										return ret;
-									}
-								}],
-						}));
-		return oTable;
-	}
+                                        {
+                                            data : "assin",
+                                        },
+
+                                        {
+                                            data : "title",
+                                        },
+
+                                        // {#{#}
+                                        // {#	data : "categories",#}
+                                        // {#},#}
+
+                                        {
+                                            data : "sales_count",
+                                        },
+
+                                        {
+                                            data : "id",
+                                            width : "10%",
+                                            bSortable : "false",
+                                            render : function(data, type, row, meta) {
+                                                var ret="<button title='删除' onclick='doDelete(" + data + ")'><i class='glyphicon glyphicon-trash'></i></button>";
+                                                return ret;
+                                            }
+                                        }],
+                                }));
+                return oTable;
+            }
+
+
 
    //刷新页面GET查询请求
     $("#btnCommoditySearch").click(function(){
-            alert(oDataTable.ajax.all())
+            alert(oDataTable.ajax.all());
             oDataTable.ajax.reload();
         });
 
@@ -145,7 +237,7 @@ $(function() {
     });
 
 
-	$("#btnCreate").click(function() {
+	 $("#btnCreate").click(function() {
 		var div=layer.open({
 			type : 2,
 			title : '推荐选择',
@@ -158,82 +250,85 @@ $(function() {
 				window.location.reload();
 			}
 		});
-           {#layer.full(div)#}
-	});
+	 });
 
 
-	//批量删除
-	$("#btnDelete").click(function() {
-		if ($("input[name='checkList']:checked").length == 0){
-			layer.msg("请选择要删除的记录");
-			return ;
-		}
+     //批量删除
+     $("#btnDelete").click(function() {
+            if ($("input[name='checkList']:checked").length == 0){
+                layer.msg("请选择要删除的记录");
+                return ;
+            }
+            var arrId= new Array();
+            $("input[name='checkList']:checked").each(function(){
+                // alert($(this).val());
+                arrId.push($(this).val());
 
-		var arrId= new Array();
-		$("input[name='checkList']:checked").each(function(){
-			//alert($(this).val());
-			arrId.push($(this).val());
-		});
+            });
 
-		sId=arrId.join(',');
+            sId=arrId.join(',');
 
-		layer.alert('确定删除吗？', {
-			title:'提示'
-			,icon: 3 //0:感叹号 1：对号 2：差号 3：问号 4：小锁 5：哭脸 6：笑脸
-			,time: 0 //不自动关闭
-			,btn: ['YES', 'NO']
-			,yes: function(index){
-			 	layer.close(index);
-			 	$.ajax({
-					type: "POST",
-					url : "{% url 'commodity:delete' %}",
-					data : {"id":sId, csrfmiddlewaretoken: '{{ csrf_token }}'},
-					cache: false,
-					success : function(msg) {
-						if (msg.result){
-							layer.alert("操作成功",{icon:1});
-							oDataTable.ajax.reload();
-						}else{
-							//alert(msg.message);
-							layer.alert("操作失败",{icon:2});
-						}
-						return ;
-					}
-				});
-			}
-		});
-	});
-
-
-});
-
-//删除单个数据
-function doDelete(id){
-    layer.alert('确定删除吗？', {
-        title:'提示'
-        ,icon: 3 //0:感叹号 1：对号 2：差号 3：问号 4：小锁 5：哭脸 6：笑脸
-        ,time: 0 //不自动关闭
-        ,btn: ['YES', 'NO']
-        ,yes: function(index){
-            layer.close(index);
-            $.ajax({
-                type: "POST",
-                url : "{% url 'hotcommend:hot_delete' %}",
-                data : {"assin":id, csrfmiddlewaretoken: '{{ csrf_token }}'},  //防止post数据时报 csrf_token 403
-                cache: false,
-                success : function(msg) {
-                    if (msg.result){
-                        layer.alert('删除成功',{icon: 1});
-                        oDataTable.ajax.reload();
-                    }else{
-                        //alert(msg.message);
-                        layer.alert('删除失败', {icon: 2});
-                    }
-                    return ;
+            layer.alert('确定删除吗？', {
+                title:'提示'
+                ,icon: 3 //0:感叹号 1：对号 2：差号 3：问号 4：小锁 5：哭脸 6：笑脸
+                ,time: 0 //不自动关闭
+                ,btn: ['YES', 'NO']
+                ,yes: function(index){
+                    layer.close(index);
+                    $.ajax({
+                        type: "POST",
+                        url : "{% url 'hotcommend:hot_delete' %}",
+                        data : {"id":sId, csrfmiddlewaretoken: '{{ csrf_token }}'},
+                        cache: false,
+                        success : function(msg) {
+                            if (msg.result){
+                                layer.alert("操作成功",{icon:1});
+                                oDataTable.ajax.reload();
+                            }else{
+                                //alert(msg.message);
+                                layer.alert("操作失败",{icon:2});
+                            }
+                            return ;
+                        }
+                    });
                 }
             });
-        }
+        });
     });
-}
+
+    //删除单个数据
+    function doDelete(id){
+        layer.alert('确定删除吗？', {
+            title:'提示'
+            ,icon: 3 //0:感叹号 1：对号 2：差号 3：问号 4：小锁 5：哭脸 6：笑脸
+            ,time: 0 //不自动关闭
+            ,btn: ['YES', 'NO']
+            ,yes: function(index){
+                layer.close(index);
+                $.ajax({
+                    type: "POST",
+                    url : "{% url 'hotcommend:hot_delete' %}",
+                    data : {"id":id, csrfmiddlewaretoken: '{{ csrf_token }}'},  //防止post数据时报 csrf_token 403
+                    cache: false,
+                    success : function(msg) {
+                        if (msg.result){
+                            {#layer.alert('删除成功',{icon: 1});#}
+                            oDataTable.ajax.reload();
+                        }else{
+                            //alert(msg.message);
+                            layer.alert('删除失败', {icon: 2});
+                        }
+                        return ;
+                    }
+                });
+            }
+        });
+    }
 </script>
+    <script>
+        $(function () {
+            //Initialize Select2 Elements
+            $(".select2").select2();
+        });
+    </script>
 {% endblock %}

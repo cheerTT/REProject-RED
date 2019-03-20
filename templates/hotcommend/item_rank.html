@@ -1,6 +1,6 @@
-{# @Time    : 2019/3/10 19:48#}
-{# @Author  : Sutrue#}
-{# @Remark  : 热门推荐增加页}
+<!--@Time    : 2019/3/10 19:48-->
+<!--@Author  : Sutrue#}-->
+<!--@Remark  : 热门推荐增加页}-->
 
 {% extends 'base-layer.html' %}
 {% load staticfiles %}
@@ -20,29 +20,48 @@
 {% endblock %}
 
 {% block main %}
-
         <div id="devlist">
             <div class="box box-primary" id="liebiao">
                 <div class="box-header">
-                    <div align="center">
-                        <div class="btn-group">
-                            <button class="btn">昨日</button>
-                            <button class="btn">近三天</button>
-                            <button class="btn">近一周</button>
+                    <form class="form-inline" id="queryForm">
+                        <div class="form-group searchArea margin-r-5 margin-top-5">
+                            <label>商品编号：</label>
+                            <input type="text" name="assin" class="form-control inputText" id="assin">
                         </div>
-{#                        <button type="button" id="btnSave" class="btn btn-info margin-right ">确定</button>#}
-                    </div>
-
+                                        <!--<div class="form-group searchArea margin-r-5 margin-top-5">-->
+                                            <!--<label>商品品牌：</label>-->
+                                            <!--<input type="text" name="brand" class="form-control inputText" id="brand">-->
+                                        <!--</div>-->
+                        <button type="button" id="btnCommoditySearch" class="btn btn-default">
+                            <i class="glyphicon glyphicon-search"></i>查询
+                        </button>
+                        <!--<div class="btn-group nav nav-pills pull-right">-->
+                            <!--<button class="btn" name="setdate" id="setdate">近三天</button>-->
+                            <!--<button class="btn" name="setdate" id="setdate">近一周</button>-->
+                            <!--<button class="btn" name="setdate" id="setdate">近一月</button>-->
+                        <!--</div>-->
+<!--{#                        <div class="box-header">#}-->
+<!--{#                            <div align="right">#}-->
+<!--{#                                <div class="btn-group">#}-->
+<!--{#                                    <button class="btn" name="setdate" id="setdate">近三天</button>#}-->
+<!--{#                                    <button class="btn" name="setdate" id="setdate">近一周</button>#}-->
+<!--{#                                    <button class="btn" name="setdate" id="setdate">近一月</button>#}-->
+<!--{#                                </div>#}-->
+        <!--{#                        <button type="button" id="btnSave" class="btn btn-info margin-right ">确定</button>#}-->
+<!--{#                            </div>#}-->
+<!--{#                        </div>#}-->
+                    </form>
                 </div>
             </div>
         </div>
         <section class="content">
-{#                <div class="box-body">#}
+                <!--<div class="box-body">-->
                     <table id="dtbList" class="display" cellspacing="0" width="100%">
                         <thead>
                         <tr>
                             <th><input type="checkbox" id="checkAll"></th>
                             <th>商品ID</th>
+                            <th>商品名称</th>
                             <th>商品销量</th>
                             <th>添加推荐</th>
                         </tr>
@@ -50,7 +69,7 @@
                         <tbody>
                         </tbody>
                     </table>
-{#                </div>#}
+                <!--</div>-->
         </section>
 
 
@@ -85,24 +104,27 @@
                     ajax : {
                         "url":"{% url 'hotcommend:item_rank' %}",
                         "data":function ( d ) {
-                            d.item_id=$("#item_id").val();
-                            d.counts=$("#counts").val();
+                            d.assin=$("#assin").val();
                         }
                     },
                     columns : [
                         DATATABLES_CONSTANT.DATA_TABLES.COLUMN.CHECKBOX,
                         {
-                            data : "item_id",
+                            data : "assin",
+
                         },
                         {
-                            data : "counts",
+                            data : "title",
                         },
                         {
-                            data : "item_id",
+                            data : "sales_count",
+                        },
+                        {
+                            data : "assin",
                             width : "10%",
                             bSortable : "false",
                             render : function(data, type, row, meta) {
-                                var ret="<button onclick='doAdd(\"" + data + "\")'><i class='glyphicon glyphicon-plus'></i></button>";
+                                var ret="<button onclick='doAdd(\"" + data +"\")'><i class='glyphicon glyphicon-plus'></i></button>";
                                 return ret;
                             }
                         }],
@@ -133,27 +155,41 @@
 
         });
 
-{#        function doAdd(item_id) {#}
-{#            alert("asdafs");#}
-{#            $.ajax({#}
-{#                type: "POST",#}
-{#                url: "{% url 'hotcommend:hot_add' %}",#}
-{#                data: {"item_id": item_id, csrfmiddlewaretoken: '{{ csrf_token }}'},  //防止post数据时报 csrf_token 403#}
-{#                cache: false,#}
-                {#content: "{% url 'hotcommend:hot_add' %}" + '?id=' + item_id,#}
-{#                end: function () {#}
-{#                    //oDataTable.ajax.reload();#}
-{#                    window.location.reload();#}
-{#                    }#}
-{#                });#}
-                {#layer.full(div)#}
-{#            }#}
+        // $("#3days").click(function() {
+        //     $.ajax({
+        //         type: "POST",
+        //         url: "{% url 'hotcommend:item_rank' %}",
+        //         data: {"date": 3, csrfmiddlewaretoken: '{{ csrf_token }}'},  //防止post数据时报 csrf_token 403
+        //         cache: false,
+        //         });
+        //     oDataTable.ajax.reload();
+        // });
+        //
+        // $("#7days").click(function() {
+        //     $.ajax({
+        //         type: "POST",
+        //         url: "{% url 'hotcommend:item_rank' %}",
+        //         data: {"date": 7, csrfmiddlewaretoken: '{{ csrf_token }}'},  //防止post数据时报 csrf_token 403
+        //         cache: false,
+        //     });
+        //     oDataTable.ajax.reload();
+        // });
+        //
+        // $("#30days").click(function() {
+        //     $.ajax({
+        //         type: "POST",
+        //         url: "{% url 'hotcommend:item_rank' %}",
+        //         data: {"date": 30, csrfmiddlewaretoken: '{{ csrf_token }}'},  //防止post数据时报 csrf_token 403
+        //         cache: false,
+        //     });
+        //     oDataTable.ajax.reload();
+        // });
 
         function doAdd(id) {
-                    $.ajax({
+            $.ajax({
                         type: "POST",
                         url: "{% url 'hotcommend:to_hot_list' %}",
-                        data: {"item_id": id, csrfmiddlewaretoken: '{{ csrf_token }}'},  //防止post数据时报 csrf_token 403
+                        data: {"assin": id, csrfmiddlewaretoken: '{{ csrf_token }}'},  //防止post数据时报 csrf_token 403
                         cache: false,
                         success: function (msg) {
                             if (msg.result) {

@@ -5,12 +5,14 @@ from django.http import HttpResponse
 from django.contrib.auth import get_user_model
 from django.core.serializers.json import DjangoJSONEncoder
 from commodity.models import Commodity, CommodityType, Commodity_price
-from commodity.forms import CommodityCreateForm, CommodityUpdateForm, ImageUploadForm
+from commodity.forms import CommodityCreateForm, CommodityUpdateForm
 from utils.mixin_utils import LoginRequiredMixin
 import json
 import re
+import os
 from PIL import Image
 from django.views.decorators.csrf import csrf_exempt
+
 
 class CommodityView(LoginRequiredMixin, View):
     def get(self, request):
@@ -53,11 +55,14 @@ class CommodityListView(LoginRequiredMixin, View):
         #     filters['brand__icontains'] = request.GET['brand']
         if 'status' in request.GET and request.GET['status']:
             filters['status'] = request.GET['status']
-        ret = dict(data=list(Commodity.objects.filter(**filters).values(*fields)))
 
-        ret = json.dumps(ret, cls=DjangoJSONEncoder)
-        # for data in ret:
-        #     print(data['title'])
+        commodity_list = Commodity.objects.filter(**filters).values(*fields)
+        for commodity in commodity_list:
+            title = commodity['title']
+            if len(str(title)) > 50:
+                commodity['title'] = '{}...'.format(str(title)[0:50])
+
+        ret = json.dumps(dict(data=list(commodity_list)), cls=DjangoJSONEncoder)
 
         return HttpResponse(ret, content_type='application/json')
 
@@ -73,7 +78,6 @@ class CommodityCreateView(LoginRequiredMixin, View):
         :param request:
         :return:跳转到添加商品页面
         '''
-        print("1111111111111111111111111111111111111111")
         ret = dict()
         status_list = []
         for status in Commodity.commodity_status:
@@ -85,8 +89,9 @@ class CommodityCreateView(LoginRequiredMixin, View):
         return render(request, 'commodity/commodity_create.html', ret)
 
     def post(self, request):
+        print("图片路径：", request.POST['imUrl'])
         res = dict()
-        commodity_create_form = CommodityCreateForm(request.POST)
+        commodity_create_form = CommodityCreateForm(request.POST, request.FILES)
         if commodity_create_form.is_valid():
             commodity_create_form.save()
             res['status'] = 'success'
@@ -145,21 +150,58 @@ class CommodityUpdateView(LoginRequiredMixin, View):
 
 class CommodityDeleteView(LoginRequiredMixin, View):
     '''
-    删除商品视图
-    '''
-
-    def post(self, request):
-        '''
 
         :param request:
         :return: 返回商品删除成功信息
-        '''
+    '''
+
+    def post(self, request):
+        print("delete:")
         ret = dict(result=False)
         if 'id' in request.POST and request.POST['id']:
             id_list = map(int, request.POST.get('id').split(','))
             Commodity.objects.filter(id__in=id_list).delete()
 
         ret['result'] = True
+        return HttpResponse(json.dumps(ret), content_type='application/json')
+
+
+class CommodityEnableView(LoginRequiredMixin, View):
+    '''
+       上架商品视图
+    '''
+
+    def post(self, request):
+        '''
+        post方法
+        :param request: 页面的request请求
+        :return: 返回商品上架成功的信息
+        '''
+        if 'id' in request.POST and request.POST['id']:
+            id_nums = request.POST.get('id')
+            queryset = Commodity.objects.extra(where=["id IN(" + id_nums + ")"])
+            queryset.filter(status='0').update(status='1')
+            ret = {'result': 'True'}
+        return HttpResponse(json.dumps(ret), content_type='application/json')
+
+
+class CommodityDisableView(LoginRequiredMixin, View):
+    '''
+    下架商品视图
+    '''
+
+    def post(self, request):
+        '''
+
+        :param request:
+        :return: 返回商品下架成功信息
+        '''
+
+        if 'id' in request.POST and request.POST['id']:
+            id_nums = request.POST.get('id')
+            queryset = Commodity.objects.extra(where=["id IN(" + id_nums + ")"])
+            queryset.filter(status='1').update(status='0')
+            ret = {'result': 'True'}
         return HttpResponse(json.dumps(ret), content_type='application/json')
 
 
@@ -183,28 +225,32 @@ class CommodityDetailView(LoginRequiredMixin, View):
 
 
 class UploadImageView(LoginRequiredMixin, View):
-    """
-    上传商品图片
-    """
+    '''
+        上传商品图片
+    '''
+
+    def get(self, request):
+        ret = dict()
+        assin = request.GET['assin']
+        categories = request.GET['categories']
+        ret['assin'] = assin
+        ret['categories'] = categories
+        print("Image get()")
+        return render(request, 'commodity/commodity_upload.html', ret)
 
     def post(self, request):
-        '''
-        :param request:
-        :return: 上传商品图片
-        '''
-
-        # File = request.FILES.get("myImage")
-        # print("上传一下啊！")
-        # print(request.POST['assin'])
-        # path = "/media/commImage/" + request.POST['categories'] + "/" + request.POST['assin'] + ".jpg"
-        # print(path)
-        # with open(path, 'wb+') as f:
-        #     # 分块写入文件
-        #     for chunk in File.chunks():
-        #         f.write(chunk)
-        ret = dict(result=False)
-        image_form = ImageUploadForm(request.POST, request.FILES)
-        if image_form.is_valid():
-            image_form.save()
-            ret['result'] = True
-        return HttpResponse(json.dumps(ret), content_type='application/json')
+        res = dict(status='fail')
+        File = request.FILES.get("file_content")
+        # File = request.FILES.get("image")
+        print(File.name)
+        accessory_dir = "media/commImage/" + request.POST['categories']
+        if not os.path.isdir(accessory_dir):  # 判断是否有这个目录，没有就创建
+            os.mkdir(accessory_dir)
+        filename = accessory_dir + "/" + request.POST['assin'] + ".jpg"
+        print(filename)
+        with open(filename, 'wb+') as f:
+            # 分块写入文件
+            for chunk in File.chunks():
+                f.write(chunk)
+        res['status'] = 'success'
+        return HttpResponse(json.dumps(res, cls=DjangoJSONEncoder), content_type='application/json')

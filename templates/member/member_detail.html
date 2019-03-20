@@ -33,30 +33,36 @@
                   <button type="button" class="btn btn-primary btn-sm" title="返回" id="btnReturn">
                       <i class="fa fa-undo">返回</i>
                   </button>
-
                 </div>
            </div>
 
                <div class="table-responsive mailbox-messages">
                   <table class="table" id="tbWorkList"  style="white-space: nowrap;">
                     <tbody>
+                        <tr>
+                            <li>
+                                <a target="_blank">
+                                <span class="mailbox-attachment-icon has-img"><img align="left" id="avatarUrl" src="{{member.avatarUrl}}" alt=""></span>
+                                </a>
+                            </li>
+                        </tr>
                         <tr class="info">
                             <td width="10%"><strong>用户id</strong></td>
                             <td class="text-left">{{ member.id }}</td>
                             <td><strong>注册时间</strong></td>
-                            <td>{{ member.joined_date2 }}</td>
+                            <td id="joined_date2">{{ member.joined_date2 }}</td>
                         </tr>
                         <tr>
                             <td><strong>昵称</strong></td>
-                            <td>{{ member.nickname }}</td>
-                            <td width="10%"><strong>性别</strong></td>
+                            <td id="nickname">{{ member.nickname }}</td>
+                            <td width="10%" id="gender"><strong>性别</strong></td>
                             <td class="text-left" id="gender">{{ member.get_gender_display }}</td>
                         </tr>
                         <tr class="info">
                             <td><strong>省</strong></td>
-                            <td>{{ member.province }}</td>
+                            <td id="province">{{ member.province }}</td>
                             <td><strong>市</strong></td>
-                            <td>{{ member.city }}</td>
+                            <td id="city">{{ member.city }}</td>
                         </tr>
                         <tr>
                             <td><strong>用户类型</strong></td>
@@ -67,7 +73,7 @@
                         <tr class="info">
 
                             <td><strong>上次登录时间</strong></td>
-                            <td>{{ member.last_login_date }}</td>
+                            <td id="last_login_time">{{ member.last_login_date }}</td>
                              <td><strong>加入人脸时间</strong></td>
                             <td>{{ member.joined_date1 }}</td>
                         </tr>
@@ -75,26 +81,32 @@
                   </table>
                 </div>
                <br>
-               <div class="box-footer">
-                  <ul class="mailbox-attachments clearfix">
-
-                    <li>
-                      <a href="{{member.avatarUrl}}" target="_blank">
-                        <span class="mailbox-attachment-icon has-img"><img src="/media/{{ member.pic_name }}" alt=""></span>
-                      </a>
-                    </li>
-                      <li>
-                      <a href="/media/image/{{ member.pic_name }}" target="_blank">
-                        <span class="mailbox-attachment-icon has-img"><img src="/media/{{ member.pic_name }}" alt=""></span>
-                      </a>
-                    </li>
-
-                  </ul>
-                </div>
             <!-- /.box-footer -->
             </div>
             <!-- /.box-body -->
           </div>
+          <div class="box-body">
+              <div class="row">
+                  <div class="col-md-8">
+                      <div id="pie_container" style="height: 600px; width: 1100px;"></div>
+                  </div>
+                  <div class="col-md-4">
+                      <div id="polygon" style="height: 600px; width: auto"></div>
+                  </div>
+           </div>
+            <!-- 为 ECharts 准备一个具备大小（宽高）的 DOM -->
+          <div class="panel panel-default">
+              <div class="panel-heading">
+                <h3 class="panel-title">用户标签</h3>
+              </div>
+              <div class="panel-body">
+                  {% for key,value in boughtitemdict.items %}
+                      {% if value.value >= 2  %}
+                            <span class="label label-primary">{{ value.label }}</span>
+                       {% endif %}
+                {% endfor %}
+          </div>
+        </div>
       </div>
         <!-- /.col -->
      <!-- TO DO List -->
@@ -109,9 +121,24 @@
 
 {% block javascripts %}
   <script src="{% static 'js/plugins/layer/layer.js' %}"></script>
+    <script type="text/javascript" src="../../static/plugins/echarts/echarts.min.js"></script>
   <script type="text/javascript">
   	$(function() {
 	    $('#ADM-ASSET').addClass('active');
+
+	    if(document.getElementById('nickname').innerText == ''){
+            document.getElementById('nickname').innerText = '暂无'}
+        if(document.getElementById("province").innerText == ''){
+            document.getElementById('province').innerText = '暂无'}
+        if(document.getElementById("city").innerText == ''){
+            document.getElementById('city').innerText = '暂无'}
+        if(document.getElementById("joined_date2").innerText == 'None'){
+            document.getElementById('joined_date2').innerText = '2019年1月1日'}
+
+        if($("#avatarUrl").attr('src')=='None'){
+            $("#avatarUrl").attr('src', '/static/media/image/default_avatar.jpg');
+        }
+
 
 	});
   	//返回
@@ -119,8 +146,350 @@
 		history.back();
 	});
 
-    $("#gender").innerText="sss"
+
+
+var mypieChart = echarts.init(document.getElementById('pie_container'));
+var mypolygon = echarts.init(document.getElementById('polygon'));
+
+
+var labelTop = {
+    normal : {
+        label : {
+            show : true,
+            position : 'center',
+            formatter : '{b}',
+            textStyle: {
+                baseline : 'bottom'
+            }
+        },
+        labelLine : {
+            show : false
+        }
+    }
+};
+var labelFromatter = {
+    normal : {
+        label : {
+            formatter : function (params){
+                return 100 - params.value + '%'
+            },
+            textStyle: {
+                baseline : 'top'
+            }
+        }
+    },
+}
+var labelBottom = {
+    normal : {
+        color: '#ccc',
+        label : {
+            show : true,
+            position : 'center'
+        },
+        labelLine : {
+            show : false
+        }
+    },
+    emphasis: {
+        color: 'rgba(0,0,0,0)'
+    }
+};
+var radius = [40, 55];
+option = {
+    legend: {
+        x : 'center',
+        y : 'center',
+        data:[
+            '有娃','美妆','美食','电子','办公用品',
+            '宠物用品', '运动户外', '家用厨具'
+        ]
+    },
+    title : {
+        text: '用户购买详情',
+        subtext: '截至至最近一次购买',
+        x: 'center'
+    },
+    toolbox: {
+        show : true,
+        feature : {
+            dataView : {show: true, readOnly: false},
+            magicType : {
+                show: true,
+                type: ['pie', 'funnel'],
+                option: {
+                    funnel: {
+                        width: '20%',
+                        height: '30%',
+                        itemStyle : {
+                            normal : {
+                                label : {
+                                    formatter : function (params){
+                                        return 'other\n' + params.value + '%\n'
+                                    },
+                                    textStyle: {
+                                        baseline : 'middle'
+                                    }
+                                }
+                            },
+                        }
+                    }
+                }
+            },
+            restore : {show: true},
+            saveAsImage : {show: true}
+        }
+    },
+    series : [
+        {
+            type : 'pie',
+            center : ['10%', '30%'],
+            radius : radius,
+            x: '0%', // for funnel
+            itemStyle : labelFromatter,
+            data : [
+                {name:'other', value:{{ sum_of_boughtitem }} - {{boughtitemdict.Baby.value}}, itemStyle : labelBottom},
+                {name:'有娃', value:{{boughtitemdict.Baby.value}},itemStyle : labelTop}
+            ]
+        },
+        {
+            type : 'pie',
+            center : ['30%', '30%'],
+            radius : radius,
+            x:'20%', // for funnel
+            itemStyle : labelFromatter,
+            data : [
+                {name:'other', value:{{ sum_of_boughtitem }} - {{boughtitemdict.Beauty.value}} , itemStyle : labelBottom},
+                {name:'美妆', value:{{boughtitemdict.Beauty.value}},itemStyle : labelTop}
+            ]
+        },
+        {
+            type : 'pie',
+            center : ['50%', '30%'],
+            radius : radius,
+            x:'40%', // for funnel
+            itemStyle : labelFromatter,
+            data : [
+                {name:'other', value:{{ sum_of_boughtitem }} - {{boughtitemdict.Grocery_and_Gourmet_Food.value}}, itemStyle : labelBottom},
+                {name:'美食', value:{{boughtitemdict.Grocery_and_Gourmet_Food.value}},itemStyle : labelTop}
+            ]
+        },
+        {
+            type : 'pie',
+            center : ['70%', '30%'],
+            radius : radius,
+            x:'60%', // for funnel
+            itemStyle : labelFromatter,
+            data : [
+                {name:'other', value:{{ sum_of_boughtitem }} - {{boughtitemdict.Electronics.value}}, itemStyle : labelBottom},
+                {name:'电子', value:{{boughtitemdict.Electronics.value}},itemStyle : labelTop}
+            ]
+        },
+        {
+            type : 'pie',
+            center : ['90%', '30%'],
+            radius : radius,
+            x:'80%', // for funnel
+            itemStyle : labelFromatter,
+            data : [
+                {name:'other', value:{{ sum_of_boughtitem }} - {{boughtitemdict.Office_Products.value}}, itemStyle : labelBottom},
+                {name:'办公用品', value:{{boughtitemdict.Office_Products.value}},itemStyle : labelTop}
+            ]
+        },
+        {
+            type : 'pie',
+            center : ['10%', '70%'],
+            radius : radius,
+            y: '55%',   // for funnel
+            x: '0%',    // for funnel
+            itemStyle : labelFromatter,
+            data : [
+                {name:'other', value:{{ sum_of_boughtitem }} - {{boughtitemdict.Pet_Supplies.value}}, itemStyle : labelBottom},
+                {name:'宠物用品', value:{{boughtitemdict.Pet_Supplies.value}},itemStyle : labelTop}
+            ]
+        },
+        {
+            type : 'pie',
+            center : ['30%', '70%'],
+            radius : radius,
+            y: '55%',   // for funnel
+            x:'20%',    // for funnel
+            itemStyle : labelFromatter,
+            data : [
+                {name:'other', value:{{ sum_of_boughtitem }} -{{boughtitemdict.Sports_and_Outdoors.value}}, itemStyle : labelBottom},
+                {name:'运动户外', value:{{boughtitemdict.Sports_and_Outdoors.value}},itemStyle : labelTop}
+            ]
+        },
+        {
+            type : 'pie',
+            center : ['50%', '70%'],
+            radius : radius,
+            y: '55%',   // for funnel
+            x:'40%', // for funnel
+            itemStyle : labelFromatter,
+            data : [
+                {name:'other', value:{{ sum_of_boughtitem }} - {{boughtitemdict.Home_and_Kitchen.value}}, itemStyle : labelBottom},
+                {name:'家用厨具', value:{{boughtitemdict.Home_and_Kitchen.value}},itemStyle : labelTop}
+            ]
+        },
+
+
+    ]
+};
+
+
+option2 = {
+    title: {
+        text: '基础雷达图'
+    },
+    tooltip: {},
+    legend: {
+        data: [ '实际开销（Actual Spending）']
+    },
+    radar: {
+        // shape: 'circle',
+        name: {
+            textStyle: {
+                color: '#fff',
+                backgroundColor: '#999',
+                borderRadius: 3,
+                padding: [3, 5]
+           }
+        },
+        indicator: [
+           { name: '消费能力', max: 200},
+           { name: '购物频率', max: 20},
+           { name: '购物偏向性', max: 1},
+           { name: '购物评分', max: 5},
+           { name: '年龄', max: 80},
+        ]
+    },
+    series: [{
+        name: '开销（Budget vs spending）',
+        type: 'radar',
+        // areaStyle: {normal: {}},
+        data : [
+             {
+                value : [{{sum_of_price}}, {{ sum_of_boughtitem}}, {{ rate_of_type }}, {{ ave_of_ratings }}, {{ predict_age }}],
+                name : '实际开销（Actual Spending）'
+            }
+        ]
+    }]
+};
+mypolygon.setOption(option2);
+
+
+option3 = {
+    tooltip: {
+        trigger: 'item',
+        formatter: "{a} <br/>{b}: {c} ({d}%)"
+    },
+    legend: {
+        orient: 'vertical',
+        x: 'left',
+        data:['女性偏好','美食','男性偏好','家庭','宝宝用品','美妆','美食','电子','办公用品',
+             '运动户外','宠物用品', '家用厨具']
+    },
+    series: [
+        {
+            name:'访问来源',
+            type:'pie',
+            selectedMode: 'single',
+            radius: [0, '30%'],
+
+            label: {
+                normal: {
+                    position: 'inner'
+                }
+            },
+            labelLine: {
+                normal: {
+                    show: false
+                }
+            },
+            data:[
+                {value:{{ boughtitemdict.Baby.value }}+{{ boughtitemdict.Beauty.value }}
+                    , name:'女性偏好', selected:true},
+                {value:{{ boughtitemdict.Grocery_and_Gourmet_Food.value}}
+                    , name:'美食', selected:true},
+                {value:{{ boughtitemdict.Electronics.value }}+ {{ boughtitemdict.Office_Products.value }}+{{ boughtitemdict.Sports_and_Outdoors.value }},name:'男性偏好'},
+                {value:{{ boughtitemdict.Pet_Supplies.value }} + {{ boughtitemdict.Home_and_Kitchen.value }}, name:'家庭'}
+            ]
+        },
+        {
+            name:'数值统计',
+            type:'pie',
+            radius: ['40%', '55%'],
+            label: {
+                normal: {
+                    formatter: '{a|{a}}{abg|}\n{hr|}\n  {b|{b}：}{c}  {per|{d}%}  ',
+                    backgroundColor: '#eee',
+                    borderColor: '#aaa',
+                    borderWidth: 1,
+                    borderRadius: 4,
+                    // shadowBlur:3,
+                    // shadowOffsetX: 2,
+                    // shadowOffsetY: 2,
+                    // shadowColor: '#999',
+                    // padding: [0, 7],
+                    rich: {
+                        a: {
+                            color: '#999',
+                            lineHeight: 22,
+                            align: 'center'
+                        },
+                        // abg: {
+                        //     backgroundColor: '#333',
+                        //     width: '100%',
+                        //     align: 'right',
+                        //     height: 22,
+                        //     borderRadius: [4, 4, 0, 0]
+                        // },
+                        hr: {
+                            borderColor: '#aaa',
+                            width: '100%',
+                            borderWidth: 0.5,
+                            height: 0
+                        },
+                        b: {
+                            fontSize: 16,
+                            lineHeight: 33
+                        },
+                        per: {
+                            color: '#eee',
+                            backgroundColor: '#334455',
+                            padding: [2, 4],
+                            borderRadius: 2
+                        }
+                    }
+                }
+            },
+            data:[
+                {value:{{ boughtitemdict.Baby.value }}, name:'宝宝用品'},
+                {value:{{ boughtitemdict.Beauty.value }}, name:'美妆'},
+                {value:{{ boughtitemdict.Grocery_and_Gourmet_Food.value }}, name:'美食'},
+                {value:{{ boughtitemdict.Electronics.value }}, name:'电子'},
+                {value:{{ boughtitemdict.Office_Products.value }}, name:'办公用品'},
+                {value:{{ boughtitemdict.Sports_and_Outdoors.value }}, name:'运动户外'},
+                {value:{{ boughtitemdict.Pet_Supplies.value }}, name:'宠物用品'},
+                {value:{{ boughtitemdict.Home_and_Kitchen.value }}, name:'家用厨具'}
+            ]
+        }
+    ]
+};
+mypieChart.setOption(option3);
+
+
+
+
 
 </script>
+
+
+
+
+
+
+
+
 
 {% endblock %}

@@ -12,5 +12,8 @@ urlpatterns = [
     url(r'^hotcommend/hot_list$', views.HotAdd.as_view(), name='hot_add'),
     url(r'hotcommend/to_hot_list', views.ToTheList.as_view(), name='to_hot_list'),
     url(r'^hotcommend/hot_delete', views.HotDeleteView.as_view(), name='hot_delete'),
+    url(r'^hotcommend/increase_rate', views.IncreaseRateView.as_view(), name='increase_rate'),
+
+    # url(r'^hotcommend/item_rank', views.ChooseDays.as_view(), name='choose_days'),
     # url(r'^hotcommend/item_rank/$', views.SalesQuery.as_view(), name='sales_query'),
 ]

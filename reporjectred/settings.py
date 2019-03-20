@@ -33,6 +33,7 @@ ALLOWED_HOSTS = ['*']
 # Application definition
 
 INSTALLED_APPS = [
+    'django.contrib.sites',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -46,8 +47,10 @@ INSTALLED_APPS = [
     'apps.recommendations.apps.RecommendationsConfig',
     'apps.hotcommend.apps.HotCommendConfig',
     'apps.api.apps.ApiConfig',
-
+    'apps.order.apps.OrderConfig',
+    'apps.comment.apps.CommentConfig',
 ]
+SITE_ID = 1
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -98,11 +101,25 @@ DATABASES = {
         'HOST': '139.219.2.134',
         'USER': 'root',
         'PASSWORD': 'Jincan.4943198',
-
         'PORT': '3306'
     }
 }
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.mysql',
+#         'NAME': 'reprojectred',
+#         'HOST': '127.0.0.1',
+#         'USER': 'root',
+#         'PASSWORD': 'root',
+#         'PORT': '3306'
+#     }
+# }
+
+if 'test' in sys.argv:
+    DATABASES['default'] = {
+        'ENGINE': 'django.db.backends.sqlite3',
+    }
 
 # Password validation
 # https://docs.djangoproject.com/en/1.11/ref/settings/#auth-password-validators
@@ -173,9 +190,10 @@ MINSIZE =20  # minimum size of face
 THRESHOLD = [0.6, 0.7, 0.7]  # three steps's threshold
 FACTOR =0.709  # scale factor
 MODELPATH = BASE_DIR + os.sep + 'facenet' + os.sep + '20180402-114759'
+# MODELPATH = BASE_DIR + os.sep + 'facenet' + os.sep + '20180408-102900'
 
 MAX_CONTENT_LENGTH = 16 * 1024 * 1024 # 图片最大为16M
-MAX_DISTINCT = 1.00 #设置最大的相似距离，1.22是facenet基于lfw计算得到的
+MAX_DISTINCT = 0.90 #设置最大的相似距离，1.22是facenet基于lfw计算得到的
 
 APPID = 'wx56291ba66ff53a69'
 SECRET = 'f4ecc5552da2ce4241d7fe083da90592'
