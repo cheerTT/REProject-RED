@@ -46,8 +46,8 @@ INSTALLED_APPS = [
     'apps.recommendations.apps.RecommendationsConfig',
     'apps.hotcommend.apps.HotCommendConfig',
     'apps.api.apps.ApiConfig',
-    'apps.order.apps.OrderConfig'
-
+    'apps.order.apps.OrderConfig',
+    'apps.comment.apps.CommentConfig'
 ]
 
 MIDDLEWARE = [

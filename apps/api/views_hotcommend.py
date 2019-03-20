@@ -28,7 +28,7 @@ class HotCommodityView(View):
         p = int(request.GET['p'])
         page_size = 10
 
-        hot_commodity = hot_list.objects.values(*fields)
+        hot_commodity = hot_list.objects.values(*fields).order_by("id")
 
         paginator = Paginator(hot_commodity, page_size)
         # print("hottttttttttttttttttttttt")
