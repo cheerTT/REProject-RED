@@ -4,7 +4,7 @@
 
 
 from django.db import models
-
+import django.utils.timezone as timezone
 
 
 # 商品类别表
@@ -36,8 +36,8 @@ class Commodity(models.Model):
     # imUrl = models.ImageField(upload_to="commImage",default="commImage/default.jpg")
     imUrl = models.CharField(max_length=1000, blank=True, null=True)
     brand = models.CharField(max_length=1000, blank=True, null=True)
-    buyDate = models.DateTimeField('商品购买日期', blank=True, null=True)
-    warrantyDate = models.DateTimeField('商品保质日期', blank=True, null=True)
+    buyDate = models.DateTimeField('商品购买日期', blank=True, null=True,default = timezone.now)
+    warrantyDate = models.DateTimeField('商品保质日期', blank=True, null=True,default = timezone.now)
     status = models.CharField(choices=commodity_status, max_length=20, default="1", verbose_name="商品的状态")
 
 
