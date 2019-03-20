@@ -9,8 +9,8 @@
     "pages/my/order_list",
     "pages/my/creditList",
     "pages/my/commentList",
-    "pages/my/index",
-
+    "pages/my/comment",
+    "pages/my/index"
 
   ],
   "window": {
