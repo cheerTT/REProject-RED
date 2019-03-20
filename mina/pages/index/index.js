@@ -59,6 +59,7 @@ Page({
   },
   checkLogin: function(){
       var that = this;
+      var app = getApp();
       wx.login({
           success: function (res) {
             if (!res.code) {
@@ -74,8 +75,10 @@ Page({
 
               data: {'code': res.code, 'codeVerify': that.data.codeVerify},
                 success: function (res) {
+                  console.log(res.data)
                   if (res.data.code != 200) {
                     console.log('regflag = false');
+                    
                     app.alert({'content': '您还不是会员，赶快到店里获取会员码吧！'})
                     that.setData({
                       
@@ -83,6 +86,9 @@ Page({
                     });
                     return;
                   }
+                  console.log(app.globalData.user_id)
+                  getApp().globalData.user_id =  res.data.user_id
+                  console.log(getApp().globalData.user_id)
                   app.setCache("token", res.data.data.token);
                   that.goToIndex();
                 }
