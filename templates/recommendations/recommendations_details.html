@@ -1,0 +1,353 @@
+<!--
+# @Time    : 2019/3/6 20:00
+# @Author  : Virus
+# @Remark  :
+
+-->
+
+{% extends "base-left.html" %}
+{% load staticfiles %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'js/plugins/layer/skin/layer.css' %}">
+{% endblock %}
+
+{% block content %}
+
+
+    <!-- Main content -->
+
+  <section class="content">
+       <div class="box-body">
+                    <div class="row">
+                            <div class="col-md-8">
+                               <div id="pie_container" style="height: 500px; width: 1248px;"></div>
+                            </div>
+                        </div>
+
+                </div>
+
+              <div class="panel panel-default">
+          <div class="panel-heading">
+            <h3 class="panel-title">用户标签</h3>
+          </div>
+          <div class="panel-body">
+                       <div class="bs-example" data-example-id="label-variants">
+                           <span class="label label-default">Default</span>
+                            <span class="label label-primary">Primary</span>
+                            <span class="label label-success">Success</span>
+                            <span class="label label-info">Info</span>
+                            <span class="label label-warning">Warning</span>
+                            <span class="label label-danger">Danger</span>
+                    </div>
+          </div>
+        </div>
+      <div class="row">
+       <div class="col-md-12">
+        <div class="box box-primary">
+            <div class="box-header with-border">
+
+              <div class="box-tools">
+                <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
+                </button>
+              </div>
+            </div>
+            <div class="box-body no-padding">
+                <div class="btn-group pull-right margin-b-10 margin-r-5">
+
+                  <button type="button" class="btn btn-primary btn-sm" title="返回" id="btnReturn">
+                      <i class="fa fa-undo"> 返回</i>
+                  </button>
+
+                </div>
+           </div>
+            <div class="panel panel-primary">
+              <div class="panel-heading">
+                <h3 class="panel-title">商品推荐详情</h3>
+              </div>
+              <div class="panel-body">
+                <div class="row">
+                    <div class="col-lg-4">
+                      <img class="img-circle" src="/media/{{ commodity_1.imUrl }}" alt="Generic placeholder image" width="140" height="140">
+                      <h2>{{ commodity_1.short_title }}</h2>
+                      <p>{{ commodity_1.short_description }}</p>
+                      <p><a class="btn btn-default" href="#" role="button" id = "btn1" onclick = 'doDetail({{ commodity_1.id }})'>View details »</a></p>
+                    </div><!-- /.col-lg-4 -->
+                    <div class="col-lg-4">
+                      <img class="img-circle" src="/media/{{ commodity_2.imUrl }}" alt="Generic placeholder image" width="140" height="140">
+                      <h2>{{ commodity_2.short_title }}</h2>
+                      <p>{{ commodity_2.short_description }}</p>
+                      <p><a class="btn btn-default" href="#" role="button" id="btn2" onclick = 'doDetail({{ commodity_2.id }})'>View details »</a></p>
+                    </div><!-- /.col-lg-4 -->
+                    <div class="col-lg-4">
+                      <img class="img-circle" src="/media/{{ commodity_3.imUrl }}" alt="Generic placeholder image" width="140" height="140">
+                      <h2>{{ commodity_3.short_title }}</h2>
+                      <p>{{ commodity_3.short_description }}</p>
+                      <p><a class="btn btn-default" href="#" role="button" id = "btn3" onclick = 'doDetail({{ commodity_3.id }})'>View details »</a></p>
+                    </div><!-- /.col-lg-4 -->
+
+                    <div class="col-lg-4">
+                      <img class="img-circle" src="/media/{{ commodity_4.imUrl }}" alt="Generic placeholder image" width="140" height="140">
+                      <h2>{{ commodity_4.short_title }}</h2>
+                      <p>{{ commodity_4.short_description }}</p>
+                      <p><a class="btn btn-default" href="#" role="button" id = "btn4" onclick = 'doDetail({{ commodity_4.id }})'>View details »</a></p>
+                    </div><!-- /.col-lg-4 -->
+
+                    <div class="col-lg-4">
+                      <img class="img-circle" src="/media/{{ commodity_5.imUrl }}" alt="Generic placeholder image" width="140" height="140">
+                      <h2>{{ commodity_5.short_title }}</h2>
+                      <p>{{ commodity_5.short_description }}</p>
+                      <p><a class="btn btn-default" href="#" role="button" id = "btn5" onclick = 'doDetail({{ commodity_5.id }})'>View details »</a></p>
+                    </div><!-- /.col-lg-4 -->
+                  </div>
+              </div>
+            </div>
+
+
+
+
+               <br>
+
+
+            <!-- /.box-footer -->
+            </div>
+            <!-- /.box-body -->
+          </div>
+      </div>
+        <!-- /.col -->
+     <!-- TO DO List -->
+
+          <!-- /.box -->
+
+    </section>
+
+    <!-- /.content -->
+
+{% endblock %}
+
+{% block javascripts %}
+  <script src="{% static 'js/plugins/layer/layer.js' %}"></script>
+    <script type="text/javascript" src="../../static/plugins/echarts/echarts.min.js"></script>
+
+  <script type="text/javascript">
+  	$(function() {
+	    $('#ADM-ASSET').addClass('active');
+
+	});
+  	//返回
+    $("#btnReturn").click(function(){
+		history.back();
+	});
+
+    function doDetail(id) {
+            window.location.href = "{% url 'commodity:detail' %}?id=" + id;
+    }
+
+    function doUpdate(id){
+	var div=layer.open({
+		type : 2,
+		title : '修改商品信息',
+		shadeClose : false,
+    	maxmin : true,
+		area : [ '800px', '580px' ],
+		content : "{% url 'commodity:update' %}"+'?id='+id,
+		end : function() {
+			//oDataTable.ajax.reload();
+            window.location.reload();
+
+		}
+	});
+	layer.full(div)
+}
+
+
+var mypieChart = echarts.init(document.getElementById('pie_container'));
+
+
+var labelTop = {
+    normal : {
+        label : {
+            show : true,
+            position : 'center',
+            formatter : '{b}',
+            textStyle: {
+                baseline : 'bottom'
+            }
+        },
+        labelLine : {
+            show : false
+        }
+    }
+};
+var labelFromatter = {
+    normal : {
+        label : {
+            formatter : function (params){
+                return 100 - params.value + '%'
+            },
+            textStyle: {
+                baseline : 'top'
+            }
+        }
+    },
+}
+var labelBottom = {
+    normal : {
+        color: '#ccc',
+        label : {
+            show : true,
+            position : 'center'
+        },
+        labelLine : {
+            show : false
+        }
+    },
+    emphasis: {
+        color: 'rgba(0,0,0,0)'
+    }
+};
+var radius = [40, 55];
+option = {
+    legend: {
+        x : 'center',
+        y : 'center',
+        data:[
+            '有娃','美妆','美食','电子','办公用品',
+            '宠物用品', '运动户外', '家用厨具'
+        ]
+    },
+    title : {
+        text: 'The App World',
+        subtext: 'from global web index',
+        x: 'center'
+    },
+    toolbox: {
+        show : true,
+        feature : {
+            dataView : {show: true, readOnly: false},
+            magicType : {
+                show: true,
+                type: ['pie', 'funnel'],
+                option: {
+                    funnel: {
+                        width: '20%',
+                        height: '30%',
+                        itemStyle : {
+                            normal : {
+                                label : {
+                                    formatter : function (params){
+                                        return 'other\n' + params.value + '%\n'
+                                    },
+                                    textStyle: {
+                                        baseline : 'middle'
+                                    }
+                                }
+                            },
+                        }
+                    }
+                }
+            },
+            restore : {show: true},
+            saveAsImage : {show: true}
+        }
+    },
+    series : [
+        {
+            type : 'pie',
+            center : ['10%', '30%'],
+            radius : radius,
+            x: '0%', // for funnel
+            itemStyle : labelFromatter,
+            data : [
+                {name:'other', value:1, itemStyle : labelBottom},
+                {name:'有娃', value:{{Baby}},itemStyle : labelTop}
+            ]
+        },
+        {
+            type : 'pie',
+            center : ['30%', '30%'],
+            radius : radius,
+            x:'20%', // for funnel
+            itemStyle : labelFromatter,
+            data : [
+                {name:'other', value:56, itemStyle : labelBottom},
+                {name:'美妆', value:{{Beauty}},itemStyle : labelTop}
+            ]
+        },
+        {
+            type : 'pie',
+            center : ['50%', '30%'],
+            radius : radius,
+            x:'40%', // for funnel
+            itemStyle : labelFromatter,
+            data : [
+                {name:'other', value:65, itemStyle : labelBottom},
+                {name:'美食', value:{{Grocery_and_Gourmet_Food}},itemStyle : labelTop}
+            ]
+        },
+        {
+            type : 'pie',
+            center : ['70%', '30%'],
+            radius : radius,
+            x:'60%', // for funnel
+            itemStyle : labelFromatter,
+            data : [
+                {name:'other', value:70, itemStyle : labelBottom},
+                {name:'电子', value:{{Electronics}},itemStyle : labelTop}
+            ]
+        },
+        {
+            type : 'pie',
+            center : ['90%', '30%'],
+            radius : radius,
+            x:'80%', // for funnel
+            itemStyle : labelFromatter,
+            data : [
+                {name:'other', value:73, itemStyle : labelBottom},
+                {name:'办公用品', value:{{Office_Products}},itemStyle : labelTop}
+            ]
+        },
+        {
+            type : 'pie',
+            center : ['10%', '70%'],
+            radius : radius,
+            y: '55%',   // for funnel
+            x: '0%',    // for funnel
+            itemStyle : labelFromatter,
+            data : [
+                {name:'other', value:78, itemStyle : labelBottom},
+                {name:'宠物用品', value:{{Pet_Supplies}},itemStyle : labelTop}
+            ]
+        },
+        {
+            type : 'pie',
+            center : ['30%', '70%'],
+            radius : radius,
+            y: '55%',   // for funnel
+            x:'20%',    // for funnel
+            itemStyle : labelFromatter,
+            data : [
+                {name:'other', value:78, itemStyle : labelBottom},
+                {name:'运动户外', value:{{Sports_and_Outdoors}},itemStyle : labelTop}
+            ]
+        },
+        {
+            type : 'pie',
+            center : ['50%', '70%'],
+            radius : radius,
+            y: '55%',   // for funnel
+            x:'40%', // for funnel
+            itemStyle : labelFromatter,
+            data : [
+                {name:'other', value:78, itemStyle : labelBottom},
+                {name:'家用厨具', value:{{Home_and_Kitchen}},itemStyle : labelTop}
+            ]
+        },
+
+
+    ]
+};
+mypieChart.setOption(option);
+</script>
+
+{% endblock %}
