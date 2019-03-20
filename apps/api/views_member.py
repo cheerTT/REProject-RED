@@ -176,10 +176,10 @@ class MemberInfoView(View):
     def get(self, request):
         ret={}
         ua = request.META.get("HTTP_AUTHORIZATION")
-        print("ua:",ua)
+        # print("ua:",ua)
 
         auth_cookie = WechatUtils.checkMemberLogin(request)
-        print('auth_cookie:',auth_cookie)
+        # print('auth_cookie:',auth_cookie)
 
         ret['id'] = auth_cookie.id
         ret['openid'] = auth_cookie.openid
