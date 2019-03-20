@@ -24,44 +24,75 @@ Page({
     },
     onLoad: function () {
         var that = this;
-
-        wx.request({
-          url: app.buildUrl('/recommendations/toprecommendations'),
-          header: app.getRequestHeader(),
-          method: 'get',
-          data: {
-          },
-          success: function (res) {
-            console.log(res.data.data),
-            that.setData({
-              toprecommendations: res.data.data
-            }
-            )
+        this.getHotCommodityList();
+        if (getApp().globalData.user_id == "not_user")
+        {
+          that.setData({
+            toprecommendations: this.goods.slice(0, 5)
+          })
+        }
+        else{
+          wx.request({
+            url: app.buildUrl('/recommendations/toprecommendations'),
+            header: app.getRequestHeader(),
+            method: 'get',
+            data: {
+            },
+            success: function (res) {
+              console.log(res.data.data),
+              that.setData({
+                toprecommendations: res.data.data
               }
-        
-        });
+              )
+                }
+
+          });
+        }
+
         wx.setNavigationBarTitle({
             title: app.globalData.shopName
         });
+        if (getApp().globalData.user_id == "not_user") {
+          that.setData({
 
-        that.setData({
-           
             categories: [
-                {id: 0, name: "爆款！！！"},
-                {id: 1, name: "猜你喜欢"},
+              { id: 0, name: "爆款！！！" },
             ],
             activeCategoryId: '0',
             //loadingMoreHidden: false
-        });
+          });
+        }
+        else{
+          that.setData({
+
+              categories: [
+                  {id: 0, name: "爆款！！！"},
+                  {id: 1, name: "猜你喜欢"},
+              ],
+              activeCategoryId: '0',
+              //loadingMoreHidden: false
+          });
+        }
     },
     onShow: function () {
       // this.getType();
+      var that = this
         this.setData({
           p: 1,
+          arpages:0,
           goods: [],
           loadingMoreHidden: true
         });
-        this.getHotCommodityList();
+      switch (that.data.activeCategoryId){
+        case'0':
+          this.getHotCommodityList();
+          break;
+        case'1':
+          this.getallrecommendations();
+          break;
+        default :
+      }
+        //this.getHotCommodityList();
 
       },
 
