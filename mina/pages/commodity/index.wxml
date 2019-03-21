@@ -18,8 +18,7 @@
     <scroll-view class="type-navbar" scroll-x="true">
       <view class="type-box" wx:for-items="{{categories}}" wx:key="id">
         <view id="{{item.id}}" class="type-navbar-item {{activeCategoryId == item.id ? 'type-item-on' : ''}}" bindtap="typeClick">
-
-          {{item.id}}
+          {{type[item.id]}}
         </view>
       </view>
     </scroll-view>

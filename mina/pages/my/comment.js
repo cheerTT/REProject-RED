@@ -2,7 +2,7 @@
 var app = getApp();
 Page({
     data: {
-        content: "很好，你已经引起了我的注意~~",
+        content: "~~",
         score: 5,
         order_sn: "",
         id: 0,
