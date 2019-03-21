@@ -12,21 +12,7 @@
     </view>
   </view>
 
-  <!--轮播图-->
-  <!--<view class="swiper-container">-->
-    <!--<swiper class="swiper_box" autoplay="{{autoplay}}" interval="{{interval}}" duration="{{duration}}" bindchange="swiperchange">-->
-      <!--<block wx:for="{{banners}}" wx:key="id">-->
-        <!--<swiper-item>-->
-          <!--<image bindtap="tapBanner" data-id="{{item.id}}" src="{{item.pic_url}}" class="slide-image" width="750rpx" height="562.5rpx" />-->
-        <!--</swiper-item>-->
-      <!--</block>-->
-    <!--</swiper>-->
-    <!--<view class="dots">-->
-      <!--<block wx:for="{{banners}}" wx:key="unique">-->
-        <!--<view class="dot{{index == swiperCurrent ? ' active' : ''}}"></view>-->
-      <!--</block>-->
-    <!--</view>-->
-  <!--</view>-->
+
   <!--分类展示-->
   <view class="type-container">
     <scroll-view class="type-navbar" scroll-x="true">

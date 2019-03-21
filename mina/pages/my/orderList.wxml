@@ -22,6 +22,7 @@
                             </view>
                             <view class="arow">
                                 <view class="goods-label"></view>
+                                <button bindtap="toCommentTap" data-id="{{itemGood.commodity_id}}" class="button">评价</button>
                                 <view class="goods-num">x {{itemGood.num}}</view>
                             </view>
                         </view>

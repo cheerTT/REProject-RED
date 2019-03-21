@@ -17,7 +17,7 @@ urlpatterns = [
     url(r'^member/info', views_member.MemberInfoView.as_view(), name="member-info"),
     url(r'^member/order', views_member.MemberOrderView.as_view(), name='member-order'),
     url(r'^member/credit_list', views_credit.CreditListView.as_view(), name='credit-list'),
-    url(r'^member/credit_share', views_credit.ShareView.as_view(), name='credit-share'),
+    url(r'^member/credit_share', csrf_exempt(views_credit.ShareView.as_view()), name='credit-share'),
 
     url(r'^commodity/comment_add', views_commodity.CommentAddView.as_view(), name='comment-add'),
     url(r'^commodity/search', views_commodity.CommoditySearchView.as_view(), name="commodity-search"),
