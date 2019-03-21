@@ -27,9 +27,6 @@ Page({
         this.getHotCommodityList();
         if (getApp().globalData.user_id == "not_user")
         {
-          that.setData({
-            toprecommendations: this.goods.slice(0, 5)
-          })
         }
         else{
           wx.request({
@@ -177,6 +174,14 @@ Page({
         default:
       }
     },
+    not_user_toprecommendations: function(){
+      var that = this
+      if (getApp().globalData.user_id == "not_user"){
+      that.setData({
+        toprecommendations: this.data.goods
+      })
+      }
+    },
     getallrecommendations: function () {
       var that = this;
       if (that.data.processing) {
@@ -238,13 +243,13 @@ Page({
         p: that.data.p,
       },
       success: function (res) {
-        console.log(res.data.data);
         var goods = res.data.data;
         that.setData({
           goods: that.data.goods.concat(goods),    //下拉增加商品
           p: that.data.p + 1,
           processing: false
         });
+        that.not_user_toprecommendations()
 
         if (res.data.has_more == false) {
           that.setData({

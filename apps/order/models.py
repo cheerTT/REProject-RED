@@ -18,5 +18,5 @@ class Transaction(models.Model):
         verbose_name_plural = verbose_name
         ordering = ["id"]
 
-    def __str__(self):
-        return self.id
+    # def __str__(self):
+    #     return self.id

@@ -123,32 +123,59 @@ class MemberDetailView(LoginRequiredMixin, View):
             member = get_object_or_404(Member, pk=request.GET.get('id'))
             ret['member'] = member
 
+
+
+
+
+
         boughtitems = Transaction.objects.filter(member_id=request.GET['id'])
         boughtitemkindlist = []
-
         boughtitemdict = {
-            'Baby': 0,
-            'Beauty': 0,
-            'Grocery_and_Gourmet_Food': 0,
-            'Electronics': 0,
-            'Office_Products': 0,
-            'Pet_Supplies': 0,
-            'Sports_and_Outdoors': 0,
-            'Home_and_Kitchen': 0,
+            'Baby': {'label':"有娃", 'value':0},
+            'Beauty': {'label':"爱美", 'value':0},
+            'Grocery_and_Gourmet_Food': {'label':"吃货", 'value':0},
+            'Electronics': {'label':"电子发烧友", 'value':0},
+            'Office_Products': {'label':"办公一族", 'value':0},
+            'Pet_Supplies': {'label':"家有宠物", 'value':0},
+            'Sports_and_Outdoors': {'label':"运动", 'value':0},
+            'Home_and_Kitchen': {'label':"家庭", 'value':0},
         }
 
+
         sum_of_boughtitem = len(boughtitems)
+        sum_of_price = 0
+        rate_of_type = 0
+        ave_of_ratings = 0
+        predict_age = 20
+
         for boughtitem in boughtitems:
             boughtitemkindlist.append(boughtitem.commodity.categories.type_name)
-            boughtitemdict[boughtitem.commodity.categories.type_name] += 1
-        print(boughtitemkindlist)
-        print(boughtitemdict)
+            boughtitemdict[boughtitem.commodity.categories.type_name]['value'] += 1
+            sum_of_price += boughtitem.commodity.present_price
+            ave_of_ratings += boughtitem.rating
 
-        for i in boughtitemdict:
-            ret[i] = boughtitemdict[i]
+
+        ave_of_ratings = ave_of_ratings / sum_of_boughtitem
+        current_max = 0
+        for key in boughtitemdict:
+            if(boughtitemdict[key]['value'] > current_max):
+                current_max = boughtitemdict[key]['value']
+        rate_of_type = current_max / sum_of_boughtitem
+
+
+
+        if(boughtitemdict['Baby']['value'] > 0):
+            predict_age += 10
 
         ret['sum_of_boughtitem'] = sum_of_boughtitem
         ret['boughtitemdict'] = boughtitemdict
+        ret['rate_of_type'] = rate_of_type
+        ret['ave_of_ratings'] = ave_of_ratings
+        ret['sum_of_price'] = sum_of_price
+        ret['predict_age'] = predict_age
+
+
+
 
         return render(request, 'member/member_detail.html', ret)
 
