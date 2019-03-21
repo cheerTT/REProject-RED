@@ -4,6 +4,8 @@
 from django.shortcuts import render
 import json
 from datetime import datetime, timedelta
+import operator
+import time
 import re
 
 from django.shortcuts import HttpResponse
@@ -14,6 +16,7 @@ from django.core.serializers.json import DjangoJSONEncoder
 from hotcommend.models import hot_list, transaction_record
 
 from django.db.models import Count
+from django.utils.safestring import mark_safe
 from itertools import chain
 
 class CommendView(LoginRequiredMixin, View):
@@ -21,8 +24,74 @@ class CommendView(LoginRequiredMixin, View):
     转入热门推荐页
     """
     def get(self, request):
+        now_time = datetime.now().strftime('%Y-%m-%d')
+        day_7_ago = (datetime.now() + timedelta(days=-7)).strftime('%Y-%m-%d')
+        day_14_ago = (datetime.now() + timedelta(days=-14)).strftime('%Y-%m-%d')
+        day_30_ago = (datetime.now() + timedelta(days=-30)).strftime('%Y-%m-%d')
+        ret = dict()
+        # ret['rates'] = mark_safe(list(transaction_record.objects.all().filter(assin='B004E4CCSQ').values('date').annotate(sales_count=Count('id')).
+        #                               filter(date__gte=day_30_ago, date__lte=now_time).order_by('date')))
 
-        return render(request, 'hotcommend/hot_list.html')
+        #最近一周的销量
+        recent7 = transaction_record.objects.all().values('assin').annotate(sales_count=Count('id')).filter(date__gte='2013-02-26', date__lte='2013-03-11').order_by('date')
+        recent14 = transaction_record.objects.all().values('assin').annotate(sales_count=Count('id')).filter(date__gte='2013-02-11', date__lte='2013-03-11').order_by('date')
+
+        inc = {}
+        for i in recent7:
+            for j in recent14:
+                if j['assin'] == i['assin']:
+                    try:
+                        inc[i['assin']] = i['sales_count'] / (j['sales_count'] - i['sales_count'])
+                        # inc.append([j['assin'], i['sales_count'] / (j['sales_count'] - i['sales_count'])])
+                    except ZeroDivisionError:
+                        pass
+                    break
+
+        sortInc = sorted(inc, key=lambda x:inc[x], reverse=True)[:6]
+
+        print(sortInc)
+
+
+        data = []
+        # 根据日期进行循环
+        begin = datetime.strptime("2013-02-11", "%Y-%m-%d")
+        end = datetime.strptime("2013-03-12", "%Y-%m-%d")
+        delta = timedelta(days=1)
+
+        for assin in sortInc:
+            data_sales = list(transaction_record.objects.all().filter(assin=assin).values('date').annotate(sales_count=Count('id')).
+                                     filter(date__gte='2013-02-11', date__lte='2013-03-11'))
+            aa = []
+            #去除日期的时分秒
+            for i in data_sales:
+                short = i['date'][:10]
+                aa.append(short)
+                i['date'] = short
+
+            #将没有销量的日期销量数定位0
+            d = begin
+            while d <= end:
+                da = str(d.strftime("%Y-%m-%d"))
+                if da not in aa:
+                    data_sales.append({'date': da, 'sales_count':0})
+                d += delta
+
+
+            data_sales = sorted(data_sales, key=lambda x:x['date'])
+            data.append([assin, data_sales])
+        ret['rates'] = mark_safe(data)
+        print(ret)
+        return render(request, 'hotcommend/hot_list.html', ret)
+
+
+    # def post(self, request):
+    #     #首先计算各商品每天的销量
+    #     ret = dict()
+    #     # ret['rates'] = list(transaction_record.objects.all().filter(assin='B000FEH8ME').values('assin', 'date'))
+    #     ret['rates'] = list(transaction_record.objects.all().filter(assin='B000FEH8ME').values('date').annotate(
+    #         sales_count=Count('id')))
+    #     print("ret",ret)
+    #     return HttpResponse(json.dumps(ret), content_type='application/json')
 
 
 #通过QuerySet的values方法来获取指定字段列的数据内容，转换QuerySet类型最终序列化成json串，返回数据访问接口
@@ -30,33 +99,6 @@ class ItemRank(LoginRequiredMixin, View):
     """
     统计商品销量
     """
-    # def post(self, request):
-    #     ret=dict()
-    #     global your_date
-    #     your_date = request.POST['date']
-    #     print("post: ", your_date)
-    #
-    #     now_time = datetime.now().strftime('%Y-%m-%d')
-    #     day_3_ago = (datetime.now() + timedelta(days=-3)).strftime('%Y-%m-%d')
-    #     day_7_ago = (datetime.now() + timedelta(days=-7)).strftime('%Y-%m-%d')
-    #     day_30_ago = (datetime.now() + timedelta(days=-30)).strftime('%Y-%m-%d')
-    #     choose_date = {'3': day_3_ago, '7': day_7_ago, '30': day_30_ago}
-    #
-    #     ret = transaction_record.objects.all().values('item_id').annotate(counts=Count('id')).filter(date__gte=choose_date[your_date], date__lte=now_time).order_by('-counts')[:50]
-    #     print(ret.values('id', 'item_id', 'date', 'user_id', 'rating'))
-    #
-    #     # 为每个物品添加对应的title
-    #     for item in ret:
-    #         a = Commodity.objects.filter(assin=item['item_id'])
-    #         try:
-    #             item['title'] = a.values('title')[0]['title']
-    #         except IndexError:
-    #             print("don't found: ", item['item_id'])
-    #
-    #     ret = dict(data=list(ret))
-    #     ret = json.dumps(ret, cls=DjangoJSONEncoder)
-    #     return HttpResponse(ret, content_type='application/json')
-
     def get(self, request):
         """
         按商品id统计指定时间内的商品销量，默认近7天的
@@ -89,7 +131,7 @@ class ItemRank(LoginRequiredMixin, View):
 
             #判断商品是否下架
             if status == '1':
-                sales_count = transaction_record.objects.all().filter(assin=request.GET['assin']).values('assin').annotate(sales_count=Count('id')).filter(date__gte='2000-02-11', date__lte=now_time)
+                sales_count = transaction_record.objects.all().filter(assin=request.GET['assin']).values('assin').annotate(sales_count=Count('id'))
                 try:
                     count = sales_count.values('sales_count')[0]['sales_count']
                 except IndexError:
