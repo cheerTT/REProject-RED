@@ -26,6 +26,9 @@ urlpatterns = [
     url(r'^commodity/commodity_list', views_commodity.CommodityListView.as_view(), name="commodity-list"),
     url(r'^commodity/commodity_info', views_commodity.CommodityInfoView.as_view(), name="commodity-info"),
     url(r'^commodity/commodity_comments', views_commodity.CommodityCommentsView.as_view(), name="commodity-comments"),
+    url(r'^commodity/cart_add', views_commodity.CartAddView.as_view(), name="cart-add"),
+    url(r'^commodity/cart_list', views_commodity.CartListView.as_view(), name="cart-list"),
+    url(r'^commodity/cart_del', csrf_exempt(views_commodity.CartDeltView.as_view()), name="cart-del"),
 
     url(r'^recommendations/toprecommendations', csrf_exempt(views_recommendations.TopRecommendationsView.as_view()), name="TopRecommendations"),
     url(r'^recommendations/allrecommendations', csrf_exempt(views_recommendations.AllRecommendationsView.as_view()),
