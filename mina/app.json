@@ -1,7 +1,6 @@
 {
   "pages": [
     "pages/index/index",
-    "pages/my/index",
     "pages/recommendations/index",
     "pages/commodity/index",
     "pages/commodity/info",
@@ -10,7 +9,8 @@
     "pages/my/orderList",
     "pages/my/commentList",
     "pages/my/creditList",
-    "pages/my/comment"
+    "pages/my/comment",
+    "pages/my/index"
 
   ],
   "window": {

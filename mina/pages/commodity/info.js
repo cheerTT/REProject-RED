@@ -26,7 +26,7 @@ Page({
         that.setData({
             id: e.id
         });
-
+        console.log(e.id)
     },
     onShow: function () {
         this.getInfo();
@@ -141,8 +141,6 @@ Page({
             },
             success: function (res) {
                 var resp = res.data;
-                 console.log(resp.data)
-
                 that.setData({
                     commentList: resp.data,
                     commentCount: resp.data.length,
@@ -165,10 +163,11 @@ Page({
                     header: app.getRequestHeader(),
                     method: 'POST',
                     data: {
-                        url: utils.getCurrentPageUrlWithArgs()
+                        url: utils.getCurrentPageUrlWithArgs(),
+                        'csrfmiddlewaretoken': '{{ csrf_token }}'
                     },
                     success: function (res) {
-
+                        console.log(res.data)
                     }
                 });
             },

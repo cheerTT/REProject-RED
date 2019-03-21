@@ -7,6 +7,7 @@ import json
 from django.shortcuts import render
 from django.views.generic.base import View
 from django.db.models import Q
+import datetime
 from django.http import HttpResponse, HttpResponseRedirect
 from django.core.serializers.json import DjangoJSONEncoder
 # from django.views.decorators.csrf import csrf_exempt
@@ -15,6 +16,8 @@ from django.core.paginator import Paginator
 from commodity.models import Commodity, CommodityType
 from utils.wechat_utils import WechatUtils
 from apps.comment.models import Comment
+import django.utils.timezone as timezone
+from order.models import Transaction
 
 
 class CommoditySearchView(View):
@@ -90,24 +93,16 @@ class CommodityCommentsView(View):
     def get(self, request):
         ret = {}
         fields = ['id', 'content', 'joined_date', 'state', 'commodity_id', 'member_id']
-        # fields = ['id', 'pic_name', 'avatarUrl']
-        # if 'id' in request.GET and request.GET['id']:
-        #     filters['id'] = request.GET['id']
-        #     print("id:",filters['id'])
-        commodity_id = request.GET['id']
-        # ua = request.META.get("HTTP_AUTHORIZATION")
-        # auth_cookie = WechatUtils.checkMemberLogin(request)
 
-        # ret['id'] = auth_cookie.id
-        print("commodity_id", commodity_id)
+        commodity_id = request.GET['id']
+
         comment_list = Comment.objects.filter(commodity_id=commodity_id).values(*fields)
 
-        print("type:", type(comment_list[0]))
         for comment in comment_list:
-            print(comment)
+            # print(comment)
             member = Member.objects.filter(id=comment['member_id'])
             # print("member:", type(member))
-            print(member.values('pic_name')[0]['pic_name'])
+            # print(member.values('pic_name')[0]['pic_name'])
             comment['nickname'] = member.values('nickname')[0]['nickname']
             comment['avatarUrl'] = member.values('avatarUrl')[0]['avatarUrl']
 
@@ -117,5 +112,25 @@ class CommodityCommentsView(View):
 
 
 class CommentAddView(View):
-    def get(self,request):
-        pass
+    def get(self, request):
+        ret = {}
+
+        commodity_id = request.GET['id']
+
+        auth_cookie = WechatUtils.checkMemberLogin(request)
+        score = request.GET['score']
+
+        content = request.GET['content']
+
+        member_id = auth_cookie.id
+        Comment.objects.create(
+            content=content,
+            joined_date=datetime.datetime.now(),
+            commodity_id=commodity_id,
+            member_id=auth_cookie.id
+        )
+
+        Transaction.objects.filter(Q(member_id=member_id) & Q(commodity_id=commodity_id)).update(rating=score)
+
+        ret['msg'] = "评论成功"
+        return HttpResponse(ret, content_type='application/json')

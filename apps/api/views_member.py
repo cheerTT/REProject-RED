@@ -67,7 +67,11 @@ class MemberLoginView(View):
         avatarUrl = request.POST['avatarUrl'] if request.POST['avatarUrl'] else ''
 
         # 判断是否已经注册过
-        bind_info = Member.objects.filter(codeVerify=codeVerify)
+        bind_info = Member.objects.filter(codeVerify=codeVerify, openid=0)
+
+        print('bind_info')
+        print(bind_info)
+
         # 正常注册的情况，通过code
         if bind_info:
             Member.objects.filter(id=bind_info[0].id).update(openid=openid,
@@ -83,8 +87,28 @@ class MemberLoginView(View):
                                   )
 
         print(bind_info.values_list())
+
+        now = datetime.datetime.now()  # 现在的时间
+        last_login_date = Member.objects.get(id=bind_info[0].id).last_login_date  # 上次登录的时间
+
+        if (now.strftime('%Y-%m-%d') != last_login_date.strftime('%Y-%m-%d')):
+            # 今天第一次登陆
+            print("今天第一次登录")
+            ret['first_time_login'] = '恭喜你，今天首次登陆获得2积分'
+            print("credit insert:")
+            Credit.objects.create(
+                behave=0,
+                creditpoints=2,
+                credittype=0,
+                createtime=datetime.datetime.now(),
+                userid_id=bind_info[0].id
+            )
+
+        Member.objects.filter(id=bind_info[0].id).update(
+            last_login_date=datetime.datetime.now())  # 每次登陆更新last_login_date
+
         token = ""
-        if bind_info:
+        if bind_info.first():
             token = "%s#%s" % (WechatUtils.geneAuthCode(
                 id=bind_info.values_list()[0][0],
                 codeVerify=bind_info.values_list()[0][13],
@@ -176,10 +200,10 @@ class MemberInfoView(View):
     def get(self, request):
         ret={}
         ua = request.META.get("HTTP_AUTHORIZATION")
-        print("ua:",ua)
+        # print("ua:",ua)
 
         auth_cookie = WechatUtils.checkMemberLogin(request)
-        print('auth_cookie:',auth_cookie)
+        # print('auth_cookie:',auth_cookie)
 
         ret['id'] = auth_cookie.id
         ret['openid'] = auth_cookie.openid
@@ -381,8 +405,10 @@ with tf.Graph().as_default():
             orderid = str(int(time.time()*1000)) + str(uuid.uuid1()).replace('-', '')[0:10]
 
             param = eval(request.POST['param'])
+            total = 0
             for kv in param.items():
                 comm = Commodity.objects.filter(id=kv[0])
+                total += float(comm[0].present_price) * int(kv[1])
                 Transaction.objects.create(rating=3,
                                            num=kv[1],
                                            member=member_foreign,
@@ -390,6 +416,13 @@ with tf.Graph().as_default():
                                            joined_date=datetime.datetime.now(),
                                            orderid=orderid)
 
+            Credit.objects.create(
+                behave=4,
+                creditpoints=int(total),
+                credittype=0,
+                createtime=datetime.datetime.now(),
+                userid=member_foreign
+            )
 
             print('结果展示')
             print(ret)
