@@ -1,3 +1,6 @@
+"""
+与小程序交互的会员模块
+"""
 # @Author  : cheertt && ttwen
 # @Time    : 2019/3/8 8:22
 # @Remark  : 收银界面以及小程序会员登陆注册与个人信息显示部分信息
@@ -8,41 +11,53 @@ import uuid
 import time
 import datetime
 import tensorflow as tf
-from django.core import serializers
+from scipy import misc
 from django.shortcuts import render
 from django.views.generic.base import View
-from django.http import HttpResponse, HttpResponseRedirect
-from django.views.decorators.csrf import csrf_exempt
+from django.http import HttpResponse
 from utils.mixin_utils import LoginRequiredMixin
 from utils.face_utils import image_array_align_data
 from utils.matrix_utils import Matrix
 from utils.wechat_utils import WechatUtils
-from reporjectred.settings import BASE_DIR, MODELPATH, MAX_DISTINCT, APPID, SECRET
+from reporjectred.settings import BASE_DIR, MODELPATH, MAX_DISTINCT
 from facenet.align.detect_face import create_mtcnn
 from facenet.facenet import get_model_filenames
-from scipy import misc
 from api.models import Member, Credit
 from order.models import Transaction
 from commodity.models import Commodity
 
-os.environ["TF_CPP_MIN_LOG_LEVEL"]='2' # 只显示 warning 和 Error
+os.environ["TF_CPP_MIN_LOG_LEVEL"] = '2'  # 只显示 warning 和 Error
 
 
 class FaceView(View):
-
+    """
+    收款界面跳转路径
+    """
     def get(self, request):
+        """
+        收款界面跳转路径 get请求
+        :param request:
+        :return:
+        """
         return render(request, 'face/face.html')
 
 
 class MemberLoginView(View):
-
+    """
+    会员登陆视图
+    用于小程序界面会员登陆实现
+    """
     def post(self, request):
-
-        ret = {'code':200, 'msg':'操作成功', 'data':{}}
+        """
+        小程序登陆业务逻辑实现-post方法
+        :param request:
+        :return:
+        """
+        ret = {'code': 200, 'msg': '操作成功', 'data': {}}
         code = request.POST['code']
-        codeVerify = request.POST['codeVerify'] if request.POST['codeVerify'] else ''
+        code_verify = request.POST['codeVerify'] if request.POST['codeVerify'] else ''
 
-        if not code or len(code) < 1:
+        if not code:
             ret['code'] = 500
             ret['msg'] = '无效的code请求'
             return HttpResponse(json.dumps(ret), content_type='application/json')
@@ -55,7 +70,7 @@ class MemberLoginView(View):
             ret = {'result': 'false', 'msg': 'openid出错'}
             return HttpResponse(json.dumps(ret), content_type='application/json')
 
-        if codeVerify == '-1':
+        if code_verify == '-1':
             ret['code'] = 500
             ret['msg'] = '无效的code请求'
             return HttpResponse(json.dumps(ret), content_type='application/json')
@@ -64,10 +79,10 @@ class MemberLoginView(View):
         gender = request.POST['gender'] if request.POST['gender'] else ''
         city = request.POST['city'] if request.POST['city'] else ''
         province = request.POST['province'] if request.POST['province'] else ''
-        avatarUrl = request.POST['avatarUrl'] if request.POST['avatarUrl'] else ''
+        avatar_url = request.POST['avatarUrl'] if request.POST['avatarUrl'] else ''
 
         # 判断是否已经注册过
-        bind_info = Member.objects.filter(codeVerify=codeVerify, openid=0)
+        bind_info = Member.objects.filter(codeVerify=code_verify, openid=0)
 
         print('bind_info')
         print(bind_info)
@@ -75,16 +90,15 @@ class MemberLoginView(View):
         # 正常注册的情况，通过code bind_info 不为空
         if bind_info:
             Member.objects.filter(id=bind_info[0].id).update(openid=openid,
-                                  nickname=nickname,
-                                  gender=gender,
-                                  city=city,
-                                  province=province,
-                                  avatarUrl=avatarUrl,
-                                  state=0,  # 0 表示正常 1 表示异常
-                                  type=1,  # 0普通用户 1 高级用户
-                                  joined_date2=datetime.datetime.now(),  # 用户注册时间
-                                  last_login_date=datetime.datetime.now()  # 最后一次登录时间
-                                  )
+                                                             nickname=nickname,
+                                                             gender=gender,
+                                                             city=city,
+                                                             province=province,
+                                                             avatarUrl=avatar_url,
+                                                             state=0,
+                                                             type=1,
+                                                             joined_date2=datetime.datetime.now(),
+                                                             last_login_date=datetime.datetime.now())
 
         print(bind_info.values_list())
 
@@ -94,7 +108,7 @@ class MemberLoginView(View):
             now = datetime.datetime.now()  # 现在的时间
             last_login_date = Member.objects.get(id=bind_info[0].id).last_login_date  # 上次登录的时间
 
-            if (now.strftime('%Y-%m-%d') != last_login_date.strftime('%Y-%m-%d')):
+            if now.strftime('%Y-%m-%d') != last_login_date.strftime('%Y-%m-%d'):
                 # 今天第一次登陆
                 print("今天第一次登录")
                 ret['first_time_login'] = '恭喜你，今天首次登陆获得2积分'
@@ -117,32 +131,35 @@ class MemberLoginView(View):
                 codeVerify=bind_info.values_list()[0][13],
                 state=bind_info.values_list()[0][12],
                 type=bind_info.values_list()[0][14],
-            ),bind_info.values_list()[0][0])
+            ), bind_info.values_list()[0][0])
         else:
             token = "%s#%s" % (WechatUtils.geneAuthCode(
                 id='-1',
                 codeVerify='-1',
                 state='0',
                 type='0',
-            ),-1)
+            ), -1)
 
         ret['data'] = {'token': token}
         return HttpResponse(json.dumps(ret), content_type='application/json')
 
 
 class MemberCheckRegView(View):
-
+    """
+    是否是会员状态验证
+    """
     def post(self, request):
-
-        ret = {'code':200, 'msg':'操作成功', 'data':{}}
+        """
+        会员状态验证-post方法
+        :param request:
+        :return:
+        """
+        ret = {'code': 200, 'msg': '操作成功', 'data': {}}
 
         code = request.POST['code']
-        codeVerify = request.POST['codeVerify'] if request.POST['codeVerify'] else ''
+        code_verify = request.POST['codeVerify'] if request.POST['codeVerify'] else ''
 
-        print('code:',code)
-        print('codeVerify:',codeVerify)
-
-        if not code or len(code) < 1:
+        if not code:
             ret['code'] = 500
             ret['msg'] = '无效的请求code'
             return HttpResponse(json.dumps(ret), content_type='application/json')
@@ -154,24 +171,23 @@ class MemberCheckRegView(View):
             ret['msg'] = 'openid出错'
             return HttpResponse(json.dumps(ret), content_type='application/json')
 
-        if codeVerify == '-1':
+        if code_verify == '-1':
             ret['code'] = 500
             ret['msg'] = '无效的code请求'
             return HttpResponse(json.dumps(ret), content_type='application/json')
 
         bind_info = Member.objects.filter(openid=openid)
 
-
         if not bind_info:
             ret['code'] = 500
             ret['msg'] = '未绑定'
             return HttpResponse(json.dumps(ret), content_type='application/json')
 
-        now = datetime.datetime.now() #现在的时间
-        last_login_date = Member.objects.get(id=bind_info[0].id).last_login_date #上次登录的时间
+        now = datetime.datetime.now()  # 现在的时间
+        last_login_date = Member.objects.get(id=bind_info[0].id).last_login_date  # 上次登录的时间
 
-        if(now.strftime('%Y-%m-%d') != last_login_date.strftime('%Y-%m-%d')):
-            #今天第一次登陆
+        if now.strftime('%Y-%m-%d') != last_login_date.strftime('%Y-%m-%d'):
+            # 今天第一次登陆
             print("今天第一次登录")
             ret['first_time_login'] = '恭喜你，今天首次登陆获得2积分'
             print("credit insert:")
@@ -184,8 +200,7 @@ class MemberCheckRegView(View):
             )
 
         Member.objects.filter(id=bind_info[0].id).update(
-            last_login_date=datetime.datetime.now()) # 每次登陆更新last_login_date
-
+            last_login_date=datetime.datetime.now())  # 每次登陆更新last_login_date
 
         token = "%s#%s" % (WechatUtils.geneAuthCode(
             id=bind_info.values_list()[0][0],
@@ -199,18 +214,23 @@ class MemberCheckRegView(View):
 
 
 class MemberInfoView(View):
-
+    """
+    会员首页信息显示
+    """
     def get(self, request):
-        ret={}
-        ua = request.META.get("HTTP_AUTHORIZATION")
-        # print("ua:",ua)
+        """
+        获取会员基本信息，并返回小程序端
+        :param request:
+        :return:
+        """
+        ret = {}
 
         auth_cookie = WechatUtils.checkMemberLogin(request)
         # print('auth_cookie:',auth_cookie)
 
         ret['id'] = auth_cookie.id
         ret['openid'] = auth_cookie.openid
-        ret['pic_name']= auth_cookie.pic_name
+        ret['pic_name'] = auth_cookie.pic_name
         ret['nickname'] = auth_cookie.nickname
         ret['gender'] = auth_cookie.gender
         ret['city'] = auth_cookie.city
@@ -222,14 +242,23 @@ class MemberInfoView(View):
 
         return HttpResponse(json.dumps(ret), content_type='application/json')
 
+
 class MemberOrderView(View):
+    """
+    会员订单视图
+    """
     def get(self, request):
+        """
+        显示会员订单信息
+        :param request:
+        :return:
+        """
         ret = []
-        fields = ['id','num','joined_date','commodity_id','member_id','orderid']
+        fields = ['id', 'num', 'joined_date', 'commodity_id', 'member_id', 'orderid']
         filters = dict()
-        if 'userid' in request.GET and request.GET['userid']:# 要查询的订单列表的用户id #43
+        if 'userid' in request.GET and request.GET['userid']:  # 要查询的订单列表的用户id #43
             filters['member_id'] = request.GET['userid']
-            transaction=Transaction.objects.filter(**filters).values(*fields)
+            transaction = Transaction.objects.filter(**filters).values(*fields)
             # print("transaction:",transaction)
             for order in transaction:
                 singleorder = {}
@@ -246,10 +275,19 @@ class MemberOrderView(View):
         # print("ret:",ret)
         return HttpResponse(json.dumps(ret), content_type='applications/json')
 
-class MemberView(LoginRequiredMixin, View):
 
+class MemberView(LoginRequiredMixin, View):
+    """
+    会员视图
+    """
     def get(self, request):
+        """
+        用于web端对会员基本信息的展示操作
+        :param request:
+        :return:
+        """
         return render(request, 'api/member/member.html')
+
 
 # 前方高能
 # 该段代码占用过多CPU资源，放在全局供其他函数调用
@@ -276,8 +314,15 @@ with tf.Graph().as_default():
 
 
     class MemberUploadFace(View):
-
+        """
+        确认收款界面相关功能，包括人脸识别以及生成订单
+        """
         def post(self, request):
+            """
+            接受base64编码的人脸数据，并把商品数据生成订单
+            :param request:
+            :return:
+            """
             ret = dict(status="fail")
 
             # 接受前端传递过来的uuid -- 判别始于哪一个商家
@@ -288,7 +333,8 @@ with tf.Graph().as_default():
 
             memberid = str(uuid.uuid1()).replace('-', '')
 
-            image_path1 = BASE_DIR + os.sep + "media" + os.sep +"face" + os.sep + datetime.datetime.now().strftime('%Y-%m-%d')
+            image_path1 = BASE_DIR + os.sep + "media" + os.sep + "face" + os.sep + datetime.datetime.now().strftime(
+                '%Y-%m-%d')
 
             if not os.path.exists(image_path1):
                 os.mkdir(image_path1)
@@ -296,10 +342,10 @@ with tf.Graph().as_default():
             image_path = image_path1 + os.sep + memberid + '.png'
 
             try:
-                with open(image_path, 'wb') as f:
-                    f.write(newdata)
+                with open(image_path, 'wb') as file:
+                    file.write(newdata)
             except FileNotFoundError as fnfe:
-                pass
+                print(fnfe)
 
             # opencv读取图片，开始进行人脸识别
             img = misc.imread(os.path.expanduser(image_path), mode='RGB')
@@ -324,13 +370,13 @@ with tf.Graph().as_default():
 
             face_query = Matrix()
 
-            codeVerify = WechatUtils.genCode()
+            code_verify = WechatUtils.genCode()
 
             # 不让生成已经存在的验证码
-            while Member.objects.filter(codeVerify=codeVerify):
-                codeVerify = WechatUtils.genCode()
+            while Member.objects.filter(codeVerify=code_verify):
+                code_verify = WechatUtils.genCode()
 
-            if codeVerify == '-1':
+            if code_verify == '-1':
                 ret['info'] = '验证码非法操作'
                 return HttpResponse(json.dumps(ret), content_type="application/json")
 
@@ -346,35 +392,24 @@ with tf.Graph().as_default():
                     ret['distance'] = pic_min_scores[i]
                     ret['picname'] = pic_min_names[i]
 
-            if len(ret) == 0:
+            if ret is None:
                 # 新建一个用户
-                isVideo = Member.objects.filter(codeVerify=codeVerify)
+                is_video = Member.objects.filter(codeVerify=code_verify)
                 print('isVideo')
-                print(isVideo.exists())
-                if not isVideo.exists():
+                print(is_video.exists())
+                if not is_video.exists():
                     print('进来了')
                     for j in range(0, len(emb_array)):
                         Member.objects.create(faceid=memberid,
                                               pic_name=memberid + "_" + str(j) + ".png",
                                               face_json=",".join(str(li) for li in emb_array[j].tolist()),
                                               joined_date1=datetime.datetime.now(),
-                                              codeVerify=codeVerify.lower()
+                                              codeVerify=code_verify.lower()
                                               )
 
-
                     ret['type'] = 1  # 表示新用户
-                    ret['codeVerify'] = codeVerify
+                    ret['codeVerify'] = code_verify
                     ret['info'] = 'success, add a face new'
-
-                # else:
-                #     for j in range(0, len(emb_array)):
-                #         Member.objects.filter(id=isVideo.first().id).update(
-                #                               faceid=memberid,
-                #                               pic_name=memberid + "_" + str(j) + ".png",
-                #                               face_json=",".join(str(li) for li in emb_array[j].tolist()),
-                #                               joined_date1=datetime.datetime.now()
-                #                               )
-                #     ret.append({"state": "success, add a face update"})
             else:
                 # 更新操作  已知用户
 
@@ -385,8 +420,6 @@ with tf.Graph().as_default():
             # 作为一个多次购物的用户，
             # 作为一个第一次注册的用户，
             member_foreign = Member.objects.filter(codeVerify=ret['codeVerify'].lower()).first()
-
-            filename_base, file_extension = os.path.splitext(image_path)
 
             # 不能用于检验验证码
 
@@ -400,20 +433,19 @@ with tf.Graph().as_default():
 
             # 生成一条订单
             if request.POST['param'] is None or request.POST['param'] == {}:
-
                 ret['state'] = '订单错误'
 
                 return HttpResponse(json.dumps(ret), content_type="application/json")
 
-            orderid = str(int(time.time()*1000)) + str(uuid.uuid1()).replace('-', '')[0:10]
+            orderid = str(int(time.time() * 1000)) + str(uuid.uuid1()).replace('-', '')[0:10]
 
             param = eval(request.POST['param'])
             total = 0
-            for kv in param.items():
-                comm = Commodity.objects.filter(id=kv[0])
-                total += float(comm[0].present_price) * int(kv[1])
+            for key_value in param.items():
+                comm = Commodity.objects.filter(id=key_value[0])
+                total += float(comm[0].present_price) * int(key_value[1])
                 Transaction.objects.create(rating=3,
-                                           num=kv[1],
+                                           num=key_value[1],
                                            member=member_foreign,
                                            commodity=comm[0],
                                            joined_date=datetime.datetime.now(),
