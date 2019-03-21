@@ -72,7 +72,7 @@ class MemberLoginView(View):
         print('bind_info')
         print(bind_info)
 
-        # 正常注册的情况，通过code
+        # 正常注册的情况，通过code bind_info 不为空
         if bind_info:
             Member.objects.filter(id=bind_info[0].id).update(openid=openid,
                                   nickname=nickname,
@@ -88,24 +88,27 @@ class MemberLoginView(View):
 
         print(bind_info.values_list())
 
-        now = datetime.datetime.now()  # 现在的时间
-        last_login_date = Member.objects.get(id=bind_info[0].id).last_login_date  # 上次登录的时间
+        print(bind_info.first())
 
-        if (now.strftime('%Y-%m-%d') != last_login_date.strftime('%Y-%m-%d')):
-            # 今天第一次登陆
-            print("今天第一次登录")
-            ret['first_time_login'] = '恭喜你，今天首次登陆获得2积分'
-            print("credit insert:")
-            Credit.objects.create(
-                behave=0,
-                creditpoints=2,
-                credittype=0,
-                createtime=datetime.datetime.now(),
-                userid_id=bind_info[0].id
-            )
+        if bind_info.first() is not None:
+            now = datetime.datetime.now()  # 现在的时间
+            last_login_date = Member.objects.get(id=bind_info[0].id).last_login_date  # 上次登录的时间
 
-        Member.objects.filter(id=bind_info[0].id).update(
-            last_login_date=datetime.datetime.now())  # 每次登陆更新last_login_date
+            if (now.strftime('%Y-%m-%d') != last_login_date.strftime('%Y-%m-%d')):
+                # 今天第一次登陆
+                print("今天第一次登录")
+                ret['first_time_login'] = '恭喜你，今天首次登陆获得2积分'
+                print("credit insert:")
+                Credit.objects.create(
+                    behave=0,
+                    creditpoints=2,
+                    credittype=0,
+                    createtime=datetime.datetime.now(),
+                    userid_id=bind_info[0].id
+                )
+
+            Member.objects.filter(id=bind_info[0].id).update(
+                last_login_date=datetime.datetime.now())  # 每次登陆更新last_login_date
 
         token = ""
         if bind_info.first():
