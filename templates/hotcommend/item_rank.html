@@ -110,17 +110,17 @@
                     columns : [
                         DATATABLES_CONSTANT.DATA_TABLES.COLUMN.CHECKBOX,
                         {
-                            data : "assin",
+                            data : "commodity",
 
                         },
                         {
-                            data : "title",
+                            data : "commodity__title",
                         },
                         {
                             data : "sales_count",
                         },
                         {
-                            data : "assin",
+                            data : "commodity",
                             width : "10%",
                             bSortable : "false",
                             render : function(data, type, row, meta) {
@@ -189,7 +189,7 @@
             $.ajax({
                         type: "POST",
                         url: "{% url 'hotcommend:to_hot_list' %}",
-                        data: {"assin": id, csrfmiddlewaretoken: '{{ csrf_token }}'},  //防止post数据时报 csrf_token 403
+                        data: {"commodity": id, csrfmiddlewaretoken: '{{ csrf_token }}'},  //防止post数据时报 csrf_token 403
                         cache: false,
                         success: function (msg) {
                             if (msg.result) {
