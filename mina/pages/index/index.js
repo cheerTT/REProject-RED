@@ -119,10 +119,15 @@ Page({
               method: 'POST',
               data: data,
               success: function (res) {
+                console.log(res)
                 if (res.data.code != 200) {
                     app.alert({'content': res.data.msg});
                     return;
                 }
+                if (res.data.user_id != '-1') {
+                  getApp().globalData.user_id = res.data.user_id
+                }
+      
                 app.setCache("token", res.data.data.token);
                 that.goToIndex();
               }
