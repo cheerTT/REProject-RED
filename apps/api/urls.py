@@ -11,7 +11,7 @@ from api import views_hotcommend
 urlpatterns = [
     # 会员信息增改删查操作
     url(r'^member/$', views_member.MemberView.as_view(), name="member"),
-    # url(r'^member/savepic', views_member.MemberUploadFace.as_view(), name="member-save-face"),
+    url(r'^member/savepic', views_member.MemberUploadFace.as_view(), name="member-save-face"),
     url(r'^member/login', csrf_exempt(views_member.MemberLoginView.as_view()), name="member-login"),
     url(r'^member/checkreg', csrf_exempt(views_member.MemberCheckRegView.as_view()), name="member-checkreg"),
     url(r'^member/info', views_member.MemberInfoView.as_view(), name="member-info"),
