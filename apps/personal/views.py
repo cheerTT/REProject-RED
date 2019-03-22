@@ -15,8 +15,7 @@ from utils.mixin_utils import LoginRequiredMixin
 from .models import WorkOrder
 from .forms import UserUpdateForm, ImageUploadForm
 from users.forms import AdminPasswdChangeForm
-from utils.toolkit import get_month_member_count, get_member_gender
-
+from utils.toolkit import get_month_member_count, get_member_gender, get_monthly_sale_count
 
 User = get_user_model()
 
@@ -33,13 +32,39 @@ class PersonalView(LoginRequiredMixin, View):
         ret = dict()
         ret['start_date'] = start_date
 
+        # 工作台最上方本月：新用户数、订单总数、订单金额、新商品数
+        ret['new_user_this_month'] = 0
+        ret['new_order_this_month'] = 0
+        ret['new_profit_this_month'] = 0
+        ret['new_commodity_this_month'] = 0
+
+        # 月度新增用户数量
         month_member_count = get_month_member_count(value=int(request.GET.get('value', 0)))
         result1 = month_member_count[0]['count']
-        # print(result1)
+        for i in result1:
+            ret['new_user_this_month'] += i
         ret['month_member_count'] = result1
 
+        # 用户性别统计
         result2 = get_member_gender(value=int(request.GET.get('value', 0)))[0]['count']
         ret['member_gender'] = result2
+
+        # 本月营业额统计
+        result3, order_num, new_commo_num, type_num_result, commo_num_array = get_monthly_sale_count(value=0)
+        for i in result3:
+            ret['new_profit_this_month'] += i
+        ret['monthly_sale_count'] = result3
+        ret['new_order_this_month'] = order_num
+        ret['new_profit_this_month'] = round(ret['new_profit_this_month'],2)
+
+        # 本月新增商品数统计
+        ret['new_commodity_this_month'] = new_commo_num
+
+        # 本月售出商品各种类数量
+        ret['type_num_result'] = type_num_result
+
+        # 统计全年12个月份8种类商品的销量
+        ret['commo_num_array'] = commo_num_array
 
         return render(request, 'personal/personal_index.html', ret)
 

@@ -40,7 +40,7 @@ page{
 }
 .order-status .right-text .status{
     font-size:28rpx;
-    color:#000; 
+    color:#000;
     margin-bottom: 10rpx;
 }
 .order-status .right-text .red{
@@ -48,7 +48,7 @@ page{
 }
 .order-status .right-text .des{
     font-size:24rpx;
-    color:#999; 
+    color:#999;
 }
 .address-sec{
     width: 720rpx;
@@ -170,7 +170,7 @@ page{
     background:#ffffff;
     border:1rpx solid #e64340;
     border-radius:6rpx;
-    width:164rpx;
+    width:200rpx;
     height:60rpx;
     line-height: 60rpx;
     text-align: center;
@@ -263,7 +263,7 @@ page{
     position: fixed;
     bottom: 0;
     left: 0;
-    border-top:1px solid #eee; 
+    border-top:1px solid #eee;
     background-color: #fff;
     z-index: 4;
 }

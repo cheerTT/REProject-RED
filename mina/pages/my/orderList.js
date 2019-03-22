@@ -10,6 +10,7 @@ Page({
       url: "/pages/my/order_info"
     })
   },
+
   onLoad: function (options) {
     // 生命周期函数--监听页面加载
     var that = this;
@@ -74,4 +75,9 @@ Page({
       url: "/pages/commodity/info?id=" + e.currentTarget.dataset.id
     });
   },
-})
+  toCommentTap:function(e){
+    wx.navigateTo({
+      url: "/pages/my/comment?id=" + e.currentTarget.dataset.id
+    });
+  }
+});

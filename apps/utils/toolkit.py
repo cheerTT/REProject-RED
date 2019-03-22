@@ -4,12 +4,13 @@
 
 
 import calendar
+import datetime
 from datetime import date, timedelta
+import numpy as np
+from django.db.models import Sum
 
-from django.core.mail import send_mail
-
-from personal.models import WorkOrder
-from reporjectred.settings import EMAIL_FROM
+from commodity.models import Commodity
+from order.models import Transaction
 from api.models import Member
 
 def get_month_member_count(value=0):
@@ -66,25 +67,56 @@ def get_monthly_sale_count(value=0):
     """
     生成当月销售数据统计
     """
+    this_year = datetime.datetime.now().year #获取当前年份
+    this_month = datetime.datetime.now().month #获取当前月份
+    this_month_days = calendar.monthrange(this_year,this_month)[1] #根据年份和月份获取这个月的天数 31
 
-    print("这个月的天数：",calendar.monthrange(2019,3)[1])
-    # filters = dict()
-    # year_work_order_count = []
-    # for user in users:
-    #     start_year = date.today().replace(month=1, day=1)
-    #     end_year = date.today().replace(year=(start_year.year + 1), month=1, day=1)
-    #     filters['add_time__range'] = (start_year, end_year)
-    #     if value == 0:
-    #         filters['proposer_id'] = user['id']
-    #     else:
-    #         filters['receiver_id'] = user['id']
-    #     year_work_order = WorkOrder.objects.filter(**filters).count()
-    #     data = {
-    #         'name': user['name'],
-    #         'count': year_work_order
-    #     }
-    #     year_work_order_count.append(data)
-    #
-    # return year_work_order_count
+    ret = []
+    order_num = 0
+    commo_type_num = {}
+    for i in range(1,this_month_days+1):
+        currentday_profit = 0
+        currentday_trans = Transaction.objects.filter(joined_date__startswith=datetime.date(this_year,this_month,i)) #获取当前天数的交易
+        for trans in currentday_trans:
+            commo_id = trans.commodity_id
+            commo_price = Commodity.objects.filter(id=commo_id).first().present_price
+            currentday_profit += commo_price
 
+            order_num += 1
+
+        ret.append(round(currentday_profit,2))
+
+    # 顺便统计一下当月新增商品数
+    filters = dict()
+    start_date = date.today().replace(month=this_month, day=1)
+    end_date = start_date + timedelta(this_month_days -1 )
+    filters['warrantyDate__range'] = (start_date, end_date)
+    new_commo_num = Commodity.objects.filter(**filters).count()
+
+    #统计当月售出商品的各种类的数量
+    filters1 = dict()
+    filters1['joined_date__range']  = (start_date, end_date)
+    commo_list = Transaction.objects.filter(**filters1)
+    type_list = []
+    type_num_result = {0:0, 1:0, 2:0, 3:0, 4:0, 5:0, 6:0, 7:0, 8:0}
+    for commo in commo_list:
+        single_type = Commodity.objects.filter(id=commo.commodity_id).first().categories_id
+        type_list.append(single_type)
+    for i in type_list:
+        type_num_result[i] += 1
+
+    # 统计全年12个月份8种类商品的销量
+    # commo_num_array = [[0]*12]*8 # 初始化为0
+    commo_num_array = [[0 for i in range(12)] for i in range(8)]
+    fields = ['num', 'joined_date', 'commodity_id', 'commodity_id__categories_id']
+    filters = dict()
+    commo_list_year = Transaction.objects.filter(**filters).values(*fields)  #今年所有的商品
+    for commo in commo_list_year:
+        # 种类为commo_type的在commo_month的有commo_num个
+        commo_type = int(commo['commodity_id__categories_id'])
+        commo_month = int(commo['joined_date'].month)
+        commo_num = int(commo['num'])
+        commo_num_array[commo_type-1][commo_month-1] += commo_num
+
+    return ret, order_num, new_commo_num, type_num_result, commo_num_array
 
