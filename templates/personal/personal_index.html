@@ -127,6 +127,24 @@
 
                 </div>
             </div>
+            <div class="box">
+               <div class="box-header with-border">
+                  <h3 class="box-title">月度各种类商品销售数据</h3>
+                  <div class="box-tools pull-right">
+                    <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
+                    </button>
+                    <button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
+                  </div>
+               </div>
+            <!-- /.box-header -->
+                <div class="box-body">
+                    <div class="row">
+                        <div class="col-md-12">
+                           <div id="year_sale_commodity" style="height: 400px; width: auto"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
         </div>
       </div>
@@ -406,6 +424,105 @@
         myChart.setOption(option, true);
     }
 
+    // 全年不同月份的不同种类商品的销量，堆积图 year_sale_commodity
+    var bar_dom = document.getElementById("year_sale_commodity");
+    var myChart = echarts.init(bar_dom,'macarons')
+    var type_num_result = {{ commo_num_array }}
+        console.log(type_num_result)
+    console.log((type_num_result[0]))
+    option = null
+    option = {
+        tooltip: {
+            trigger: 'axis'
+        },
+        legend: {
+            data : ['baby','beauty','Grocery','Electronics','Office','Pet', 'Sports','Kitchen']
+        },
+        toolbox: {
+            show: true,
+            feature: {
+                mark: {show: true},
+                dataView: {show: true, readOnly: false},
+                magicType: {show: true, type: ['line', 'bar', 'stack', 'tiled']},
+                restore: {show: true},
+                saveAsImage: {show: true}
+            }
+        },
+        calculable: true,
+        xAxis: [
+            {
+                type: 'category',
+                boundaryGap: false,
+                data : ['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月']
+            }
+        ],
+        yAxis: [
+            {
+                type: 'value'
+            }
+        ],
+        series: [
+            {
+                name: 'baby',
+                type: 'line',
+                stack: '总量',
+                itemStyle: {normal: {areaStyle: {type: 'default'}}},
+                data: type_num_result[0]
+            },
+            {
+                name: 'beauty',
+                type: 'line',
+                stack: '总量',
+                itemStyle: {normal: {areaStyle: {type: 'default'}}},
+                data: type_num_result[1]
+            },
+            {
+                name: 'Grocery',
+                type: 'line',
+                stack: '总量',
+                itemStyle: {normal: {areaStyle: {type: 'default'}}},
+                data: type_num_result[2]
+            },
+            {
+                name: 'Electronics',
+                type: 'line',
+                stack: '总量',
+                itemStyle: {normal: {areaStyle: {type: 'default'}}},
+                data: type_num_result[3]
+            },
+            {
+                name: 'Office',
+                type: 'line',
+                stack: '总量',
+                itemStyle: {normal: {areaStyle: {type: 'default'}}},
+                data: type_num_result[4]
+            },
+            {
+                name: 'Pet',
+                type: 'line',
+                stack: '总量',
+                itemStyle: {normal: {areaStyle: {type: 'default'}}},
+                data: type_num_result[5]
+            },
+            {
+                name: 'Sports',
+                type: 'line',
+                stack: '总量',
+                itemStyle: {normal: {areaStyle: {type: 'default'}}},
+                data: type_num_result[6]
+            },
+            {
+                name: 'Kitchen',
+                type: 'line',
+                stack: '总量',
+                itemStyle: {normal: {areaStyle: {type: 'default'}}},
+                data: type_num_result[7]
+            },
+        ]
+    };
+    if (option && typeof option === "object") {
+        myChart.setOption(option, true);
+    }
     //图表窗体自适应
   $(window).resize(function(){
       myChart.resize();

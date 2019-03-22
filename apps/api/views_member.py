@@ -132,6 +132,7 @@ class MemberLoginView(View):
                 state=bind_info.values_list()[0][12],
                 type=bind_info.values_list()[0][14],
             ), bind_info.values_list()[0][0])
+
         else:
             token = "%s#%s" % (WechatUtils.geneAuthCode(
                 id='-1',
@@ -139,8 +140,8 @@ class MemberLoginView(View):
                 state='0',
                 type='0',
             ), -1)
-
         ret['data'] = {'token': token}
+
         return HttpResponse(json.dumps(ret), content_type='application/json')
 
 
