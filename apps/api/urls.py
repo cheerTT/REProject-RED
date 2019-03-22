@@ -33,6 +33,7 @@ urlpatterns = [
     url(r'^recommendations/toprecommendations', csrf_exempt(views_recommendations.TopRecommendationsView.as_view()), name="TopRecommendations"),
     url(r'^recommendations/allrecommendations', csrf_exempt(views_recommendations.AllRecommendationsView.as_view()),
         name="AllRecommendations"),
+    url(r'^recommendations/commonrecommendations',csrf_exempt(views_recommendations.Get_Common_Recommenadations.as_view()), name="CommonRecommendations"),
 
     url(r'^hotcommend/hot_commodity', views_hotcommend.HotCommodityView.as_view(), name="hot-commodity"),
     # url(r'^user/list$', views.UserListView.as_view(), name="user-list"),

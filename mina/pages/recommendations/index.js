@@ -21,6 +21,7 @@ Page({
         imagePath : app.globalData.imagePath,
         processing: false,
         p:1,
+        commonrecommendations : []
     },
     onLoad: function () {
         var that = this;
@@ -28,6 +29,7 @@ Page({
         console.log(getApp().globalData.user_id)
         if (getApp().globalData.user_id == "not_user")
         {
+          console.log("不是用户")
         }
         else{
           wx.request({
@@ -45,6 +47,32 @@ Page({
                 }
 
           });
+
+          wx.request({
+            url: app.buildUrl('/recommendations/commonrecommendations'),
+            header: app.getRequestHeader(),
+            method: 'get',
+            data: {
+            },
+            success: function (res) {
+              console.log(res.data.data),
+                that.setData({
+                  toprecommendations: res.data.data.slice(0, 3).concat(that.data.toprecommendations),
+                  commonrecommendations : res.data.data
+
+                })
+              if (res.data.has_more == false) {
+                that.setData({
+                  loadingMoreHidden: false
+                });
+              }
+            }
+          });
+
+
+
+
+
         }
 
         wx.setNavigationBarTitle({
@@ -71,6 +99,14 @@ Page({
               //loadingMoreHidden: false
           });
         }
+
+
+
+
+
+
+
+
     },
     onShow: function () {
       // this.getType();
@@ -112,11 +148,12 @@ Page({
         case "1":
           this.setData({
             loadingMoreHidden: true,
-            goods: [],
+            goods: that.data.commonrecommendations,
             activeCategoryId: e.currentTarget.id,
             arpages:0
           });
           that.getallrecommendations()
+          
           break;
           default:
       }
