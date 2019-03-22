@@ -50,17 +50,21 @@ class PersonalView(LoginRequiredMixin, View):
         ret['member_gender'] = result2
 
         # 本月营业额统计
-        result3, order_num, new_commo_num, type_num_result = get_monthly_sale_count(value=0)
+        result3, order_num, new_commo_num, type_num_result, commo_num_array = get_monthly_sale_count(value=0)
         for i in result3:
-            ret['new_profit_this_month'] += round(i,2)
+            ret['new_profit_this_month'] += i
         ret['monthly_sale_count'] = result3
         ret['new_order_this_month'] = order_num
+        ret['new_profit_this_month'] = round(ret['new_profit_this_month'],2)
 
         # 本月新增商品数统计
         ret['new_commodity_this_month'] = new_commo_num
 
         # 本月售出商品各种类数量
         ret['type_num_result'] = type_num_result
+
+        # 统计全年12个月份8种类商品的销量
+        ret['commo_num_array'] = commo_num_array
 
         return render(request, 'personal/personal_index.html', ret)
 
