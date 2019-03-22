@@ -37,68 +37,82 @@ Page({
             url: "/pages/cart/index"
         });
     },
-    toAddShopCar: function () {
-        this.setData({
-            shopType: "addShopCar"
-        });
-        this.bindGuiGeTap();
-    },
-    tobuy: function () {
-        this.setData({
-            shopType: "tobuy"
-        });
-        this.bindGuiGeTap();
-    },
     addShopCar: function () {
+        var that = this;
+        wx.request({
+            url: app.buildUrl("/commodity/cart_add"),
+            header: app.getRequestHeader(),
+            method: 'GET',
+            data: {
+                id: that.data.id
+            },
+            success: function (res) {
 
-    },
-    buyNow: function () {
-        wx.navigateTo({
-            url: "/pages/order/index"
+                var resp = res.data.msg;
+
+                wx.showToast({
+                    title: resp,
+                    duration: 1000,
+                    mask: true
+                })
+
+            }
         });
     },
+    // tobuy: function () {
+    //     this.setData({
+    //         shopType: "tobuy"
+    //     });
+    //     this.bindGuiGeTap();
+    // },
+
+    // buyNow: function () {
+    //     wx.navigateTo({
+    //         url: "/pages/order/index"
+    //     });
+    // },
     /**
      * 规格选择弹出框
      */
-    bindGuiGeTap: function () {
-        this.setData({
-            hideShopPopup: false
-        })
-    },
+    // bindGuiGeTap: function () {
+    //     this.setData({
+    //         hideShopPopup: false
+    //     })
+    // },
     /**
      * 规格选择弹出框隐藏
      */
-    closePopupTap: function () {
-        this.setData({
-            hideShopPopup: true
-        })
-    },
-    numJianTap: function () {
-        if (this.data.buyNumber <= this.data.buyNumMin) {
-            return;
-        }
-        var currentNum = this.data.buyNumber;
-        currentNum--;
-        this.setData({
-            buyNumber: currentNum
-        });
-    },
-    numJiaTap: function () {
-        if (this.data.buyNumber >= this.data.buyNumMax) {
-            return;
-        }
-        var currentNum = this.data.buyNumber;
-        currentNum++;
-        this.setData({
-            buyNumber: currentNum
-        });
-    },
+    // closePopupTap: function () {
+    //     this.setData({
+    //         hideShopPopup: true
+    //     })
+    // },
+    // numJianTap: function () {
+    //     if (this.data.buyNumber <= this.data.buyNumMin) {
+    //         return;
+    //     }
+    //     var currentNum = this.data.buyNumber;
+    //     currentNum--;
+    //     this.setData({
+    //         buyNumber: currentNum
+    //     });
+    // },
+    // numJiaTap: function () {
+    //     if (this.data.buyNumber >= this.data.buyNumMax) {
+    //         return;
+    //     }
+    //     var currentNum = this.data.buyNumber;
+    //     currentNum++;
+    //     this.setData({
+    //         buyNumber: currentNum
+    //     });
+    // },
     //事件处理函数
-    swiperchange: function (e) {
-        this.setData({
-            swiperCurrent: e.detail.current
-        })
-    },
+    // swiperchange: function (e) {
+    //     this.setData({
+    //         swiperCurrent: e.detail.current
+    //     })
+    // },
     getInfo: function () {
         var that = this;
         wx.request({
@@ -110,27 +124,14 @@ Page({
             success: function (res) {
                 // console.log(res.data.data)
                 var resp = res.data;
-                // if (resp.code != 200) {
-                //     app.alert({"content": resp.msg});
-                //     wx.navigateTo({
-                //         url: "/pages/commodity/index"
-                //     });
-                //     return;
-                // }
-
                 that.setData({
                     good: resp.data[0],
-                    // buyNumMax: resp.data.info.stock,
-                    // shopCarNum: resp.data.cart_number
                 });
-                // console.log(resp.data[0].imUrl)
-
-                // WxParse.wxParse('article', 'html', resp.data.info.summary, that, 5);
             }
         });
     },
 
-     getComments:function(){
+    getComments: function () {
         var that = this;
         console.log(that.data.id)
         wx.request({
@@ -150,7 +151,7 @@ Page({
     },
     // memberComments:function(){}
 
-     onShareAppMessage: function () {
+    onShareAppMessage: function () {
         var that = this;
         console.log("分享")
         return {
