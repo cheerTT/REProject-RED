@@ -43,11 +43,6 @@ class PersonalView(LoginRequiredMixin, View):
         result1 = month_member_count[0]['count']
         for i in result1:
             ret['new_user_this_month'] += i
-        ret['month_member_count'] = result1
-
-        # 用户性别统计
-        result2 = get_member_gender(value=int(request.GET.get('value', 0)))[0]['count']
-        ret['member_gender'] = result2
 
         # 本月营业额统计
         result3, order_num, new_commo_num, type_num_result, commo_num_array = get_monthly_sale_count(value=0)
