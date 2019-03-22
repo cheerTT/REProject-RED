@@ -27,6 +27,7 @@ from recommendations.models import Users_AllRecommendations
 os.environ["TF_CPP_MIN_LOG_LEVEL"]='2' # 只显示 warning 和 Error
 from django.core.paginator import Paginator
 from order.models import Transaction
+import random
 
 class TopRecommendationsView(View):
     def get(self, request):
@@ -53,6 +54,7 @@ class TopRecommendationsView(View):
 
 class Get_Common_Recommenadations(View):
     def get(self, request):
+        print("进入方法")
         user = WechatUtils.checkMemberLogin(request)
         user_id = user.id
         boughtitems = Transaction.objects.filter(member_id=user_id)
@@ -77,13 +79,17 @@ class Get_Common_Recommenadations(View):
             该用户若是购买了两件以上或者25%以上某种类商品，则给他推送该种类下随机五件商品，注意，Order_by方法损耗较大
             但还是最优随机选择方法。
             '''
+        print("进入方法type")
         for type in boughtitemdict:
             if (boughtitemdict[type] >= 2 or boughtitemdict[type]/sum_of_boughtitem >=0.25 ):
                 recommendations = Commodity.objects.filter(categories__type_name= type).order_by('?')[:5].values()
                 commoditylist += recommendations
-        ret = dict(data=commoditylist)
-        print(ret)
+        print(commoditylist)
 
+        random.shuffle(commoditylist)
+        print("随即后")
+        print(commoditylist)
+        ret = dict(data= commoditylist)
         ret = json.dumps(ret, cls=DjangoJSONEncoder)
         return HttpResponse(ret, content_type='application/json')
 

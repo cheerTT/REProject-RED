@@ -167,7 +167,13 @@ class MemberDetailView(LoginRequiredMixin, View):
         if(boughtitemdict['Baby']['value'] > 0):
             predict_age += 10
 
+        frequent_of_buy= sum_of_boughtitem if sum_of_boughtitem < 25 else 25
+        sum_of_price = sum_of_price if sum_of_price <250 else 250
+
+
+
         ret['sum_of_boughtitem'] = sum_of_boughtitem
+        ret['frequent_of_buy'] = frequent_of_buy
         ret['boughtitemdict'] = boughtitemdict
         ret['rate_of_type'] = rate_of_type
         ret['ave_of_ratings'] = ave_of_ratings
