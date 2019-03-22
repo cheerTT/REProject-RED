@@ -6,6 +6,8 @@
 import calendar
 import datetime
 from datetime import date, timedelta
+import numpy as np
+from django.db.models import Sum
 
 from commodity.models import Commodity
 from order.models import Transaction
@@ -102,7 +104,19 @@ def get_monthly_sale_count(value=0):
         type_list.append(single_type)
     for i in type_list:
         type_num_result[i] += 1
-    # print(type_num_result) # {0: 0, 1: 13, 2: 0, 3: 9, 4: 1, 5: 0, 6: 1, 7: 0, 8: 0}
 
-    return ret, order_num, new_commo_num, type_num_result
+    # 统计全年12个月份8种类商品的销量
+    # commo_num_array = [[0]*12]*8 # 初始化为0
+    commo_num_array = [[0 for i in range(12)] for i in range(8)]
+    fields = ['num', 'joined_date', 'commodity_id', 'commodity_id__categories_id']
+    filters = dict()
+    commo_list_year = Transaction.objects.filter(**filters).values(*fields)  #今年所有的商品
+    for commo in commo_list_year:
+        # 种类为commo_type的在commo_month的有commo_num个
+        commo_type = int(commo['commodity_id__categories_id'])
+        commo_month = int(commo['joined_date'].month)
+        commo_num = int(commo['num'])
+        commo_num_array[commo_type-1][commo_month-1] += commo_num
+
+    return ret, order_num, new_commo_num, type_num_result, commo_num_array
 
