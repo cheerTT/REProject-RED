@@ -2,9 +2,6 @@
 
 a scrm management system based on face recognition
 
-
-
-
 #### 2019-3-6	CatherineXX
 
 完成商品管理模块，展示商品信息，以及对商品的增删改查；
@@ -114,10 +111,6 @@ git 测试
 #### 2019-3-17 CatherineXX
 定制单元测试规则，编写商品管理视图层的单元测试代码
 
-更新
-
-
-
 #### 2019-3-18 cheertt
 项目代码恢复
 
@@ -134,6 +127,7 @@ git 测试
 
 #### 2019-3-20 cheertt
 收银界面
+
 #### 2019-3-20 Virus
 改进了原来的画像AI，增加了雷达图。
 
