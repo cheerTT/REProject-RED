@@ -1,11 +1,11 @@
 .video {
-    margin-left: 100px;
+    margin-left: 50px;
     margin-top: 20px;
     float: left;
 }
 
 .commodity {
-    margin-left: 100px;
+    margin-left: 30px;
     margin-top: 20px;
     float: left;
 }
@@ -26,6 +26,7 @@
 
 .mytable tbody tr:hover{
     background-color: #fff;
+    border-radius: 5px;
 }
 
 .item_img {
@@ -52,4 +53,58 @@
 .btn_money {
     margin-left: 20px;
     cursor: pointer;
+}
+
+.commodities_list {
+    width: 470px;
+    min-height:480px;
+    padding: 10px 20px;
+    background-color: #ffffff;
+    border-radius: 5px;
+}
+
+.product_gw{border:1px solid #dbdbdb;width:110px;line-height:25px;overflow:hidden;font-size:.6rem;float:left}
+.product_gw em{display:block;height:25px;width:35px;float:left;color:#7A7979;border-right:1px solid #dbdbdb;text-align:center;cursor:pointer}
+.product_gw .product-num{display:block;float:left;text-align:center;width:38px;font-style:normal;font-size:12px;line-height:25px;border:0;pointer-events:none}
+.product_gw em.product-add{float:right;border-right:0;border-left:1px solid #dbdbdb}
+
+
+.comm_table {
+    width: 480px;
+    height: auto;
+}
+
+.comm_head tr td {
+    padding: 10px;
+    color: #4b646f;
+    font-size: 14px;
+    text-align: center;
+}
+
+.comm_tbody tr td {
+    padding: 10px;
+}
+
+.comm_table .comm_head .comm_num {
+    width: 80px;
+    height: 30px;
+}
+
+
+.comm_tbody .comm_title {
+    color: #4b646f;
+}
+
+.comm_id {
+    font-size: 14px;
+    font-family: 'Consolas', 'Deja Vu Sans Mono', 'Bitstream Vera Sans Mono', monospace;
+    color: #1b7e5a;
+}
+
+.searchInput {
+    border-radius: 5px;
+}
+
+.dataList_table {
+    border-radius: 5px;
 }

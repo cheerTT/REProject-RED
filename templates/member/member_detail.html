@@ -40,11 +40,9 @@
                   <table class="table" id="tbWorkList"  style="white-space: nowrap;">
                     <tbody>
                         <tr>
-                            <li>
-                                <a target="_blank">
-                                <span class="mailbox-attachment-icon has-img"><img align="left" id="avatarUrl" src="{{member.avatarUrl}}" alt=""></span>
-                                </a>
-                            </li>
+                            <a target="_blank">
+                            <span class="mailbox-attachment-icon has-img"><img align="left" id="avatarUrl" src="{{member.avatarUrl}}" alt=""></span>
+                            </a>
                         </tr>
                         <tr class="info">
                             <td width="10%"><strong>用户id</strong></td>
@@ -356,8 +354,8 @@ option2 = {
            }
         },
         indicator: [
-           { name: '消费能力', max: 200},
-           { name: '购物频率', max: 20},
+           { name: '消费能力', max: 250},
+           { name: '购物频率', max: 25},
            { name: '购物偏向性', max: 1},
            { name: '购物评分', max: 5},
            { name: '年龄', max: 80},
@@ -369,7 +367,7 @@ option2 = {
         // areaStyle: {normal: {}},
         data : [
              {
-                value : [{{sum_of_price}}, {{ sum_of_boughtitem}}, {{ rate_of_type }}, {{ ave_of_ratings }}, {{ predict_age }}],
+                value : [{{sum_of_price}}, {{ frequent_of_buy}}, {{ rate_of_type }}, {{ ave_of_ratings }}, {{ predict_age }}],
                 name : '实际开销（Actual Spending）'
             }
         ]

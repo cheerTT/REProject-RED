@@ -10,7 +10,8 @@
     "pages/my/commentList",
     "pages/my/creditList",
     "pages/my/comment",
-    "pages/my/index"
+    "pages/my/index",
+    "pages/cart/index"
 
   ],
   "window": {

@@ -20,7 +20,7 @@ page{
     text-align: center;
     font-size:28rpx;
     color:#999;
-    background: url(http://cdn.static.54php.cn/mina_order/icon-cart.png) no-repeat center 205rpx;
+    /*background: url(images/icon-cart.png) no-repeat center 205rpx;*/
     background-size: 100rpx auto;
     margin-bottom: 50rpx;
 }
@@ -64,22 +64,25 @@ page{
 .a-goods-conts{
     display: flex;
     justify-content:space-between;
-    padding-left: 30rpx;
+    /*padding-left: 30rpx;*/
     width: 870rpx;
     box-sizing: border-box;
     transition: margin-left 0.2s ease-in-out;
-    background: url(http://cdn.static.54php.cn/mina_order/gou.png) no-repeat 30rpx center;
-    background-size: 40rpx auto; 
+    background: url(https://helianthus.chinacloudapp.cn/static/media/gou.png) no-repeat 30rpx center;
+    background-size: 40rpx auto;
+    /*background-color: #9f191f;*/
 }
 .a-goods-conts.active{
-    background: url(http://cdn.static.54php.cn/mina_order/gou-red.png) no-repeat 30rpx center;
-    background-size: 40rpx auto; 
+
+    background: url(https://helianthus.chinacloudapp.cn/static/media/gou-red.png) no-repeat 30rpx center;
+    background-size: 40rpx auto;
+    /*background-color: #0c0c0c;*/
 }
 .goods-info{
     border-bottom: 1px solid #eee;
     display: flex;
     justify-content:space-between;
-    padding: 30rpx 0 30rpx 70rpx; 
+    padding: 30rpx 0 30rpx 70rpx;
     width: 720rpx;
     box-sizing: border-box;
 }
@@ -171,7 +174,7 @@ page{
     height:160rpx;
 }
 
-.a-goods-conts .delete-btn{
+.delete-btn{
     width: 120rpx;
     line-height: 220rpx;
     text-align: center;
@@ -187,8 +190,8 @@ page{
     position: fixed;
     bottom: 0;
     left: 0;
-    border-bottom:1px solid #eee; 
-    border-top:1px solid #eee; 
+    border-bottom:1px solid #eee;
+    border-top:1px solid #eee;
     background-color: #fff;
 }
 .jiesuan-box .to-pay-btn{
@@ -215,11 +218,11 @@ page{
 .jiesuan-box .all-selected{
     padding-left: 90rpx;
     color:#000000;
-    background: url(http://cdn.static.54php.cn/mina_order/gou.png) no-repeat 30rpx center;
-    background-size: 40rpx auto; 
+    background: url(images/nav/gou.png) no-repeat 30rpx center;
+    background-size: 40rpx auto;
 }
 .jiesuan-box .all-selected.active{
-    background: url(http://cdn.static.54php.cn/mina_order/gou-red.png) no-repeat 30rpx center;
+    background: url(images/nav/gou-red.png) no-repeat 30rpx center;
     background-size: 40rpx auto; 
 }
 .jiesuan-box .total{

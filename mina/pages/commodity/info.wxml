@@ -53,44 +53,11 @@
     <!--底部-->
     <view class="footer-box">
         <view class="shop-cart-btn" bindtap="goShopCar">
-            <view class="shop-num">({{shopCarNum}})</view>
-            <view style='position:absolute;bottom:10rpx;'> 购物车 </view>
+            <!--<view class="shop-num">({{shopCarNum}})</view>-->
+            <view style='position:absolute;bottom:10rpx;'> 收藏 </view>
         </view>
-        <view class="join-shop-cart" bindtap="toAddShopCar">加入购物车</view>
-        <view class="now-buy" bindtap="tobuy">立即购买</view>
+        <view class="join-shop-cart" bindtap="addShopCar">加入收藏</view>
+        <view class="now-buy" bindtap="goShopCar">我的收藏</view>
    </view>
 
-   <!--购买和收藏弹窗-->
-    <view class="show-popup" hidden="{{hideShopPopup}}" >
-        <view class="popup-mask" bindtap="closePopupTap"></view>
-        <view class="popup-contents">
-             <view class="pop-goods-info">
-                <view class="pop-img-box">
-                    <image src="{{info.main_image}}" class="goods-thumbnail"/>
-                </view>
-                <view class="pop-goods-des">
-                    <view class="pop-goods-title">{{info.name}}</view>
-                    <view class="pop-goods-price">¥ {{info.price}}</view>
-                </view>
-                <view class="pop-goods-close" bindtap="closePopupTap"></view>
-             </view>
-
-             <view class="buy-num-box">
-                <view class="num-label">购买数量</view>
-                <view class="num-box">
-                    <view class="num-jian {{buyNumber == buyNumMin ? 'hui': ''}}" bindtap="numJianTap">-</view>
-                    <view class="num-input">
-                       <input  type="number" value="{{buyNumber}}" disabled/>
-                    </view>
-                    <view class="num-jia {{buyNumber== buyNumMax ? 'hui': ''}}" bindtap="numJiaTap">+</view>
-                </view>
-             </view>
-             <view class="popup-join-btn" wx:if="{{shopType =='addShopCar'}}" bindtap="addShopCar">
-                加入购物车
-             </view>
-             <view class="popup-join-btn" wx:if="{{shopType =='tobuy'}}" bindtap="buyNow">
-                立即购买
-             </view>
-        </view>
-    </view>
 </view>

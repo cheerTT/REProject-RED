@@ -1,5 +1,7 @@
 from django.db import models
 
+from commodity.models import Commodity
+
 
 class Member(models.Model):
     gender_choices = (('1', '男'), ('2', '女'))
@@ -13,16 +15,17 @@ class Member(models.Model):
     joined_date1 = models.DateField(null=True, blank=True, verbose_name="人脸录入时间")
     joined_date2 = models.DateField(null=True, blank=True, verbose_name="用户注册时间", default='2019-01-01')
 
-    nickname = models.CharField(null=True, blank=True,max_length=20, verbose_name="昵称", default='暂无')
-    gender = models.CharField(null=True, blank=True,max_length=4, choices=gender_choices, verbose_name="性别", default='暂无')
+    nickname = models.CharField(null=True, blank=True, max_length=20, verbose_name="昵称", default='暂无')
+    gender = models.CharField(null=True, blank=True, max_length=4, choices=gender_choices, verbose_name="性别",
+                              default='暂无')
     avatarUrl = models.CharField(max_length=200, verbose_name="头像链接", null=True, blank=True, default='暂无')
-    city = models.CharField(null=True, blank=True,max_length=20, verbose_name="城市", default='暂无')
-    province = models.CharField(null=True, blank=True,max_length=20, verbose_name="省份", default='暂无')
-    state = models.CharField(null=True, blank=True,max_length=4, choices=state_choices, default='0', verbose_name="会员状态")
-    codeVerify = models.CharField(null=True, blank=True,max_length=6, verbose_name="验证码", default='-1')
-    type = models.CharField(null=True, blank=True,max_length=4, choices=type_choices, default='0', verbose_name="会员级别")
+    city = models.CharField(null=True, blank=True, max_length=20, verbose_name="城市", default='暂无')
+    province = models.CharField(null=True, blank=True, max_length=20, verbose_name="省份", default='暂无')
+    state = models.CharField(null=True, blank=True, max_length=4, choices=state_choices, default='0',
+                             verbose_name="会员状态")
+    codeVerify = models.CharField(null=True, blank=True, max_length=6, verbose_name="验证码", default='-1')
+    type = models.CharField(null=True, blank=True, max_length=4, choices=type_choices, default='0', verbose_name="会员级别")
     last_login_date = models.DateTimeField(null=True, blank=True, verbose_name="上次登录时间", default='2019-01-01')
-
 
     class Meta:
         verbose_name = "会员基本信息"
@@ -39,17 +42,17 @@ class Remark(models.Model):
     """
     pass
 
-class Credit(models.Model):
 
+class Credit(models.Model):
     '''
     √0：每日首次登陆获得积分：+2分/次
-    1：消费送积分：+1分/元
-    2：每日首次转发送积分：+3分/次
-    3：发表评论送积分：+2分/条
-    4：消费抵扣积分：-1元/100分
+    √1：消费送积分：+1分/元
+    √2：每日首次转发送积分：+3分/次
+    ×3：发表评论送积分：+2分/条
+    ×4：消费抵扣积分：-1元/100分
     '''
     type_choices = (('0', '收入'), ('1', '支出'))
-    bahave_choices = (('0', '每日首次登陆加积分'),('1', '消费送积分'),('2', '转发送积分'),('3','发表评论送积分'),('4', '消费抵扣积分'))
+    bahave_choices = (('0', '每日首次登陆加积分'), ('1', '消费送积分'), ('2', '转发送积分'), ('3', '发表评论送积分'), ('4', '消费抵扣积分'))
 
     behave = models.CharField(null=True, blank=True, max_length=50, choices=bahave_choices, verbose_name='产生积分变动的行为')
     creditpoints = models.IntegerField(null=True, blank=True, verbose_name='每条行为对应的积分')
@@ -61,3 +64,11 @@ class Credit(models.Model):
         verbose_name = "会员积分变动信息表"
         verbose_name_plural = verbose_name
         ordering = ["createtime"]
+
+
+class Cart(models.Model):
+    commodity = models.ForeignKey(Commodity, on_delete=models.CASCADE, null=True, blank=True, verbose_name='收藏商品id')
+    member = models.ForeignKey(Member, on_delete=models.CASCADE, null=True, blank=True, verbose_name='用户id')
+
+    class Meta:
+        verbose_name = "商品收藏表"

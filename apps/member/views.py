@@ -11,6 +11,7 @@ from api.models import Member
 from django.http import HttpResponse
 from django.core.serializers.json import DjangoJSONEncoder
 from order.models import Transaction
+from utils.toolkit import get_month_member_count, get_member_gender, get_monthly_sale_count
 
 
 import json
@@ -47,6 +48,15 @@ class MemberView(LoginRequiredMixin, View):
             gender_dict = dict(item=gender[0], value=gender[1])
             gender_list.append(gender_dict)
         ret['gender_list'] = gender_list
+
+        # 月度新增用户数量
+        month_member_count = get_month_member_count(value=int(request.GET.get('value', 0)))
+        result1 = month_member_count[0]['count']
+        ret['month_member_count'] = result1
+
+        # 用户性别统计
+        result2 = get_member_gender(value=int(request.GET.get('value', 0)))[0]['count']
+        ret['member_gender'] = result2
 
         return render(request, "member/member_list.html", ret)
 
@@ -123,11 +133,6 @@ class MemberDetailView(LoginRequiredMixin, View):
             member = get_object_or_404(Member, pk=request.GET.get('id'))
             ret['member'] = member
 
-
-
-
-
-
         boughtitems = Transaction.objects.filter(member_id=request.GET['id'])
         boughtitemkindlist = []
         boughtitemdict = {
@@ -167,14 +172,18 @@ class MemberDetailView(LoginRequiredMixin, View):
         if(boughtitemdict['Baby']['value'] > 0):
             predict_age += 10
 
+        frequent_of_buy= sum_of_boughtitem if sum_of_boughtitem < 25 else 25
+        sum_of_price = sum_of_price if sum_of_price <250 else 250
+
+
+
         ret['sum_of_boughtitem'] = sum_of_boughtitem
+        ret['frequent_of_buy'] = frequent_of_buy
         ret['boughtitemdict'] = boughtitemdict
         ret['rate_of_type'] = rate_of_type
         ret['ave_of_ratings'] = ave_of_ratings
         ret['sum_of_price'] = sum_of_price
         ret['predict_age'] = predict_age
-
-
 
 
         return render(request, 'member/member_detail.html', ret)

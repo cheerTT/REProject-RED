@@ -11,7 +11,7 @@
       </view>
       <view class="row-box" style="margin-top:35rpx">
           <view class="row-label">评价内容</view>
-          <textarea name="content" style="margin-top:35rpx;width:100%;" value="{{content}}" bindinput="contentChange" />
+          <textarea name="content" class="myText" value="{{content}}" bindinput="contentChange" />
       </view>
       <view class="btn-row">
         <button class="confirm-btn" bindtap="doComment">提交评价</button>
