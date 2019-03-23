@@ -41,13 +41,16 @@ Page({
             },
             success: function (res) {
                 var resp = res.data;
-                console.log(res)
                 // app.alert({"content": resp});
-                 wx.showToast({
+                setTimeout(function(){
+                   wx.showToast({
                     title: resp.msg,
                     duration: 1000,
                     mask: true
-                })
+                    });
+                },1000);
+
+                wx.navigateBack();
 
 
             }

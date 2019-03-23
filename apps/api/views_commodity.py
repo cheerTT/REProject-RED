@@ -173,7 +173,7 @@ class CartAddView(View):
 
         cart_list = Cart.objects.filter(Q(member_id=member_id) & Q(commodity_id=commodity_id))
         if (cart_list):
-            ret['msg'] = "已经加入收藏车"
+            ret['msg'] = "已经加入收藏"
         else:
             Cart.objects.create(
                 member_id=member_id,
