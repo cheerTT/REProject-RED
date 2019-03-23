@@ -43,7 +43,11 @@ Page({
                 var resp = res.data;
                 console.log(res)
                 // app.alert({"content": resp});
-                wx.navigateBack();
+                 wx.showToast({
+                    title: resp.msg,
+                    duration: 1000,
+                    mask: true
+                })
 
 
             }

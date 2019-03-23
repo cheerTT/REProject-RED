@@ -33,7 +33,10 @@ Page({
         this.getComments();
     },
     goShopCar: function () {
-        wx.reLaunch({
+        // wx.reLaunch({
+        //     url: "/pages/cart/index"
+        // });
+        wx.navigateTo({
             url: "/pages/cart/index"
         });
     },
@@ -59,60 +62,7 @@ Page({
             }
         });
     },
-    // tobuy: function () {
-    //     this.setData({
-    //         shopType: "tobuy"
-    //     });
-    //     this.bindGuiGeTap();
-    // },
 
-    // buyNow: function () {
-    //     wx.navigateTo({
-    //         url: "/pages/order/index"
-    //     });
-    // },
-    /**
-     * 规格选择弹出框
-     */
-    // bindGuiGeTap: function () {
-    //     this.setData({
-    //         hideShopPopup: false
-    //     })
-    // },
-    /**
-     * 规格选择弹出框隐藏
-     */
-    // closePopupTap: function () {
-    //     this.setData({
-    //         hideShopPopup: true
-    //     })
-    // },
-    // numJianTap: function () {
-    //     if (this.data.buyNumber <= this.data.buyNumMin) {
-    //         return;
-    //     }
-    //     var currentNum = this.data.buyNumber;
-    //     currentNum--;
-    //     this.setData({
-    //         buyNumber: currentNum
-    //     });
-    // },
-    // numJiaTap: function () {
-    //     if (this.data.buyNumber >= this.data.buyNumMax) {
-    //         return;
-    //     }
-    //     var currentNum = this.data.buyNumber;
-    //     currentNum++;
-    //     this.setData({
-    //         buyNumber: currentNum
-    //     });
-    // },
-    //事件处理函数
-    // swiperchange: function (e) {
-    //     this.setData({
-    //         swiperCurrent: e.detail.current
-    //     })
-    // },
     getInfo: function () {
         var that = this;
         wx.request({
