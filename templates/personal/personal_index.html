@@ -85,28 +85,6 @@
         <div class="col-md-12">
             <div class="box">
                <div class="box-header with-border">
-                  <h3 class="box-title">用户数据统计</h3>
-                  <div class="box-tools pull-right">
-                    <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
-                    </button>
-                    <button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
-                  </div>
-               </div>
-            <!-- /.box-header -->
-                <div class="box-body">
-                    <div class="row">
-                        <div class="col-md-8">
-                           <div id="bar_container" style="height: 400px; width: 900px;"></div>
-                        </div>
-                        <div class="col-md-4">
-                           <div id="pie_container" style="height: 400px; width: auto"></div>
-                        </div>
-                    </div>
-
-                </div>
-            </div>
-            <div class="box">
-               <div class="box-header with-border">
                   <h3 class="box-title">本月销售运营数据</h3>
                   <div class="box-tools pull-right">
                     <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
@@ -118,18 +96,17 @@
                 <div class="box-body">
                     <div class="row">
                         <div class="col-md-8">
-                           <div id="monthly_sale_container" style="height: 400px; width: 900px;"></div>
+                           <div id="monthly_sale_container" style="height: 400px; width: 800px;"></div>
                         </div>
                         <div class="col-md-4">
                            <div id="monthly_commodity_sale_container" style="height: 400px; width: auto"></div>
                         </div>
                     </div>
-
                 </div>
             </div>
             <div class="box">
                <div class="box-header with-border">
-                  <h3 class="box-title">月度各种类商品销售数据</h3>
+                  <h3 class="box-title">月度各种类商品销量数据</h3>
                   <div class="box-tools pull-right">
                     <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
                     </button>
@@ -163,139 +140,6 @@
 		$('#index').addClass('active');
 	});
 
-
-	// 月度用户统计echarts
-    var bar_dom = document.getElementById("bar_container");
-    var myChart = echarts.init(bar_dom,'macarons');
-    option = null;
-    option = {
-        title: {
-            text: '月度新增用户数量统计',
-            subtext: '',
-            x:'center'
-        },
-        tooltip: {
-            trigger: 'axis'
-        },
-
-        toolbox: {
-            show: true,
-            feature: {
-                dataView: {show: true, readOnly: false},
-                magicType : {show: true, type: ['line', 'bar', 'stack', 'tiled']},
-                restore : {show: true},
-                saveAsImage: {show: true}
-            }
-        },
-        calculable: true,
-        xAxis: [
-            {
-                type: 'category',
-                data : ['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月']
-
-            }
-        ],
-        yAxis: [
-            {
-                type: 'value'
-            }
-        ],
-        series: [
-            {
-                name: '新增用户数',
-                type: 'line',
-                smooth: true,
-                itemStyle: {normal: {areaStyle: {type: 'default'}}},
-                data: {{ month_member_count }},
-                markPoint : {
-                    data : [
-                        {type : 'max', name: '最大值'},
-                        {type : 'min', name: '最小值'}
-                    ]
-            },
-            },
-        ]
-    };
-    if (option && typeof option === "object") {
-        myChart.setOption(option, true);
-    }
-
-	// 用户数据统计echarts(性别)
-    var bar_dom = document.getElementById("pie_container");
-    var myChart = echarts.init(bar_dom,'macarons');
-    var gender = {{ member_gender }}
-    option = null;
-    option = {
-        title: {
-            text: '用户性别统计',
-            subtext: '',
-            x:'center'
-        },
-        tooltip: {
-            trigger: 'item',
-            formatter: "{a} <br/>{b} : {c} ({d}%)"
-        },
-         legend: {
-         orient : 'vertical',
-         x : 'left',
-        },
-        toolbox: {
-        show : true,
-        feature : {
-            mark : {show: true},
-            dataView : {show: true, readOnly: false},
-            magicType : {
-                show: true,
-                type: ['pie', 'funnel'],
-                option: {
-                    funnel: {
-                        x: '25%',
-                        width: '50%',
-                        funnelAlign: 'center',
-                        max: 1548
-                    }
-                }
-            },
-            restore : {show: true},
-            saveAsImage : {show: true}
-        }
-        },
-        calculable: true,
-        series: [
-            {
-                name: '用户性别统计',
-                type: 'pie',
-                radius : ['30%', '50%'],
-                itemStyle : {
-                normal : {
-                    label : {
-                        show : false
-                    },
-                    labelLine : {
-                        show : false
-                    }
-                },
-                emphasis : {
-                    label : {
-                        show : true,
-                        position : 'center',
-                        textStyle : {
-                            fontSize : '30',
-                            fontWeight : 'bold'
-                        }
-                    }
-                }
-            },
-                data: [
-                    { value: gender[0], name:'男生'},
-                    { value: gender[1], name:'女生'}
-                ]
-            },
-        ]
-    };
-    if (option && typeof option === "object") {
-        myChart.setOption(option, true);
-    }
 
     //本月营业额数据
     var bar_dom = document.getElementById("monthly_sale_container");

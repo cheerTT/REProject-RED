@@ -46,9 +46,6 @@ class TopRecommendationsView(View):
 
         ret = dict(data = commoditylist)
 
-        # print("11111111111111111111111111111111111")
-        # print(ret)
-
         ret = json.dumps(ret, cls=DjangoJSONEncoder)
         return HttpResponse(ret, content_type='application/json')
 
@@ -79,16 +76,12 @@ class Get_Common_Recommenadations(View):
             该用户若是购买了两件以上或者25%以上某种类商品，则给他推送该种类下随机五件商品，注意，Order_by方法损耗较大
             但还是最优随机选择方法。
             '''
-        print("进入方法type")
         for type in boughtitemdict:
             if (boughtitemdict[type] >= 2 or boughtitemdict[type]/sum_of_boughtitem >=0.25 ):
                 recommendations = Commodity.objects.filter(categories__type_name= type).order_by('?')[:5].values()
                 commoditylist += recommendations
-        print(commoditylist)
 
         random.shuffle(commoditylist)
-        print("随即后")
-        print(commoditylist)
         ret = dict(data= commoditylist)
         ret = json.dumps(ret, cls=DjangoJSONEncoder)
         return HttpResponse(ret, content_type='application/json')
