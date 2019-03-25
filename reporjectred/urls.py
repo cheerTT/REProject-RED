@@ -20,7 +20,7 @@ from reporjectred.settings import MEDIA_ROOT
 from users.views import IndexView, LoginView, LogoutView
 from personal.views import PersonalView, UserInfoView, UploadImageView, \
     PasswdChangeView
-from api.views_member import FaceView
+# from api.views_member import FaceView
 
 
 urlpatterns = [
@@ -47,7 +47,7 @@ urlpatterns = [
 
     url(r'^hotcommend/', include('hotcommend.urls', namespace='hotcommend')),
 
-    url(r'^api/face/$', FaceView.as_view(), name="face"),
+    # url(r'^api/face/$', FaceView.as_view(), name="face"),
 
     url(r'^api/', include('api.urls', namespace='api')),
 ]
