@@ -50,6 +50,7 @@ class WechatUtils():
         :return:
         '''
         auth_cookie = request.META.get('HTTP_AUTHORIZATION')
+        # print(auth_cookie)
         if auth_cookie is None:
             print('1')
             return False

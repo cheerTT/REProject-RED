@@ -1,3 +1,9 @@
+"""
+检测到图片含有人脸时，需要识别人脸信息
+"""
+# @Author  : cheertt
+# @Time    : 2019/3/7 14:22
+# @Remark  : 采用mtcnn截取人脸
 import os
 import datetime
 import numpy as np
@@ -82,6 +88,3 @@ def image_array_align_data(image_arr, image_path, pnet, rnet, onet, image_size=1
         return np.zeros((1, 3))
 
 
-def base_dir():
-    print('BASE_DIR:')
-    print(BASE_DIR)
