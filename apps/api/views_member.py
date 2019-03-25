@@ -88,18 +88,21 @@ class MemberLoginView(View):
         print(bind_info)
 
         # 正常注册的情况，通过code bind_info 不为空
-        # 以及不正常的情况
         if bind_info:
             Member.objects.filter(id=bind_info[0].id).update(openid=openid,
-                                                         nickname=nickname,
-                                                         gender=gender,
-                                                         city=city,
-                                                         province=province,
-                                                         avatarUrl=avatar_url,
-                                                         state=0,
-                                                         type=1,
-                                                         joined_date2=datetime.datetime.now(),
-                                                         last_login_date=datetime.datetime.now())
+                                                             nickname=nickname,
+                                                             gender=gender,
+                                                             city=city,
+                                                             province=province,
+                                                             avatarUrl=avatar_url,
+                                                             state=0,
+                                                             type=1,
+                                                             joined_date2=datetime.datetime.now(),
+                                                             last_login_date=datetime.datetime.now())
+
+        print(bind_info.values_list())
+
+        print(bind_info.first())
 
         if bind_info.first() is not None:
             now = datetime.datetime.now()  # 现在的时间
@@ -131,7 +134,6 @@ class MemberLoginView(View):
             ), bind_info.first().id)
             ret['user_id'] = bind_info.first().id
         else:
-            # non_user = Member.objects.filter(openid=openid)
             token = "%s#%s" % (WechatUtils.geneAuthCode(
                 id='-1',
                 codeVerify='-1',
@@ -227,7 +229,6 @@ class MemberInfoView(View):
         ret = {}
 
         auth_cookie = WechatUtils.checkMemberLogin(request)
-        print('auth_cookie:',auth_cookie)
 
         ret['id'] = auth_cookie.id
         ret['openid'] = auth_cookie.openid
@@ -240,7 +241,7 @@ class MemberInfoView(View):
         ret['avatarUrl'] = auth_cookie.avatarUrl
         ret['codeVerify'] = auth_cookie.codeVerify
         ret['type'] = auth_cookie.type
-        print("ret",ret)
+
         return HttpResponse(json.dumps(ret), content_type='application/json')
 
 
