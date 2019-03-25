@@ -98,9 +98,9 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'reprojectred',
-        'HOST': '139.219.2.134',
+        'HOST': '42.159.7.12',
         'USER': 'root',
-        'PASSWORD': 'Jincan.4943198',
+        'PASSWORD': '123456',
         'PORT': '3306'
     }
 }
