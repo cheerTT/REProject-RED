@@ -6,11 +6,10 @@
     "pages/commodity/info",
     "pages/recommendations/info",
     "pages/order/index",
-    "pages/my/order_list",
-    "pages/my/order_info",
-    "pages/my/creditList",
+    "pages/my/orderList",
     "pages/my/commentList",
-
+    "pages/my/creditList",
+    "pages/my/comment",
     "pages/my/index",
     "pages/cart/index"
 
@@ -38,7 +37,7 @@
         "pagePath": "pages/commodity/index",
         "iconPath": "images/nav/search-off.png",
         "selectedIconPath": "images/nav/search-on.png",
-        "text": "购物车"
+        "text": "搜索"
       },
       {
         "pagePath": "pages/my/index",

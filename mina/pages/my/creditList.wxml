@@ -1,1 +1,61 @@
-我的积分
+<view class="myIntegral-wrap page" id="myIntegral">
+    <scroll-view class="myIntegral-content" wx:if="{{ integralPage == 0 }}" scroll-y="true" bindscroll="fixedMessageNav" lower-threshold="116"
+                 bindscrolltolower="checkMoreMessageData" >
+        <view class="integral-detail">
+            <view class="integral-card">
+                <view class="detail-num">
+                    <text>{{ totalpoints }}</text>
+                </view>
+                <view class="detail-name">
+                    <text>总积分</text>
+                </view>
+                <view class="integral-detail-bottomline"></view>
+            </view>
+            <view class="detail-rule" catchtap="showIntegralRule">
+                <text>积分规则</text>
+                <view class="single-icon">?</view>
+            </view>
+        </view>
+        <view class="message-nav">
+            <view>积分明细</view>
+        </view>
+        <view class="message-content" wx:for="{{ creditlist.data }}" wx:key="{{ index }}" wx:for-item="singlecredit">
+            <view class="message-item">
+                <view class="message-title">{{ singlecredit.behave }}</view>
+                <view class="message-time">{{ singlecredit.createtime }}</view>
+                <view class="message-num">{{ singlecredit.creditpoints }}积分</view>
+            </view>
+        </view>
+    </scroll-view>
+    <view class="myIntegral-rule" wx:if="{{ integralPage == 1 }}">
+        <view class="rule-list">
+            <view class="rule-item">
+                <view class="item-name">消费积分</view>
+                <view class="item-content">消费 {{ integralRule.consumeNum }} 元，获得 1 积分</view>
+            </view>
+            <view class="rule-item">
+                <view class="item-name">登录积分</view>
+                <view class="item-content">每天登录送 {{ integralRule.loginNum }} 积分</view>
+            </view>
+            <view class="rule-item">
+                <view class="item-name">分享积分</view>
+                <view class="item-content">每天首次分享商品送 {{ integralRule.shareNum }} 积分</view>
+            </view>
+            <view class="rule-item">
+                <view class="item-name">评论积分</view>
+                <view class="item-content">商品评论送 {{ integralRule.postCommentNum }} 积分</view>
+            </view>
+            <view class="rule-item">
+                <view class="item-name">使用积分</view>
+                <view class="item-content">{{ integralRule.convertNum }} 积分 = 1元</view>
+            </view>
+            <view class="rule-item">
+                <view class="item-name">提醒</view>
+                <view class="item-content">消费积分并不会影响升级会员卡，与会员升级相关的是总积分</view>
+            </view>
+        </view>
+        <view class="confirm-btn" catchtap="hideIntegralRule">确定</view>
+    </view>
+</view>
+
+

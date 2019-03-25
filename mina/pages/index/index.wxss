@@ -14,7 +14,7 @@ page{
   flex: 1;
   display: flex;
   flex-direction: column;
-  background: #69C3AA;
+  background: #B3D4DB;
   align-items: stretch;
   padding: 0;
   height: 100%;
@@ -153,14 +153,15 @@ page{
 }
 
 .confirm-btn {
-  font-size: 13pt;
-  line-height: 85rpx;
-  height: 85rpx;
-  background: #69C3AA;
-  color: #fff;
+  border: 2px solid #405F80;
+  font-size: 12pt;
+  line-height: 95rpx;
+  height: 95rpx;
+  background: #B3D4DB;
+  color: #405F80;
   text-align: center;
-  border-radius: 100rpx;
-  margin: 40% 20%;
+  border-radius: 30rpx;
+  margin: 20% 30% 50% 30%;
 }
 .confirm-btn:active {
   opacity: .8;
@@ -168,7 +169,7 @@ page{
 
 
 .copyright {
-  font-size: 28rpx;
+  font-size: 30rpx;
   color: #999;
   position: fixed;
   bottom: 0;
@@ -176,4 +177,36 @@ page{
   right: 0;
   padding: 30rpx;
   text-align: center;
+}
+
+.search-code {
+  margin: 0 30%;
+}
+
+.search-code input {
+  text-align: center;
+}
+
+.avatar-show {
+  margin: 10% 30%;
+}
+
+.userinfo-avatar {
+  margin: 20% 10% 10%;
+  width: 256rpx;
+  height: 256rpx;
+  border-radius: 50%;
+}
+
+
+.bind-btn {
+  border: 2px solid #405F80;
+  font-size: 12pt;
+  line-height: 95rpx;
+  height: 95rpx;
+  background: #B3D4DB;
+  color: #405F80;
+  text-align: center;
+  border-radius: 30rpx;
+  margin: 20% 30% 10% 30%;
 }

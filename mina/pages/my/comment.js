@@ -2,32 +2,57 @@
 var app = getApp();
 Page({
     data: {
-        "content":"非常愉快的订餐体验~~",
-        "score":10,
-        "order_sn":""
+        content: "~~",
+        score: 5,
+        order_sn: "",
+        id: 0,
+        userid: null,
     },
     onLoad: function (e) {
+        var that = this;
+        that.setData({
+            id: e.id,
+            userid: e.userid
+        });
+
 
     },
-    scoreChange:function( e ){
+
+    scoreChange: function (e) {
         this.setData({
-            "score":e.detail.value
+            score: e.detail.value
         });
     },
-    doComment:function(){
+    contentChange: function (e) {
+        this.setData({
+            content: e.detail.value
+        });
+    },
+    doComment: function () {
         var that = this;
+
         wx.request({
-            url: app.buildUrl("/my/comment/add"),
+            url: app.buildUrl("/commodity/comment_add"),
             header: app.getRequestHeader(),
+            data: {
+                id: that.data.id,
+                score: that.data.score,
+                content: that.data.content
+            },
             success: function (res) {
                 var resp = res.data;
-                if (resp.code != 200) {
-                    app.alert({"content": resp.msg});
-                    return;
-                }
-                that.setData({
-                   user_info:resp.data.info
-                });
+                // app.alert({"content": resp});
+                setTimeout(function(){
+                   wx.showToast({
+                    title: resp.msg,
+                    duration: 1000,
+                    mask: true
+                    });
+                },1000);
+
+                wx.navigateBack();
+
+
             }
         });
     }

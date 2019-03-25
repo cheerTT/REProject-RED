@@ -21,47 +21,112 @@ Page({
         imagePath : app.globalData.imagePath,
         processing: false,
         p:1,
+        commonrecommendations : []
     },
     onLoad: function () {
         var that = this;
-
-        wx.request({
-          url: app.buildUrl('/recommendations/toprecommendations'),
-          header: app.getRequestHeader(),
-          method: 'get',
-          data: {
-          },
-          success: function (res) {
-            console.log(res.data.data),
-            that.setData({
-              toprecommendations: res.data.data
-            }
-            )
+        this.getHotCommodityList();
+        console.log(getApp().globalData.user_id)
+        if (getApp().globalData.user_id == "not_user")
+        {
+          console.log("不是用户")
+        }
+        else{
+          wx.request({
+            url: app.buildUrl('/recommendations/toprecommendations'),
+            header: app.getRequestHeader(),
+            method: 'get',
+            data: {
+            },
+            success: function (res) {
+              console.log(res.data.data),
+              that.setData({
+                toprecommendations: res.data.data
               }
-        
-        });
+              )
+                }
+
+          });
+
+          wx.request({
+            url: app.buildUrl('/recommendations/commonrecommendations'),
+            header: app.getRequestHeader(),
+            method: 'get',
+            data: {
+            },
+            success: function (res) {
+              console.log(res.data.data),
+                that.setData({
+                  toprecommendations: res.data.data.slice(0, 3).concat(that.data.toprecommendations),
+                  commonrecommendations : res.data.data
+
+                })
+              if (res.data.has_more == false) {
+                that.setData({
+                  loadingMoreHidden: false
+                });
+              }
+            }
+          });
+
+
+
+
+
+        }
+
         wx.setNavigationBarTitle({
             title: app.globalData.shopName
         });
+        if (getApp().globalData.user_id == "not_user") {
+          that.setData({
 
-        that.setData({
-           
             categories: [
-                {id: 0, name: "爆款！！！"},
-                {id: 1, name: "猜你喜欢"},
+              { id: 0, name: "爆款！！！" },
             ],
             activeCategoryId: '0',
             //loadingMoreHidden: false
-        });
+          });
+        }
+        else{
+          that.setData({
+
+              categories: [
+                  {id: 0, name: "爆款！！！"},
+                  {id: 1, name: "猜你喜欢"},
+              ],
+              activeCategoryId: '0',
+              //loadingMoreHidden: false
+          });
+        }
+
+
+
+
+
+
+
+
     },
     onShow: function () {
       // this.getType();
+      var that = this
         this.setData({
           p: 1,
+          arpages:0,
           goods: [],
           loadingMoreHidden: true
         });
-        this.getHotCommodityList();
+      switch (that.data.activeCategoryId){
+        case'0':
+          this.getHotCommodityList();
+          break;
+        case'1':
+          this.getallrecommendations();
+          break;
+        default :
+      }
+        //this.getHotCommodityList();
 
       },
 
@@ -83,15 +148,22 @@ Page({
         case "1":
           this.setData({
             loadingMoreHidden: true,
-            goods: [],
+            goods: that.data.commonrecommendations,
             activeCategoryId: e.currentTarget.id,
             arpages:0
           });
           that.getallrecommendations()
+          
           break;
           default:
       }
 
+    },
+
+    toDetailsTap: function (e) {
+      wx.navigateTo({
+        url: "/pages/commodity/info?id=" + e.currentTarget.dataset.id
+      });
     },
     scroll: function (e) {
         var that = this, scrollTop = that.data.scrollTop;
@@ -113,13 +185,14 @@ Page({
     tapBanner: function (e) {
         if (e.currentTarget.dataset.id != 0) {
             wx.navigateTo({
-              url: "/pages/recommendations/info?id=" + e.currentTarget.dataset.id
+              url: "/pages/commodity/info?id=" + e.currentTarget.dataset.id
             });
         }
     },
     toDetailsTap: function (e) {
+      console.log(e.currentTarget.dataset.id)
         wx.navigateTo({
-          url: "/pages/recommendations/info?id=" + e.currentTarget.dataset.id
+          url: "/pages/commodity/info?id=" + e.currentTarget.dataset.id
         });
     },
     onReachBottom: function () { //下拉刷新
@@ -127,7 +200,6 @@ Page({
       console.log(that.data.activeCategoryId)
       switch (that.data.activeCategoryId){
         case '0':
-        console.log("fdgdfgf")
         setTimeout(function () {
           that.getHotCommodityList();
         }, 500);
@@ -138,6 +210,14 @@ Page({
           }, 500);
         break;
         default:
+      }
+    },
+    not_user_toprecommendations: function(){
+      var that = this
+      if (getApp().globalData.user_id == "not_user"){
+      that.setData({
+        toprecommendations: this.data.goods
+      })
       }
     },
     getallrecommendations: function () {
@@ -201,13 +281,13 @@ Page({
         p: that.data.p,
       },
       success: function (res) {
-        console.log(res.data.data);
         var goods = res.data.data;
         that.setData({
           goods: that.data.goods.concat(goods),    //下拉增加商品
           p: that.data.p + 1,
           processing: false
         });
+        that.not_user_toprecommendations()
 
         if (res.data.has_more == false) {
           that.setData({

@@ -7,7 +7,8 @@ Page({
     angle: 0,
     userInfo: {},
     regFlag: true,
-    codeVerify: ''
+    codeVerify: '',
+    bol: false
   },
   goToIndex:function(){
     wx.switchTab({
@@ -41,15 +42,24 @@ Page({
         });
       }
     });
+
   },
   listenerCodeInput: function (e) {
     this.setData({
       codeVerify: e.detail.value
     });
   },
+  // changeName: function(e) {
+  //   app.alert({'content': '请输入验证码'});
+  // },
+  show: function() {
+    this.setData({
+      bol:true
+    })
+  },
   checkLogin: function(){
-      
       var that = this;
+      var app = getApp();
       wx.login({
           success: function (res) {
             if (!res.code) {
@@ -57,7 +67,8 @@ Page({
                 return;
             }
             console.log('checkLogin')
-            console.log(that.data.codeVerify)
+
+            console.log('11' + that.data.codeVerify)
             wx.request({
               url: app.buildUrl('/member/checkreg'),
               header: app.getRequestHeader(),
@@ -65,12 +76,20 @@ Page({
 
               data: {'code': res.code, 'codeVerify': that.data.codeVerify},
                 success: function (res) {
+                  console.log(res.data)
                   if (res.data.code != 200) {
-                      that.setData({
-                          regFlag: false
-                      });
-                      return;
+                    console.log('regflag = false');
+                    
+                    app.alert({'content': '您还不是会员，赶快到店里获取会员码吧！'})
+                    that.setData({
+                      
+                      regFlag: false
+                    });
+                    return;
                   }
+                  console.log(app.globalData.user_id)
+                  getApp().globalData.user_id =  res.data.user_id
+                  console.log(getApp().globalData.user_id)
                   app.setCache("token", res.data.data.token);
                   that.goToIndex();
                 }
@@ -79,6 +98,7 @@ Page({
       });
   },
   login: function(e){
+    
     var that = this;
     if (!e.detail.userInfo) {
         app.alert({'content': '登陆失败，请再次点击'});
@@ -99,10 +119,15 @@ Page({
               method: 'POST',
               data: data,
               success: function (res) {
+                console.log(res)
                 if (res.data.code != 200) {
                     app.alert({'content': res.data.msg});
                     return;
                 }
+                if (res.data.user_id != '-1') {
+                  getApp().globalData.user_id = res.data.user_id
+                }
+      
                 app.setCache("token", res.data.data.token);
                 that.goToIndex();
               }

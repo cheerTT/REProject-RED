@@ -10,8 +10,7 @@
   <link rel="stylesheet" href="{% static 'plugins/layui/layui.css' %}">
   <link rel="stylesheet" href="{% static 'dist/css/face.css' %}">
 </head>
-
-<body>
+<body style="background-image: url({% static 'media/bg.jpg' %});background-repeat:no-repeat; background-size:100% 100%;-moz-background-size:100% 100%;">
     <div>
         <ul class="layui-nav layui-bg-cyan">
             <li class="layui-nav-item">
@@ -31,8 +30,12 @@
         </ul>
     </div>
     <div class="video">
-        <video id="video" width="480" height="300" controls></video>
-
+        <video id="video" controls></video>
+        <br/>
+        <br/>
+        <br/>
+        <br/>
+        <span id="codeShow" style="font-size: 40px; color: red;"></span>
         <div id="a">
             <canvas id="canvas" width="480" height="320"></canvas>
         </div>
@@ -50,18 +53,36 @@
                         </tbody>
                     </table>
                 </div>
+
+                <div class="commodities_list">
+
+                    <table class="comm_table">
+                        <thead class="comm_head">
+                            <tr>
+                                <td>品名</td>
+                                <td class="comm_num">数量</td>
+                                <td class="comm_price">单价</td>
+                                <td class="comm_del"></td>
+                            </tr>
+                        </thead>
+                        <tbody class="comm_tbody">
+                        </tbody>
+                    </table>
+
+                </div>
+
             </div>
 
         </div>
     </div>
-    <div class="order">
+    <!--<div class="order">
         <div class="inputArea">
-            <table class="layui-table mytable" lay-skin="nob">
-                <tbody class="orderList">
-                </tbody>
-            </table>
+            <div class="layui-inline">
+                <input type="text" class="layui-input receive_money" placeholder="实收金额"/>
+            </div>
         </div>
     </div>
+    -->
 </body>
 
 <script type="text/javascript">
@@ -129,17 +150,20 @@
     function upload(base64) {
         var total = 0;
         var param = new Map();
-        lis = $(".orderList tr");
-
+        lis = $(".comm_tbody tr");
+        console.log(lis);
+        if (lis.length == 0) {
+            alert('请输入商品');
+            return;
+        }
         for (var i = 0; i < lis.length; i++) {
 
-            idd = lis[i].getElementsByTagName('input').item(0).getAttribute('id');
-            assinn = lis[i].getElementsByTagName('td').item(1).textContent;
-            vall = lis[i].getElementsByTagName('input').item(0).getAttribute('value');
-            pricee = lis[i].getElementsByTagName('td').item(3).textContent;
+            idd = lis[i].getElementsByTagName('div').item(0).textContent;
+            vall = lis[i].getElementsByTagName('input').item(0).value;
+            pricee = lis[i].getElementsByTagName('td').item(2).textContent;
             pricee = pricee.slice(1, pricee.length);
             total += pricee * vall;
-
+            console.log(total);
             param.set(idd, vall);
         }
         param = JSON.stringify(_strMapToObj(param));
@@ -157,6 +181,16 @@
               console.log(result);
               // img_path = result.data.file_path
               // 显示验证码-并跳转另一个页面
+              console.log(result.type);
+              console.log(result.codeVerify);
+              if (result.type == 0) {
+                  $('#codeShow').html("<font color=green>老会员：</font>" + result.codeVerify);
+              } else if (result.type == 1) {
+                  $('#codeShow').html("<font color=green>新会员：</font>" + result.codeVerify);
+              } else {
+                  $('#codeShow').html("您的浏览器被攻击了");
+              }
+
           }
       });
 
@@ -165,10 +199,11 @@
 </script>
 
 <script type="application/javascript">
-    var orderList = '';
-    var i = 1;
+
+    // var orderList = '';
+    // var i = 1;
     let orderId = new Set();
-    function orderAdd(id, assin, present_price) {
+    function orderAdd(id, title, assin, present_price) {
 
         if (orderId.has(id) == true) {
             // todo
@@ -176,16 +211,58 @@
         } else {
             orderId.add(id);
 
-            orderList += '<tr><td>' + i++ + '</td>'
-                        + '<td>' + assin + '</td>'
-                        + '<td><input id="' + id + '" onkeyup="value=zhzs(this.value)" lay-verify="required|number" type="text" value="1" class="layui-input numInput" maxlength="3" /></td>'
-                        + '<td>￥' + present_price + '</td></tr>';
+            var orderList = '<tr class="product-box">\n' +
+'                                <td class="comm_title">\n' +
+'                                    ' + title + '\n' +
+'                                    <div class="comm_id">' + id + '</div>\n' +
+'                                    <div class="comm_id">' + assin + '</div>\n' +
+'                                </td>\n' +
+'                                <td>\n' +
+'                                    <div class="product_gw">\n' +
+'                                       <em class="product-jian">-</em>\n' +
+'                                       <input type="text" value="1" class="product-num"/>\n' +
+'                                       <em class="product-add">+</em>\n' +
+'                                    </div>\n' +
+'                                </td>\n' +
+'                                <td>￥' + present_price + '</td>\n' +
+'                                <td><div class="product-del"><img src="../../static/media/close.png" /></div></td>\n' +
+'                            </tr>';
+
+
+
+
+            {#var orderList = '<tr><td>' + i++ + '</td>'#}
+            {#            + '<td>' + assin + '</td>'#}
+            {#            + '<td><input id="' + id + '" onkeyup="value=zhzs(this.value)" lay-verify="required|number" type="text" value="1" class="layui-input numInput" maxlength="3" /></td>'#}
+            {#            + '<td>￥' + present_price + '</td></tr>';#}
+
+            $(".comm_tbody").append(orderList);
 
         }
 
-        $(".orderList").html("");
-        $(".orderList").append(orderList);
+        //$(".orderList").html("");
+        //$(".orderList").append(orderList);
     }
+
+    $(document.body).on('click','.product-del',function(){
+		if(confirm("确认删除吗")){
+			$(this).closest(".product-box").remove();
+		}
+    });
+
+    $(document.body).on('click','.product-add',function(){
+        var n=$(this).prev().val();
+		var num=parseInt(n)+1;
+		if(num==99){ return;}
+			$(this).prev().val(num);
+    });
+
+    $(document.body).on('click','.product-jian',function(){
+        var n=$(this).next().val();
+		var num=parseInt(n)-1;
+		if(num==0){ return;}
+			$(this).next().val(num);
+    });
 
     // 限制文本框只能输入正整数
     function zhzs(value){
@@ -201,18 +278,29 @@
             var searchText = $(this).val();
             var tmpHtml = "";
             var search_url = "";
-            if (searchText.length > 4) {
+            if (searchText.length > 8) {
                 $.ajax({
                     cache: false,
                     type: 'get',
                     dataType:'json',
+                    headers: {
+                      'accept': 'application/json'
+                    },
                     url:"http://127.0.0.1:8000/api/commodity/search"+"?s="+searchText,
                     async: true,
                     success: function(data) {
                         data = data['data'];
                         for (var i=0;i<data.length;i++){
+                            console.log(data[i]["title"]);
+                            var title = '';
+                            for (var j = 0; j < data[i]["title"].length; j++) {
+                                if (data[i]["title"][j] != '\'') {
+                                    title += data[i]["title"][j];
+                                }
+                            }
+                            console.log(title);
                             tmpHtml += '<tr><td rowspan="3"><img class="item_img" src="/media/' + data[i]['imUrl'] + '"></td>'
-                                    + '<td><a href="#" onclick="orderAdd(' + data[i]['id'] + ',\'' + data[i]["assin"]  + '\',' + data[i]["present_price"] + ')" id=' + data[i]['id'] + '>' + data[i]["assin"] + '</a></td></tr>'
+                                    + '<td><a href="#" onclick="orderAdd(' + data[i]['id'] + ',\''+ title + '\',\'' + data[i]["assin"]  + '\',' + data[i]["present_price"] + ')" id=' + data[i]['id'] + '>' + data[i]["assin"] + '</a></td></tr>'
                                     + '<tr><td class="item_content">' + data[i]["title"] + '</td></tr>'
                                     + '<tr><td>' + data[i]["present_price"] + '</td></tr>'
                         }

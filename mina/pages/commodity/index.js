@@ -18,6 +18,9 @@ Page({
         searchInput: '',
         p: 1,
         processing: false,
+        imagePath: app.globalData.imagePath,
+        type: ['baby', 'beauty', 'Grocery', 'Electronics', 'Office', 'Pet', 'Sports', 'Kitchen']
+
     },
     onLoad: function () {
         var that = this;
@@ -34,7 +37,7 @@ Page({
     },
     //每次展示都会调用这个方法
     onShow: function () {
-       this.setData({
+        this.setData({
             p: 1,
             goods: [],
             loadingMoreHidden: true
@@ -71,7 +74,7 @@ Page({
     tapBanner: function (e) {
         if (e.currentTarget.dataset.id != 0) {
             wx.navigateTo({
-                url: "/pages/food/info?id=" + e.currentTarget.dataset.id
+                url: "/pages/commodity/info?id=" + e.currentTarget.dataset.id
             });
         }
     },
@@ -142,7 +145,7 @@ Page({
             },
             success: function (res) {
                 console.log(res.data.data)
-                var goods=res.data.data;
+                var goods = res.data.data;
                 that.setData({
                     goods: that.data.goods.concat(goods),
                     p: that.data.p + 1,

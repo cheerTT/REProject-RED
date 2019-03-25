@@ -4,12 +4,13 @@
 
 
 import calendar
+import datetime
 from datetime import date, timedelta
+import numpy as np
+from django.db.models import Sum
 
-from django.core.mail import send_mail
-
-from personal.models import WorkOrder
-from reporjectred.settings import EMAIL_FROM
+from commodity.models import Commodity
+from order.models import Transaction
 from api.models import Member
 
 def get_month_member_count(value=0):
@@ -51,134 +52,71 @@ def  get_member_gender(value=0):
     # end_date = start_date + timedelta(days_in_month - 1)
     filters['gender'] = '1'
     member_gender1 = Member.objects.filter(**filters).count()
-    # print("member_gender1:", member_gender1)
     count.append(member_gender1)
 
     filters['gender'] = '2'
     member_gender2 = Member.objects.filter(**filters).count()
-    # print("member_gender2:",member_gender2)
     count.append(member_gender2)
     data = {
         'count': count
     }
-    # print('data:',data)
     member_gender.append(data)
     return member_gender
 
-def get_year_work_order_count(users, value=0):
+def get_monthly_sale_count(value=0):
     """
-    生成年度统计数据
+    生成当月销售数据统计
     """
-    # filters = dict()
-    # year_work_order_count = []
-    # for user in users:
-    #     start_year = date.today().replace(month=1, day=1)
-    #     end_year = date.today().replace(year=(start_year.year + 1), month=1, day=1)
-    #     filters['add_time__range'] = (start_year, end_year)
-    #     if value == 0:
-    #         filters['proposer_id'] = user['id']
-    #     else:
-    #         filters['receiver_id'] = user['id']
-    #     year_work_order = WorkOrder.objects.filter(**filters).count()
-    #     data = {
-    #         'name': user['name'],
-    #         'count': year_work_order
-    #     }
-    #     year_work_order_count.append(data)
-    #
-    # return year_work_order_count
+    this_year = datetime.datetime.now().year #获取当前年份
+    this_month = datetime.datetime.now().month #获取当前月份
+    this_month_days = calendar.monthrange(this_year,this_month)[1] #根据年份和月份获取这个月的天数 31
 
+    ret = []
+    order_num = 0
+    commo_type_num = {}
+    for i in range(1,this_month_days+1):
+        currentday_profit = 0
+        currentday_trans = Transaction.objects.filter(joined_date__startswith=datetime.date(this_year,this_month,i)) #获取当前天数的交易
+        for trans in currentday_trans:
+            commo_id = trans.commodity_id
+            commo_price = Commodity.objects.filter(id=commo_id).first().present_price
+            currentday_profit += commo_price
 
-class ToolKit(object):
-    '''
-    随机生成工单号
-    '''
+            order_num += 1
 
-    @classmethod
-    def bulidNumber(self, nstr, nlen, srcnum="0"):
-        numlen = nlen - len(nstr)
-        snum = "1"
-        if len(srcnum) == nlen:
-            snum = srcnum[len(nstr):len(srcnum)]
-            nnum = int(snum)
-            snum = str(nnum + 1)
-        return nstr + snum.zfill(numlen)
+        ret.append(round(currentday_profit,2))
 
+    # 顺便统计一下当月新增商品数
+    filters = dict()
+    start_date = date.today().replace(month=this_month, day=1)
+    end_date = start_date + timedelta(this_month_days -1 )
+    filters['warrantyDate__range'] = (start_date, end_date)
+    new_commo_num = Commodity.objects.filter(**filters).count()
 
-class SendMessage(object):
+    #统计当月售出商品的各种类的数量
+    filters1 = dict()
+    filters1['joined_date__range']  = (start_date, end_date)
+    commo_list = Transaction.objects.filter(**filters1)
+    type_list = []
+    type_num_result = {0:0, 1:0, 2:0, 3:0, 4:0, 5:0, 6:0, 7:0, 8:0}
+    for commo in commo_list:
+        single_type = Commodity.objects.filter(id=commo.commodity_id).first().categories_id
+        type_list.append(single_type)
+    for i in type_list:
+        type_num_result[i] += 1
 
-    @classmethod
-    def send_workorder_email(self, number):
-        work_order = WorkOrder.objects.get(number=number)
-        if work_order.status == "2":
-            email_title = u"工单申请通知：{0}".format(work_order.title)
-            email_body = """
-            {0} 提交了一个新的工单申请， 工单编号 ：{1}， 申请时间：{2}， 安排时间：{3}， 请审批！
-            -----------------------------------------------------
-            联系人：{4}
-            电话 ： {5}
-            单位 ： {6}
-            地址 ： {7}
-            内容 ： {8}
-            -----------------------------------------------------
-            本邮件为系统通知请勿回复。
-            """.format(work_order.proposer.name, work_order.number, work_order.add_time.strftime("%Y-%m-%d %H:%I:%S"),
-                       work_order.do_time,
-                       work_order.customer.name, work_order.customer.phone, work_order.customer.unit,
-                       work_order.customer.address, work_order.content)
-            email = [work_order.approver.email, work_order.proposer.email]
+    # 统计全年12个月份8种类商品的销量
+    # commo_num_array = [[0]*12]*8 # 初始化为0
+    commo_num_array = [[0 for i in range(12)] for i in range(8)]
+    fields = ['num', 'joined_date', 'commodity_id', 'commodity_id__categories_id']
+    filters = dict()
+    commo_list_year = Transaction.objects.filter(**filters).values(*fields)  #今年所有的商品
+    for commo in commo_list_year:
+        # 种类为commo_type的在commo_month的有commo_num个
+        commo_type = int(commo['commodity_id__categories_id'])
+        commo_month = int(commo['joined_date'].month)
+        commo_num = int(commo['num'])
+        commo_num_array[commo_type-1][commo_month-1] += commo_num
 
-        elif work_order.status == "3":
-            record = work_order.workorderrecord_set.filter(record_type="1").last()
-            email_title = "工单派发通知：{0}".format(work_order.title)
-            email_body = """
-            编号为：{0} 的工单已经派发，申请人：{1}， 申请时间{2}，安排时间{3}，接单人：{4}
-            -----------------------------------------------------
-            联系人：{5}
-            电话 ： {6}
-            单位 ： {7}
-            地址 ： {8}
-            内容 ： {9}
-            派发记录：{10}
-            -----------------------------------------------------
-            本邮件为系统通知请勿回复。
-            """.format(work_order.number, work_order.proposer, work_order.add_time.strftime("%Y-%m-%d %H:%I:%S"), work_order.do_time,
-                       work_order.receiver,
-                       work_order.customer.name, work_order.customer.phone, work_order.customer.unit,
-                       work_order.customer.address,
-                       work_order.content, record.content)
-            email = [work_order.approver.email, work_order.proposer.email, work_order.receiver.email]
+    return ret, order_num, new_commo_num, type_num_result, commo_num_array
 
-        elif work_order.status == "4":
-            record = work_order.workorderrecord_set.filter(record_type="2").last()
-            email_title = "工单执行通知：{0}".format(work_order.title)
-            email_body = """
-            编号为：{0} 的工单已经执行，执行人：{1}
-            执行记录：{2}
-            本邮件为系统通知请勿回复。
-            """.format(work_order.number, work_order.receiver.name, record.content)
-            email = [work_order.approver.email, work_order.proposer.email, work_order.receiver.email]
-
-        elif work_order.status == "5":
-            record = work_order.workorderrecord_set.filter(record_type="3").last()
-            email_title = "工单确认通知：{0}".format(work_order.title)
-            email_body = """
-            编号为：{0} 的工单已经确认完成，确认人：{1}
-            确认记录：{2}
-            本邮件为系统通知请勿回复。
-            """.format(work_order.number, work_order.proposer.name, record.content)
-            email = [work_order.approver.email, work_order.proposer.email, work_order.receiver.email]
-
-        elif work_order.status == "0":
-            record = work_order.workorderrecord_set.filter(record_type="0").last()
-            email_title = "工单退回通知：{0}".format(work_order.title)
-            email_body = """
-            编号为：{0} 的工单已被退回，操作人：{1}
-            退回说明：{2}
-            本邮件为系统通知请勿回复。
-            """.format(work_order.number, record.name.name, record.content)
-            email = [work_order.approver.email, work_order.proposer.email, work_order.receiver.email]
-
-        send_status = send_mail(email_title, email_body, EMAIL_FROM, email)
-        if send_status:
-            pass
