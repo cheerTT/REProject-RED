@@ -12,16 +12,12 @@ from django.http import HttpResponse
 from django.core.serializers.json import DjangoJSONEncoder
 from order.models import Transaction
 from utils.toolkit import get_month_member_count, get_member_gender, get_monthly_sale_count
-
-
 import json
 
 
 
 class MemberView(LoginRequiredMixin, View):
-    '''
-    会员查询
-    '''
+    '''会员查询'''
 
     def get(self, request):
         '''
@@ -50,21 +46,19 @@ class MemberView(LoginRequiredMixin, View):
         ret['gender_list'] = gender_list
 
         # 月度新增用户数量
-        month_member_count = get_month_member_count(value=int(request.GET.get('value', 0)))
+        month_member_count = get_month_member_count()
         result1 = month_member_count[0]['count']
         ret['month_member_count'] = result1
 
         # 用户性别统计
-        result2 = get_member_gender(value=int(request.GET.get('value', 0)))[0]['count']
+        result2 = get_member_gender()[0]['count']
         ret['member_gender'] = result2
 
         return render(request, "member/member_list.html", ret)
 
 
 class MemberListView(LoginRequiredMixin, View):
-    '''
-    会员列表页面处理方法
-    '''
+    '''会员列表页面处理方法'''
     def get(self, request):
         '''
         get方法
@@ -107,19 +101,8 @@ class MemberListView(LoginRequiredMixin, View):
         ret = dict(data=list(member_list))
         return HttpResponse(json.dumps(ret, cls=DjangoJSONEncoder), content_type='application/json')
 
-
-class MemberUpdateView(LoginRequiredMixin, View):
-
-    def get(self, request):
-        return None
-
-    def post(self, request):
-        return None
-
 class MemberDetailView(LoginRequiredMixin, View):
-    '''
-    用户详情页面
-    '''
+    '''用户详情页面'''
     def get(self, request):
         '''
         get方法
@@ -163,17 +146,17 @@ class MemberDetailView(LoginRequiredMixin, View):
         ave_of_ratings = ave_of_ratings / sum_of_boughtitem
         current_max = 0
         for key in boughtitemdict:
-            if(boughtitemdict[key]['value'] > current_max):
+            if boughtitemdict[key]['value'] > current_max:
                 current_max = boughtitemdict[key]['value']
         rate_of_type = current_max / sum_of_boughtitem
 
 
 
-        if(boughtitemdict['Baby']['value'] > 0):
+        if boughtitemdict['Baby']['value'] > 0:
             predict_age += 10
 
-        frequent_of_buy= sum_of_boughtitem if sum_of_boughtitem < 25 else 25
-        sum_of_price = sum_of_price if sum_of_price <250 else 250
+        frequent_of_buy = sum_of_boughtitem if sum_of_boughtitem < 25 else 25
+        sum_of_price = sum_of_price if sum_of_price < 250 else 250
 
 
 
@@ -189,9 +172,7 @@ class MemberDetailView(LoginRequiredMixin, View):
         return render(request, 'member/member_detail.html', ret)
 
 class MemberEnableView(LoginRequiredMixin, View):
-    """
-    启用用户：单个或批量启用
-    """
+    """启用用户：单个或批量启用"""
     def post(self, request):
         '''
         post方法
@@ -207,9 +188,7 @@ class MemberEnableView(LoginRequiredMixin, View):
 
 
 class MemberDisableView(LoginRequiredMixin, View):
-    """
-    锁定用户：单个或批量锁定
-    """
+    """锁定用户：单个或批量锁定"""
     def post(self, request):
         '''
         post方法
