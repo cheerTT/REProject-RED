@@ -36,10 +36,9 @@ class Commodity(models.Model):
     # imUrl = models.ImageField(upload_to="commImage",default="commImage/default.jpg")
     imUrl = models.CharField(max_length=1000, blank=True, null=True)
     brand = models.CharField(max_length=1000, blank=True, null=True)
-    buyDate = models.DateTimeField('商品购买日期', blank=True, null=True,default = timezone.now)
-    warrantyDate = models.DateTimeField('商品保质日期', blank=True, null=True,default = timezone.now)
+    buyDate = models.DateTimeField('商品购买日期', blank=True, null=True, default=timezone.now)
+    warrantyDate = models.DateTimeField('商品保质日期', blank=True, null=True, default=timezone.now)
     status = models.CharField(choices=commodity_status, max_length=20, default="1", verbose_name="商品的状态")
-
 
     def short_description(self):
         if len(str(self.description)) > 400:
@@ -53,6 +52,7 @@ class Commodity(models.Model):
             return '{}...'.format(str(self.title)[0:50])
         else:
             return str(self.title)
+
     class Meta:
         db_table = "commodity"
 
