@@ -3,6 +3,7 @@ from commodity.models import Commodity, CommodityType, Commodity_price
 
 
 class CommodityCreateForm(forms.ModelForm):
+
     class Meta:
         model = Commodity
         fields = ['assin','status']
@@ -10,7 +11,6 @@ class CommodityCreateForm(forms.ModelForm):
         error_messages = {
             "assin": {"required": "商品编号不能为空"},
             "status": {"required": "请选择商品状态"},
-            # "imUrl":{"required":"请选择图片"}
         }
 
     def clean(self):
@@ -23,6 +23,7 @@ class CommodityCreateForm(forms.ModelForm):
 
 
 class CommodityUpdateForm(forms.ModelForm):
+
     class Meta:
         model = Commodity
         fields = '__all__'
@@ -34,8 +35,3 @@ class CommodityUpdateForm(forms.ModelForm):
             "warrantyDate": {"required": "请输入质保日期"},
             "status": {"required": "请选择商品状态"}
         }
-#
-# class ImageUploadForm(forms.ModelForm):
-#     class Meta:
-#         model = Commodity
-#         fields = ['imUrl']

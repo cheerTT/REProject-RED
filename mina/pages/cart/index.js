@@ -105,29 +105,7 @@ Page({
             noSelect: noSelect,
         });
     },
-    //去结算
-    // toPayOrder: function () {
-    //     var data = {
-    //         type: "cart",
-    //         goods: []
-    //     };
-    //
-    //     var list = this.data.list;
-    //     for (var i = 0; i < list.length; i++) {
-    //         if (!list[i].active) {
-    //             continue;
-    //         }
-    //         data['goods'].push({
-    //             "id": list[i].food_id,
-    //             "price": list[i].price,
-    //             "number": list[i].number
-    //         });
-    //     }
-    //
-    //     wx.navigateTo({
-    //         url: "/pages/order/index?data=" + JSON.stringify(data)
-    //     });
-    // },
+
     //如果没有显示去光光按钮事件
     toIndexPage: function () {
         wx.switchTab({
@@ -188,19 +166,5 @@ Page({
         });
 
     },
-    // setCart:function( food_id, number ){
-    //     var that = this;
-    //     var data = {
-    //         "id": food_id,
-    //         "number": number
-    //     };
-    //     wx.request({
-    //         url: app.buildUrl("/cart/set"),
-    //         header: app.getRequestHeader(),
-    //         method: 'POST',
-    //         data: data,
-    //         success: function (res) {
-    //         }
-    //     });
-    // }
+
 });

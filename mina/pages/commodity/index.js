@@ -27,12 +27,6 @@ Page({
         wx.setNavigationBarTitle({
             title: app.globalData.shopName
         });
-        // that.setData({
-        //     imagePath:app.globalData.imagePath
-        // });
-        //
-        // console.log("fdshfyuasgfy");
-        // console.log(imagePath);
 
     },
     //每次展示都会调用这个方法

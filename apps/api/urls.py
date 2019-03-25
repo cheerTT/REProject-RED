@@ -21,7 +21,6 @@ urlpatterns = [
 
     url(r'^commodity/comment_add', views_commodity.CommentAddView.as_view(), name='comment-add'),
     url(r'^commodity/search', views_commodity.CommoditySearchView.as_view(), name="commodity-search"),
-
     url(r'^commodity/commodity_type', views_commodity.CommodityTypeView.as_view(), name="commodity-type"),
     url(r'^commodity/commodity_list', views_commodity.CommodityListView.as_view(), name="commodity-list"),
     url(r'^commodity/commodity_info', views_commodity.CommodityInfoView.as_view(), name="commodity-info"),
@@ -34,19 +33,7 @@ urlpatterns = [
     url(r'^recommendations/allrecommendations', csrf_exempt(views_recommendations.AllRecommendationsView.as_view()),
         name="AllRecommendations"),
     url(r'^recommendations/commonrecommendations',csrf_exempt(views_recommendations.Get_Common_Recommenadations.as_view()), name="CommonRecommendations"),
-
     url(r'^hotcommend/hot_commodity', views_hotcommend.HotCommodityView.as_view(), name="hot-commodity"),
-    # url(r'^user/list$', views.UserListView.as_view(), name="user-list"),
-    # url(r'^user/create$', views.UserCreateView.as_view(), name="user-create"),
-    # url(r'^user/enable$', views.UserEnableView.as_view(), name="user-enable"),
-    # url(r'^user/disable$', views.UserDisableView.as_view(), name="user-disable"),
-    # url(r'^user/delete$', views.UserDeleteView.as_view(), name="user-delete"),
-    # url(r'^user/detail$', views_user.UserDetailView.as_view(), name="user-detail"),
-    # url(r'^user/update$', views_user.UserUpdataView.as_view(), name="user-update"),
-    # url(r'^user/create$', views_user.UserCreateView.as_view(), name="user-create"),
-    # url(r'^user/delete$', views_user.UserDeleteView.as_view(), name="user-delete"),
-    # url(r'^user/enable$', views_user.UserEnableView.as_view(), name="user-enable"),
-    # url(r'^user/disable$', views_user.UserDisableView.as_view(), name="user-disable"),
-    # url(r'^user/adminpasswdchange$', views_user.AdminPasswdChangeView.as_view(), name="user-adminpasswdchange"),
+
 
 ]

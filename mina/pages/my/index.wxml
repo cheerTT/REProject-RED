@@ -1,8 +1,9 @@
 <view class="container">
     <view class="userinfo">
-        <image wx:if="{{userInfo && userInfo.avatarUrl}}" class="userinfo-avatar" src="{{ userInfo.avatarUrl }}"
-               background-size="cover"></image>
-        <text class="userinfo-nickname">{{ userInfo.nickname }}</text>
+        <image wx:if="{{userInfo && userInfo.avatarUrl}}" class="userinfo-avatar" src="{{ userInfo.avatarUrl }}"background-size="cover"></image>
+        <image wx:else class="userinfo-avatar" src="/images/sunflower.png"background-size="cover" alt="无头像">无头像</image>
+        <text class="userinfo-nickname" wx:if="{{ userInfo.nickname }}">{{ userInfo.nickname }}</text>
+        <text class="userinfo-nickname" wx:else>您未注册成为会员</text>
     </view>
     <view style="height:20rpx;background: #eee;width:100%;"></view>
     <view class="my-item">
