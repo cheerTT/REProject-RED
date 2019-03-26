@@ -1,8 +1,9 @@
-﻿'''生成工作台各种统计数据'''
+﻿"""
+生成工作台各种统计数据
+"""
 # @Time   : 2019年3月9日16:50:29
 # @Author : ttwen
 # @Remark   : 生成工作台各种统计数据
-
 
 import calendar
 import datetime
@@ -10,6 +11,7 @@ from datetime import date, timedelta
 from commodity.models import Commodity
 from order.models import Transaction
 from api.models import Member
+
 
 def get_month_member_count():
     """生成月度用户统计"""
@@ -31,8 +33,9 @@ def get_month_member_count():
     month_member_count.append(data)
     return month_member_count
 
+
 def  get_member_gender():
-    '''生成用户性别数据'''
+    """生成用户性别数据"""
     filters = dict()
     member_gender = []
 
@@ -49,6 +52,7 @@ def  get_member_gender():
     }
     member_gender.append(data)
     return member_gender
+
 
 def get_monthly_sale_count():
     """生成当月销售数据统计"""
