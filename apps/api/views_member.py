@@ -30,7 +30,9 @@ os.environ["TF_CPP_MIN_LOG_LEVEL"] = '2'  # 只显示 warning 和 Error
 
 
 class FaceView(View):
-    """收款界面跳转路径"""
+    """
+    收款界面跳转路径
+    """
     def get(self, request):
         """
         收款界面跳转路径 get请求
@@ -41,7 +43,10 @@ class FaceView(View):
 
 
 class MemberLoginView(View):
-    """会员登陆视图,用于小程序界面会员登陆实现"""
+    """
+    会员登陆视图
+    用于小程序界面会员登陆实现
+    """
     def post(self, request):
         """
         小程序登陆业务逻辑实现-post方法
@@ -141,7 +146,9 @@ class MemberLoginView(View):
 
 
 class MemberCheckRegView(View):
-    """是否是会员状态验证"""
+    """
+    是否是会员状态验证
+    """
     def post(self, request):
         """
         会员状态验证-post方法
@@ -208,7 +215,9 @@ class MemberCheckRegView(View):
 
 
 class MemberInfoView(View):
-    """会员首页信息显示"""
+    """
+    会员首页信息显示
+    """
     def get(self, request):
         """
         获取会员基本信息，并返回小程序端
@@ -218,6 +227,7 @@ class MemberInfoView(View):
         ret = {}
 
         auth_cookie = WechatUtils.checkMemberLogin(request)
+        print('auth_cookie:',auth_cookie)
 
         ret['id'] = auth_cookie.id
         ret['openid'] = auth_cookie.openid
@@ -226,6 +236,7 @@ class MemberInfoView(View):
         ret['gender'] = auth_cookie.gender
         ret['city'] = auth_cookie.city
         ret['province'] = auth_cookie.province
+        # ret['last_login_date'] = auth_cookie.last_login_date 不能json化
         ret['avatarUrl'] = auth_cookie.avatarUrl
         ret['codeVerify'] = auth_cookie.codeVerify
         ret['type'] = auth_cookie.type
@@ -234,7 +245,9 @@ class MemberInfoView(View):
 
 
 class MemberOrderView(View):
-    """会员订单视图"""
+    """
+    会员订单视图
+    """
     def get(self, request):
         """
         显示会员订单信息
@@ -265,7 +278,9 @@ class MemberOrderView(View):
 
 
 class MemberView(LoginRequiredMixin, View):
-    """会员视图"""
+    """
+    会员视图
+    """
     def get(self, request):
         """
         用于web端对会员基本信息的展示操作
@@ -274,9 +289,9 @@ class MemberView(LoginRequiredMixin, View):
         """
         return render(request, 'api/member/member.html')
 
+
 # 前方高能
 # 该段代码占用过多CPU资源，放在全局供其他函数调用
-
 # with tf.Graph().as_default():
 #     gpu_memory_fraction = 1.0
 #     gpu_options = tf.GPUOptions(per_process_gpu_memory_fraction=gpu_memory_fraction)
