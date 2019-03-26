@@ -10,7 +10,7 @@ Page({
         integralRule: {
         convertNum: 100, // 100积分对应1元
         consumeNum: 1, // 消费1元积累1积分
-        loginNum: 0, // 每天登录送2积分
+        loginNum: 2, // 每天登录送2积分
         postCommentNum: 2, // 对于购买过的商品评论送2积分
         shareNum: 3, // 每天首次分享商品给好友送3积分
       },

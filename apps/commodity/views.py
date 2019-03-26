@@ -1,20 +1,18 @@
-from django.shortcuts import render
-from django.shortcuts import get_object_or_404
-from django.views.generic.base import View
-from django.http import HttpResponse
-from django.contrib.auth import get_user_model
-from django.core.serializers.json import DjangoJSONEncoder
-from commodity.models import Commodity, CommodityType, Commodity_price
-from commodity.forms import CommodityCreateForm, CommodityUpdateForm
-from utils.mixin_utils import LoginRequiredMixin
+
 import json
 import re
 import os
-from PIL import Image
-from django.views.decorators.csrf import csrf_exempt
+from django.shortcuts import render
+from django.views.generic.base import View
+from django.http import HttpResponse
+from django.core.serializers.json import DjangoJSONEncoder
+from commodity.models import Commodity, CommodityType
+from commodity.forms import CommodityCreateForm, CommodityUpdateForm
+from utils.mixin_utils import LoginRequiredMixin
 
 
 class CommodityView(LoginRequiredMixin, View):
+
     def get(self, request):
         '''
         get方法
@@ -33,9 +31,7 @@ class CommodityView(LoginRequiredMixin, View):
 
 
 class CommodityListView(LoginRequiredMixin, View):
-    """
-        商品显示页面
-    """
+    """商品显示页面"""
 
     def get(self, request):
         '''
@@ -51,8 +47,6 @@ class CommodityListView(LoginRequiredMixin, View):
             filters['title__icontains'] = request.GET['title']
         if 'categories' in request.GET and request.GET['categories']:
             filters['categories'] = request.GET['categories']
-        # if 'brand' in request.GET and request.GET['brand']:
-        #     filters['brand__icontains'] = request.GET['brand']
         if 'status' in request.GET and request.GET['status']:
             filters['status'] = request.GET['status']
 
@@ -68,9 +62,7 @@ class CommodityListView(LoginRequiredMixin, View):
 
 
 class CommodityCreateView(LoginRequiredMixin, View):
-    """
-         添加商品页面
-    """
+    """添加商品页面"""
 
     def get(self, request):
         '''
@@ -89,7 +81,6 @@ class CommodityCreateView(LoginRequiredMixin, View):
         return render(request, 'commodity/commodity_create.html', ret)
 
     def post(self, request):
-        print("图片路径：", request.POST['imUrl'])
         res = dict()
         commodity_create_form = CommodityCreateForm(request.POST, request.FILES)
         if commodity_create_form.is_valid():
@@ -107,9 +98,7 @@ class CommodityCreateView(LoginRequiredMixin, View):
 
 
 class CommodityUpdateView(LoginRequiredMixin, View):
-    """
-     商品信息修改页面
-     """
+    """商品信息修改页面"""
 
     def get(self, request):
         '''
@@ -156,7 +145,6 @@ class CommodityDeleteView(LoginRequiredMixin, View):
     '''
 
     def post(self, request):
-        print("delete:")
         ret = dict(result=False)
         if 'id' in request.POST and request.POST['id']:
             id_list = map(int, request.POST.get('id').split(','))
@@ -186,13 +174,10 @@ class CommodityEnableView(LoginRequiredMixin, View):
 
 
 class CommodityDisableView(LoginRequiredMixin, View):
-    '''
-    下架商品视图
-    '''
+    '''下架商品视图'''
 
     def post(self, request):
         '''
-
         :param request:
         :return: 返回商品下架成功信息
         '''
@@ -206,20 +191,16 @@ class CommodityDisableView(LoginRequiredMixin, View):
 
 
 class CommodityDetailView(LoginRequiredMixin, View):
-    """
-    商品详情页面
-    """
+    """商品详情页面"""
 
     def get(self, request):
         '''
-
         :param request:
         :return: 跳转到商品详情页面
         '''
         ret = dict()
         if 'id' in request.GET and request.GET['id']:
             commodity = Commodity.objects.filter(id=request.GET['id'])
-            print(commodity)
             ret['commodity'] = commodity[0]
         return render(request, 'commodity/commodity_detail.html', ret)
 
@@ -241,7 +222,6 @@ class UploadImageView(LoginRequiredMixin, View):
     def post(self, request):
         res = dict(status='fail')
         File = request.FILES.get("file_content")
-        # File = request.FILES.get("image")
         print(File.name)
         accessory_dir = "media/commImage/" + request.POST['categories']
         if not os.path.isdir(accessory_dir):  # 判断是否有这个目录，没有就创建
