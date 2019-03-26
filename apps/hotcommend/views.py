@@ -28,10 +28,11 @@ class CommendView(LoginRequiredMixin, View):
         :param request:
         :return:
         """
-        # now_time = datetime.now().strftime('%Y-%m-%d')
+        now_time = datetime.now().strftime('%Y-%m-%d')
         # day_7_ago = (datetime.now() + timedelta(days=-7)).strftime('%Y-%m-%d')
         # day_14_ago = (datetime.now() + timedelta(days=-14)).strftime('%Y-%m-%d')
         # day_30_ago = (datetime.now() + timedelta(days=-30)).strftime('%Y-%m-%d')
+        day_90_ago = (datetime.now() + timedelta(days=-90)).strftime('%Y-%m-%d')
         ret = dict()
 
         #最近一周的销量
@@ -58,7 +59,7 @@ class CommendView(LoginRequiredMixin, View):
         data = []
         # 根据日期进行循环
         begin = datetime.strptime("2013-02-11", "%Y-%m-%d")
-        end = datetime.strptime("2013-03-12", "%Y-%m-%d")
+        end = datetime.strptime("2013-03-11", "%Y-%m-%d")
         delta = timedelta(days=1)
 
         for assin in sort_inc:
@@ -84,13 +85,19 @@ class CommendView(LoginRequiredMixin, View):
             data_sales = sorted(data_sales, key=lambda x: x['date'])
             data.append([assin, data_sales])
         ret['rates'] = mark_safe(data)
+
+        season_sale = list(Transaction.objects.all().values('commodity', 'commodity__title',
+                                                            'commodity__assin').annotate(counts=Sum('num')).
+                           filter(joined_date__gte=day_90_ago, joined_date__lte=now_time).order_by('-counts')[:10])
+        ret['season'] = mark_safe(season_sale)
+
         return render(request, 'hotcommend/hot_list.html', ret)
 
 
 #通过QuerySet的values方法来获取指定字段列的数据内容，转换QuerySet类型最终序列化成json串，返回数据访问接口
 class ItemRank(LoginRequiredMixin, View):
     """
-    统计商品销量
+    统计最近一个月商品销量
     """
     def get(self, request):
         """
