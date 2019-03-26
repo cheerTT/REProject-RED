@@ -2,7 +2,6 @@
 # @Author: cheertt && xie Liangcai
 # @Time:2019年3月11日14:31:35
 # @Description: 与小程序端商品相关交互的接口
-# 谢良才你这个大胖子
 # '''
 import json
 
