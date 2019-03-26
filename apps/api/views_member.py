@@ -290,7 +290,6 @@ class MemberView(LoginRequiredMixin, View):
         """
         return render(request, 'api/member/member.html')
 
-
 # 前方高能
 # 该段代码占用过多CPU资源，放在全局供其他函数调用
 with tf.Graph().as_default():

@@ -1,17 +1,14 @@
-from django.shortcuts import render
-from django.shortcuts import get_object_or_404
-from django.views.generic.base import View
-from django.http import HttpResponse
-from django.contrib.auth import get_user_model
-from django.core.serializers.json import DjangoJSONEncoder
-from commodity.models import Commodity, CommodityType, Commodity_price
-from commodity.forms import CommodityCreateForm, CommodityUpdateForm
-from utils.mixin_utils import LoginRequiredMixin
+
 import json
 import re
 import os
-from PIL import Image
-from django.views.decorators.csrf import csrf_exempt
+from django.shortcuts import render
+from django.views.generic.base import View
+from django.http import HttpResponse
+from django.core.serializers.json import DjangoJSONEncoder
+from commodity.models import Commodity, CommodityType
+from commodity.forms import CommodityCreateForm, CommodityUpdateForm
+from utils.mixin_utils import LoginRequiredMixin
 
 
 class CommodityView(LoginRequiredMixin, View):
