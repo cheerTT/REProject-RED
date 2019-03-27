@@ -79,22 +79,18 @@ class WechatUtils():
         auth_cookie = request.META.get('HTTP_AUTHORIZATION')
         print(auth_cookie)
         if auth_cookie is None:
-            print('1')
             return False
 
         auth_info = auth_cookie.split('#')
         if len(auth_info) != 2:
-            print('2')
             return False
 
         try:
             member_info = Member.objects.filter(id=auth_info[1]).first()
         except Exception:
-            print('3')
             return False
 
         if member_info is None:
-            print('4')
             return False
 
         if auth_info[0] != WechatUtils.geneAuthCode(
@@ -102,11 +98,9 @@ class WechatUtils():
                 codeVerify=member_info.codeVerify,
                 state=member_info.state,
                 type=member_info.type):
-            print('5')
             return False
 
         if member_info.state != '0' and member_info.type != '1':
-            print('6')
             return False
 
         return member_info
