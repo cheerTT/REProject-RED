@@ -44,7 +44,7 @@ class PersonalView(LoginRequiredMixin, View):
             ret['new_user_this_month'] += i
 
         # 本月营业额统计
-        result3, order_num, new_commo_num, type_num_result, commo_num_array = get_monthly_sale_count(value=0)
+        result3, order_num, new_commo_num, type_num_result, commo_num_array = get_monthly_sale_count()
         for i in result3:
             ret['new_profit_this_month'] += i
         ret['monthly_sale_count'] = result3
