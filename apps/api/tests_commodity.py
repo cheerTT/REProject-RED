@@ -8,7 +8,7 @@ from django.test import TestCase  # 导入Django测试包
 from django.template.loader import render_to_string
 
 from api.models import Member, Cart
-from comment.models import Comment
+from apps.comment.models import Comment
 from commodity.models import CommodityType, Commodity
 from apps.users.models import UserProfile
 
@@ -32,7 +32,7 @@ class UserViewTest(TestCase):
                                  buyDate='2019-3-15',
                                  warrantyDate='2020-3-15',
                                  )
-        CommodityType.objects.create(id=1, name="Baby")
+        CommodityType.objects.create(id=1, type_name="Baby")
         Member.objects.create(id=1, )
         Comment.objects.create(id=1, content="test", commodity_id=6666, joined_date='2019-03-20 19:16:45.316348',
                                member_id=1)
@@ -44,8 +44,8 @@ class UserViewTest(TestCase):
 
         :return:
         """
-        data = {'assin': 'ABCDE12345'}
-        response = self.client.get('/commodity/commodity/search', data=data)
+        data = {'s': 'ABCDE12345'}
+        response = self.client.get('/api/commodity/search', data=data)
         print(response.content)
         self.assertEqual(response.status_code, 200)
 
@@ -55,7 +55,7 @@ class UserViewTest(TestCase):
         :return:
         """
         commodity_type = CommodityType.objects.all()
-        response = self.client.get('/commodity/commodity/list', dict(data=list(commodity_type)))
+        response = self.client.get('/api/commodity/list', dict(data=list(commodity_type)))
         print(response.content)
         self.assertEqual(response.status_code, 200)
 
@@ -64,8 +64,8 @@ class UserViewTest(TestCase):
         小程序端商品列表展示
         :return:
         """
-        commodity = Commodity.objects.all()
-        response = self.client.get('/commodity/commodity/commodity_list', dict(data=list(commodity)))
+        data={'p':1}
+        response = self.client.get('/api/commodity/commodity_list',data=data)
         print(response.content)
         self.assertEqual(response.status_code, 200)
 
@@ -74,8 +74,8 @@ class UserViewTest(TestCase):
         查看商品详情
         :return:
         """
-        data = {"id": 6666}
-        response = self.client.post('/commodity/commodity/info', data=data)
+
+        response = self.client.post('/api/commodity/commodity_info')
         self.assertEqual(response.status_code, 200)
 
     def test_CommodityCommentsView_get(self):
@@ -84,8 +84,8 @@ class UserViewTest(TestCase):
         :return:
         """
 
-        comment = Comment.objects.all()
-        response = self.client.get('/commodity/commodity/commodity_comments', dict(data=list(comment)))
+        data={'id':6666}
+        response = self.client.get('/api/commodity/commodity_comments', data=data)
         self.assertEqual(response.status_code, 200)
 
     def test_CommentAddView_post(self):
@@ -99,7 +99,7 @@ class UserViewTest(TestCase):
                    'commodity_id': 6666,
                    'member_id': 1
                    }
-        response = self.client.post('/commodity/commodity/comment_add', data=comment)
+        response = self.client.post('/api/commodity/comment_add', data=comment)
         self.assertEqual(response.status_code, 200)
 
 
@@ -112,7 +112,7 @@ def test_CartAddView_post(self):
             'commodity_id': 6666,
             'member_id': 1
             }
-    response = self.client.post('/commodity/commodity/cart_add', data=data)
+    response = self.client.post('/api/commodity/cart_add', data=data)
     self.assertEqual(response.status_code, 200)
 
 
@@ -122,7 +122,7 @@ def test_CartListView_post(self):
     :return:
     '''
     data = {'member_id': 1, }
-    response = self.client.post('/commodity/commodity/enable', data=data)
+    response = self.client.post('/api/commodity/enable', data=data)
     self.assertEqual(response.status_code, 200)
 
 
@@ -132,5 +132,5 @@ def test_CartDeltView_post(self):
     :return:
     '''
     goods = [1]
-    response = self.client.post('/commodity/commodity/cart_del', data=goods)
+    response = self.client.post('/api/commodity/cart_del', data=goods)
     self.assertEqual(response.status_code, 200)
