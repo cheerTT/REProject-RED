@@ -54,7 +54,7 @@ class UserViewTest(TestCase):
         credit = Credit.objects.all()
 
         response = self.client.post('/login/', data=self.login_user)
-        response = self.client.get('/credit/credit/list', dict(data=list(credit)))
+        response = self.client.get('/api/member/credit/list', dict(data=list(credit)))
         print(response.content)
         self.assertEqual(response.status_code, 200)
 
@@ -65,6 +65,6 @@ class UserViewTest(TestCase):
         """
         idd = {'id': 6666}
         response = self.client.post('/share/', data=self.login_user)
-        response = self.client.get('/member/credit/credit_share', idd)
+        response = self.client.get('/api/member/credit_share', idd)
         self.assertEqual(response.status_code, 200)
 
