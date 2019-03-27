@@ -30,7 +30,9 @@ os.environ["TF_CPP_MIN_LOG_LEVEL"] = '2'  # 只显示 warning 和 Error
 
 
 class FaceView(View):
-    """收款界面跳转路径"""
+    """
+    收款界面跳转路径
+    """
     def get(self, request):
         """
         收款界面跳转路径 get请求
@@ -41,7 +43,10 @@ class FaceView(View):
 
 
 class MemberLoginView(View):
-    """会员登陆视图,用于小程序界面会员登陆实现"""
+    """
+    会员登陆视图
+    用于小程序界面会员登陆实现
+    """
     def post(self, request):
         """
         小程序登陆业务逻辑实现-post方法
@@ -122,12 +127,12 @@ class MemberLoginView(View):
         token = ""
         if bind_info.first():
             token = "%s#%s" % (WechatUtils.geneAuthCode(
-                id=bind_info.values_list()[0][0],
-                codeVerify=bind_info.values_list()[0][13],
-                state=bind_info.values_list()[0][12],
-                type=bind_info.values_list()[0][14],
-            ), bind_info.values_list()[0][0])
-
+                id=bind_info.first().id,
+                codeVerify=bind_info.first().codeVerify,
+                state=bind_info.first().state,
+                type=bind_info.first().type,
+            ), bind_info.first().id)
+            ret['user_id'] = bind_info.first().id
         else:
             token = "%s#%s" % (WechatUtils.geneAuthCode(
                 id='-1',
@@ -135,13 +140,17 @@ class MemberLoginView(View):
                 state='0',
                 type='0',
             ), -1)
+            ret['user_id'] = '-1'
+
         ret['data'] = {'token': token}
 
         return HttpResponse(json.dumps(ret), content_type='application/json')
 
 
 class MemberCheckRegView(View):
-    """是否是会员状态验证"""
+    """
+    是否是会员状态验证
+    """
     def post(self, request):
         """
         会员状态验证-post方法
@@ -208,7 +217,9 @@ class MemberCheckRegView(View):
 
 
 class MemberInfoView(View):
-    """会员首页信息显示"""
+    """
+    会员首页信息显示
+    """
     def get(self, request):
         """
         获取会员基本信息，并返回小程序端
@@ -226,6 +237,7 @@ class MemberInfoView(View):
         ret['gender'] = auth_cookie.gender
         ret['city'] = auth_cookie.city
         ret['province'] = auth_cookie.province
+        # ret['last_login_date'] = auth_cookie.last_login_date 不能json化
         ret['avatarUrl'] = auth_cookie.avatarUrl
         ret['codeVerify'] = auth_cookie.codeVerify
         ret['type'] = auth_cookie.type
@@ -234,7 +246,9 @@ class MemberInfoView(View):
 
 
 class MemberOrderView(View):
-    """会员订单视图"""
+    """
+    会员订单视图
+    """
     def get(self, request):
         """
         显示会员订单信息
@@ -265,7 +279,9 @@ class MemberOrderView(View):
 
 
 class MemberView(LoginRequiredMixin, View):
-    """会员视图"""
+    """
+    会员视图
+    """
     def get(self, request):
         """
         用于web端对会员基本信息的展示操作
@@ -276,175 +292,174 @@ class MemberView(LoginRequiredMixin, View):
 
 # 前方高能
 # 该段代码占用过多CPU资源，放在全局供其他函数调用
+with tf.Graph().as_default():
+    gpu_memory_fraction = 1.0
+    gpu_options = tf.GPUOptions(per_process_gpu_memory_fraction=gpu_memory_fraction)
+    sess = tf.Session(config=tf.ConfigProto(gpu_options=gpu_options, log_device_placement=False))
+    with sess.as_default():
+        pnet, rnet, onet = create_mtcnn(sess, None)
 
-# with tf.Graph().as_default():
-#     gpu_memory_fraction = 1.0
-#     gpu_options = tf.GPUOptions(per_process_gpu_memory_fraction=gpu_memory_fraction)
-#     sess = tf.Session(config=tf.ConfigProto(gpu_options=gpu_options, log_device_placement=False))
-#     with sess.as_default():
-#         pnet, rnet, onet = create_mtcnn(sess, None)
-#
-# with tf.Graph().as_default():
-#     sess = tf.Session()
-#     # 加载模型
-#     meta_file, ckpt_file = get_model_filenames(MODELPATH)
-#     saver = tf.train.import_meta_graph(os.path.join(MODELPATH, meta_file))
-#     saver.restore(sess, os.path.join(MODELPATH, ckpt_file))
-#     # 获得输入输出张量
-#     images_placeholder = tf.get_default_graph().get_tensor_by_name("input:0")
-#     embeddings = tf.get_default_graph().get_tensor_by_name("embeddings:0")
-#     phase_train_placeholder = tf.get_default_graph().get_tensor_by_name("phase_train:0")
-#
-#     # 进行人脸识别，加载
-#     print('Creating networks and loading parameters')
-#
-#
-#     class MemberUploadFace(View):
-#         """
-#         确认收款界面相关功能，包括人脸识别以及生成订单
-#         """
-#         def post(self, request):
-#             """
-#             接受base64编码的人脸数据，并把商品数据生成订单
-#             :param request:
-#             :return:
-#             """
-#             ret = dict(status="fail")
-#
-#             # 接受前端传递过来的uuid -- 判别始于哪一个商家
-#             img = request.POST['img']
-#
-#             img1 = img.replace('data:image/png;base64,', '')
-#             newdata = base64.b64decode(img1)
-#
-#             memberid = str(uuid.uuid1()).replace('-', '')
-#
-#             image_path1 = BASE_DIR + os.sep + "media" + os.sep + "face" + os.sep + datetime.datetime.now().strftime(
-#                 '%Y-%m-%d')
-#
-#             if not os.path.exists(image_path1):
-#                 os.mkdir(image_path1)
-#
-#             image_path = image_path1 + os.sep + memberid + '.png'
-#
-#             try:
-#                 with open(image_path, 'wb') as file:
-#                     file.write(newdata)
-#             except FileNotFoundError as fnfe:
-#                 print(fnfe)
-#
-#             # opencv读取图片，开始进行人脸识别
-#             img = misc.imread(os.path.expanduser(image_path), mode='RGB')
-#             # 设置默认插入时 detect_multiple_faces =False只检测图中的一张人脸，True则检测人脸中的多张
-#             # 一般入库时只检测一张人脸，查询时检测多张人脸
-#             images = image_array_align_data(img, image_path, pnet, rnet, onet, detect_multiple_faces=False)
-#
-#             # 设置返回结果
-#
-#             ret = {}
-#
-#             # 判断如果如图没有检测到人脸则直接返回
-#             if len(images.shape) < 4:
-#                 ret['info'] = '没有人脸信息,请重新输入，以确保有人脸信息'
-#
-#                 print(ret)
-#                 return HttpResponse(json.dumps(ret), content_type="application/json")
-#
-#             feed_dict = {images_placeholder: images, phase_train_placeholder: False}
-#             # emb_array保存的是经过facenet转换的128维的向量
-#             emb_array = sess.run(embeddings, feed_dict=feed_dict)
-#
-#             face_query = Matrix()
-#
-#             code_verify = WechatUtils.genCode()
-#
-#             # 不让生成已经存在的验证码
-#             while Member.objects.filter(codeVerify=code_verify):
-#                 code_verify = WechatUtils.genCode()
-#
-#             if code_verify == '-1':
-#                 ret['info'] = '验证码非法操作'
-#                 return HttpResponse(json.dumps(ret), content_type="application/json")
-#
-#             # 分别获取距离该图片中人脸最相近的人脸信息
-#             # pic_min_scores 是数据库中人脸距离（facenet计算人脸相似度根据人脸距离进行的）
-#             # pic_min_names 是当时入库时保存的文件名
-#             # pic_min_uid  是对应的用户id
-#             # if face_query.get_socres(emb_array) is not None:
-#             pic_min_scores, pic_min_names, pic_min_uid = face_query.get_socres(emb_array)
-#             for i in range(0, len(pic_min_scores)):
-#                 if pic_min_scores[i] < MAX_DISTINCT:
-#                     ret['faceid'] = pic_min_uid[i]
-#                     ret['distance'] = pic_min_scores[i]
-#                     ret['picname'] = pic_min_names[i]
-#
-#             if ret is None:
-#                 # 新建一个用户
-#                 is_video = Member.objects.filter(codeVerify=code_verify)
-#                 print('isVideo')
-#                 print(is_video.exists())
-#                 if not is_video.exists():
-#                     print('进来了')
-#                     for j in range(0, len(emb_array)):
-#                         Member.objects.create(faceid=memberid,
-#                                               pic_name=memberid + "_" + str(j) + ".png",
-#                                               face_json=",".join(str(li) for li in emb_array[j].tolist()),
-#                                               joined_date1=datetime.datetime.now(),
-#                                               codeVerify=code_verify.lower()
-#                                               )
-#
-#                     ret['type'] = 1  # 表示新用户
-#                     ret['codeVerify'] = code_verify
-#                     ret['info'] = 'success, add a face new'
-#             else:
-#                 # 更新操作  已知用户
-#
-#                 ret['type'] = 0  # 表示老用户
-#                 ret['codeVerify'] = Member.objects.filter(faceid=ret['faceid']).first().codeVerify
-#                 ret['info'] = 'update'
-#
-#             # 作为一个多次购物的用户，
-#             # 作为一个第一次注册的用户，
-#             member_foreign = Member.objects.filter(codeVerify=ret['codeVerify'].lower()).first()
-#
-#             # 不能用于检验验证码
-#
-#             print('member_foreign')
-#             print(member_foreign)
-#
-#             if member_foreign is None:
-#                 ret['state'] = '当前用户未识别'
-#
-#                 return HttpResponse(json.dumps(ret), content_type="application/json")
-#
-#             # 生成一条订单
-#             if request.POST['param'] is None or request.POST['param'] == {}:
-#                 ret['state'] = '订单错误'
-#
-#                 return HttpResponse(json.dumps(ret), content_type="application/json")
-#
-#             orderid = str(int(time.time() * 1000)) + str(uuid.uuid1()).replace('-', '')[0:10]
-#
-#             param = eval(request.POST['param'])
-#             total = 0
-#             for key_value in param.items():
-#                 comm = Commodity.objects.filter(id=key_value[0])
-#                 total += float(comm[0].present_price) * int(key_value[1])
-#                 Transaction.objects.create(rating=3,
-#                                            num=key_value[1],
-#                                            member=member_foreign,
-#                                            commodity=comm[0],
-#                                            joined_date=datetime.datetime.now(),
-#                                            orderid=orderid)
-#
-#             Credit.objects.create(
-#                 behave=4,
-#                 creditpoints=int(total),
-#                 credittype=0,
-#                 createtime=datetime.datetime.now(),
-#                 userid=member_foreign
-#             )
-#
-#             print('结果展示')
-#             print(ret)
-#             return HttpResponse(json.dumps(ret), content_type="application/json")
+with tf.Graph().as_default():
+    sess = tf.Session()
+    # 加载模型
+    meta_file, ckpt_file = get_model_filenames(MODELPATH)
+    saver = tf.train.import_meta_graph(os.path.join(MODELPATH, meta_file))
+    saver.restore(sess, os.path.join(MODELPATH, ckpt_file))
+    # 获得输入输出张量
+    images_placeholder = tf.get_default_graph().get_tensor_by_name("input:0")
+    embeddings = tf.get_default_graph().get_tensor_by_name("embeddings:0")
+    phase_train_placeholder = tf.get_default_graph().get_tensor_by_name("phase_train:0")
+
+    # 进行人脸识别，加载
+    print('Creating networks and loading parameters')
+
+
+    class MemberUploadFace(View):
+        """
+        确认收款界面相关功能，包括人脸识别以及生成订单
+        """
+        def post(self, request):
+            """
+            接受base64编码的人脸数据，并把商品数据生成订单
+            :param request:
+            :return:
+            """
+            ret = dict(status="fail")
+
+            # 接受前端传递过来的uuid -- 判别始于哪一个商家
+            img = request.POST['img']
+
+            img1 = img.replace('data:image/png;base64,', '')
+            newdata = base64.b64decode(img1)
+
+            memberid = str(uuid.uuid1()).replace('-', '')
+
+            image_path1 = BASE_DIR + os.sep + "media" + os.sep + "face" + os.sep + datetime.datetime.now().strftime(
+                '%Y-%m-%d')
+
+            if not os.path.exists(image_path1):
+                os.mkdir(image_path1)
+
+            image_path = image_path1 + os.sep + memberid + '.png'
+
+            try:
+                with open(image_path, 'wb') as file:
+                    file.write(newdata)
+            except FileNotFoundError as fnfe:
+                print(fnfe)
+
+            # opencv读取图片，开始进行人脸识别
+            img = misc.imread(os.path.expanduser(image_path), mode='RGB')
+            # 设置默认插入时 detect_multiple_faces =False只检测图中的一张人脸，True则检测人脸中的多张
+            # 一般入库时只检测一张人脸，查询时检测多张人脸
+            images = image_array_align_data(img, image_path, pnet, rnet, onet, detect_multiple_faces=False)
+
+            # 设置返回结果
+
+            ret = {}
+
+            # 判断如果如图没有检测到人脸则直接返回
+            if len(images.shape) < 4:
+                ret['info'] = '没有人脸信息,请重新输入，以确保有人脸信息'
+
+                print(ret)
+                return HttpResponse(json.dumps(ret), content_type="application/json")
+
+            feed_dict = {images_placeholder: images, phase_train_placeholder: False}
+            # emb_array保存的是经过facenet转换的128维的向量
+            emb_array = sess.run(embeddings, feed_dict=feed_dict)
+
+            face_query = Matrix()
+
+            code_verify = WechatUtils.genCode()
+
+            # 不让生成已经存在的验证码
+            while Member.objects.filter(codeVerify=code_verify):
+                code_verify = WechatUtils.genCode()
+
+            if code_verify == '-1':
+                ret['info'] = '验证码非法操作'
+                return HttpResponse(json.dumps(ret), content_type="application/json")
+
+            # 分别获取距离该图片中人脸最相近的人脸信息
+            # pic_min_scores 是数据库中人脸距离（facenet计算人脸相似度根据人脸距离进行的）
+            # pic_min_names 是当时入库时保存的文件名
+            # pic_min_uid  是对应的用户id
+            # if face_query.get_socres(emb_array) is not None:
+            pic_min_scores, pic_min_names, pic_min_uid = face_query.get_socres(emb_array)
+            for i in range(0, len(pic_min_scores)):
+                if pic_min_scores[i] < MAX_DISTINCT:
+                    ret['faceid'] = pic_min_uid[i]
+                    ret['distance'] = pic_min_scores[i]
+                    ret['picname'] = pic_min_names[i]
+
+            if ret is None:
+                # 新建一个用户
+                is_video = Member.objects.filter(codeVerify=code_verify)
+                print('isVideo')
+                print(is_video.exists())
+                if not is_video.exists():
+                    print('进来了')
+                    for j in range(0, len(emb_array)):
+                        Member.objects.create(faceid=memberid,
+                                              pic_name=memberid + "_" + str(j) + ".png",
+                                              face_json=",".join(str(li) for li in emb_array[j].tolist()),
+                                              joined_date1=datetime.datetime.now(),
+                                              codeVerify=code_verify.lower()
+                                              )
+
+                    ret['type'] = 1  # 表示新用户
+                    ret['codeVerify'] = code_verify
+                    ret['info'] = 'success, add a face new'
+            else:
+                # 更新操作  已知用户
+
+                ret['type'] = 0  # 表示老用户
+                ret['codeVerify'] = Member.objects.filter(faceid=ret['faceid']).first().codeVerify
+                ret['info'] = 'update'
+
+            # 作为一个多次购物的用户，
+            # 作为一个第一次注册的用户，
+            member_foreign = Member.objects.filter(codeVerify=ret['codeVerify'].lower()).first()
+
+            # 不能用于检验验证码
+
+            print('member_foreign')
+            print(member_foreign)
+
+            if member_foreign is None:
+                ret['state'] = '当前用户未识别'
+
+                return HttpResponse(json.dumps(ret), content_type="application/json")
+
+            # 生成一条订单
+            if request.POST['param'] is None or request.POST['param'] == {}:
+                ret['state'] = '订单错误'
+
+                return HttpResponse(json.dumps(ret), content_type="application/json")
+
+            orderid = str(int(time.time() * 1000)) + str(uuid.uuid1()).replace('-', '')[0:10]
+
+            param = eval(request.POST['param'])
+            total = 0
+            for key_value in param.items():
+                comm = Commodity.objects.filter(id=key_value[0])
+                total += float(comm[0].present_price) * int(key_value[1])
+                Transaction.objects.create(rating=3,
+                                           num=key_value[1],
+                                           member=member_foreign,
+                                           commodity=comm[0],
+                                           joined_date=datetime.datetime.now(),
+                                           orderid=orderid)
+
+            Credit.objects.create(
+                behave=4,
+                creditpoints=int(total),
+                credittype=0,
+                createtime=datetime.datetime.now(),
+                userid=member_foreign
+            )
+
+            print('结果展示')
+            print(ret)
+            return HttpResponse(json.dumps(ret), content_type="application/json")

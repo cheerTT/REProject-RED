@@ -125,6 +125,8 @@ Page({
                     return;
                 }
                 if (res.data.user_id != '-1') {
+                  console.log("wo lai la")
+                  console.log(res.data.user_id)
                   getApp().globalData.user_id = res.data.user_id
                 }
       

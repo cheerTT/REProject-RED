@@ -2,24 +2,18 @@
 # @Author: cheertt && xie Liangcai
 # @Time:2019年3月11日14:31:35
 # @Description: 与小程序端商品相关交互的接口
-# 谢良才你这个大胖子
 # '''
 import json
-
-from django.core import serializers
-from django.shortcuts import render
+import datetime
 from django.views.generic.base import View
 from django.db.models import Q
-import datetime
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse
 from django.core.serializers.json import DjangoJSONEncoder
-# from django.views.decorators.csrf import csrf_exempt
-from api.models import Member, Cart
 from django.core.paginator import Paginator
+from api.models import Member, Cart
 from commodity.models import Commodity, CommodityType
 from utils.wechat_utils import WechatUtils
 from apps.comment.models import Comment
-import django.utils.timezone as timezone
 from order.models import Transaction
 
 
@@ -34,7 +28,7 @@ class CommoditySearchView(View):
 
 class CommodityTypeView(View):
 
-    def get(self, request):
+    def get(self):
         '''
         商品种类展示
         :param request:
@@ -156,7 +150,7 @@ class CartAddView(View):
         member_id = auth_cookie.id
 
         cart_list = Cart.objects.filter(Q(member_id=member_id) & Q(commodity_id=commodity_id))
-        if (cart_list):
+        if cart_list:
             ret['msg'] = "已经加入收藏"
         else:
             Cart.objects.create(
