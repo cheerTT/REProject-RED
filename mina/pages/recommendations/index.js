@@ -32,6 +32,7 @@ Page({
           console.log("不是用户")
         }
         else{
+          console.log("是用户")
           wx.request({
             url: app.buildUrl('/recommendations/toprecommendations'),
             header: app.getRequestHeader(),
