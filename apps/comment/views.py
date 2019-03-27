@@ -31,7 +31,12 @@ class CommentListView(LoginRequiredMixin, View):
                 filters['state'] = '0'
             elif request.GET.get('select') == 'False':
                 filters['state'] = '1'
-        ret = dict(data=list(Comment.objects.filter(**filters).values(*fields)))
+        comment_list = Comment.objects.filter(**filters).values(*fields)
+        for comment in comment_list:
+            title = comment['content']
+            if len(str(title)) > 20:
+                comment['content'] = '{}...'.format(str(title)[0:20])
+        ret = dict(data=list(comment_list))
         return HttpResponse(json.dumps(ret, cls=DjangoJSONEncoder), content_type='application/json')
 
 
