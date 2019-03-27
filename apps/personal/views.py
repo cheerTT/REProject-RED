@@ -1,34 +1,33 @@
+"""
+登录主界面信息展示处理
+"""
 # @Time   : 2019/3/10 21:03
-# @Author : liyuming
+# @Author : ttwen
 # @Remark : 登录主界面信息展示处理
 import json
 import re
-import calendar
-from datetime import date, timedelta
+from datetime import date
 from django.shortcuts import render
 from django.views.generic.base import View
 from django.http import HttpResponse
 from django.contrib.auth import get_user_model
 from django.shortcuts import get_object_or_404
-from django.db.models import Q
 from utils.mixin_utils import LoginRequiredMixin
-from .models import WorkOrder
 from .forms import UserUpdateForm, ImageUploadForm
 from users.forms import AdminPasswdChangeForm
-from utils.toolkit import get_month_member_count, get_member_gender, get_monthly_sale_count
+from utils.toolkit import get_month_member_count, get_monthly_sale_count
 
 User = get_user_model()
 
 
 class PersonalView(LoginRequiredMixin, View):
-    """
-    我的工作台,用于显示个人信息，提高用户体验
-    """
+    """我的工作台,用于显示个人信息，提高用户体验"""
     def get(self, request):
-
+        '''
+        :param request: 页面的请求
+        :return: 返回各种统计结果
+        '''
         start_date = date.today().replace(day=1)
-        _, days_in_month = calendar.monthrange(start_date.year, start_date.month)
-        end_date = start_date + timedelta(days=days_in_month)
         ret = dict()
         ret['start_date'] = start_date
 
@@ -39,7 +38,7 @@ class PersonalView(LoginRequiredMixin, View):
         ret['new_commodity_this_month'] = 0
 
         # 月度新增用户数量
-        month_member_count = get_month_member_count(value=int(request.GET.get('value', 0)))
+        month_member_count = get_month_member_count()
         result1 = month_member_count[0]['count']
         for i in result1:
             ret['new_user_this_month'] += i
@@ -50,7 +49,7 @@ class PersonalView(LoginRequiredMixin, View):
             ret['new_profit_this_month'] += i
         ret['monthly_sale_count'] = result3
         ret['new_order_this_month'] = order_num
-        ret['new_profit_this_month'] = round(ret['new_profit_this_month'],2)
+        ret['new_profit_this_month'] = round(ret['new_profit_this_month'], 2)
 
         # 本月新增商品数统计
         ret['new_commodity_this_month'] = new_commo_num
@@ -65,13 +64,19 @@ class PersonalView(LoginRequiredMixin, View):
 
 
 class UserInfoView(LoginRequiredMixin, View):
-    """
-    个人中心：个人信息查看和修改
-    """
+    """个人中心：个人信息查看和修改"""
     def get(self, request):
+        '''
+        :param request: 页面的请求
+        :return: 返回个人信息页面
+        '''
         return render(request, 'personal/userinfo/user_info.html')
 
     def post(self, request):
+        '''
+        :param request: 页面的请求
+        :return: 返回成功状态码
+        '''
         ret = dict(status="fail")
         user = User.objects.get(id=request.POST['id'])
         user_update_form = UserUpdateForm(request.POST, instance=user)
@@ -82,10 +87,9 @@ class UserInfoView(LoginRequiredMixin, View):
 
 
 class UploadImageView(LoginRequiredMixin, View):
-    """
-    个人中心：上传头像
-    """
+    """个人中心：上传头像"""
     def post(self, request):
+        '''post方法'''
         ret = dict(result=False)
         image_form = ImageUploadForm(request.POST, request.FILES, instance=request.user)
         if image_form.is_valid():
@@ -95,17 +99,16 @@ class UploadImageView(LoginRequiredMixin, View):
 
 
 class PasswdChangeView(LoginRequiredMixin, View):
-    """
-    登陆用户修改个人密码
-    """
+    """登陆用户修改个人密码"""
     def get(self, request):
+        '''get方法'''
         ret = dict()
         user = get_object_or_404(User, pk=int(request.user.id))
         ret['user'] = user
         return render(request, 'personal/userinfo/passwd-change.html', ret)
 
     def post(self, request):
-
+        '''post方法'''
         user = get_object_or_404(User, pk=int(request.user.id))
         form = AdminPasswdChangeForm(request.POST)
         if form.is_valid():

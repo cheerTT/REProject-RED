@@ -2,26 +2,13 @@
 <view class="container">
   <!--商品轮播图-->
    <view class="swiper-container">
-        <!--<swiper class="swiper_box" autoplay="{{autoplay}}" interval="{{interval}}" duration="{{duration}}" bindchange="swiperchange">-->
-            <!--<block wx:for="{{info.pics}}" wx:key="id">-->
-                <!--<swiper-item>-->
-                    <!--<image src="{{item}}" class="slide-image" width="355" height="150" mode="aspectFit" lazy-load="true"/>-->
-                <!--</swiper-item>-->
-            <!--</block>-->
-        <!--</swiper>-->
-        <!--<view class="dots">-->
-            <!--<block wx:for="{{info.pics}}" wx:key="unique">-->
-                <!--<view class="dot{{index == swiperCurrent ? ' active' : ''}}"></view>-->
-            <!--</block>-->
-        <!--</view>-->
+
        <image src="{{imagePath}}/{{good.imUrl}}" class="slide-image" width="355" height="150" mode="aspectFit" lazy-load="true"/>
    </view>
    <!--商品基本介绍-->
    <view class="goods-info">
         <view class="goods-title">{{good.title}}</view>
         <view class="goods-price" style="padding-left:35rpx;">¥ {{good.present_price}}</view>
-        <!--<view class="goods-price" style="color:#999;font-size:24rpx;">购买{{info.total_count}}次</view>-->
-        <!--<view class="goods-price" style="color:#999;font-size:24rpx;">共收到 {{info.comment_count}} 次好评</view>-->
         <view class="goods-info-fx">
           <image src='/images/qd.png' />
           <button open-type="share">分享</button>
@@ -53,7 +40,6 @@
     <!--底部-->
     <view class="footer-box">
         <view class="shop-cart-btn" bindtap="goShopCar">
-            <!--<view class="shop-num">({{shopCarNum}})</view>-->
             <view style='position:absolute;bottom:10rpx;'> 收藏 </view>
         </view>
         <view class="join-shop-cart" bindtap="addShopCar">加入收藏</view>
