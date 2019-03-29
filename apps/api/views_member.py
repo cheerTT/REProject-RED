@@ -393,7 +393,9 @@ with tf.Graph().as_default():
                     ret['distance'] = pic_min_scores[i]
                     ret['picname'] = pic_min_names[i]
 
-            if ret is None:
+            print(ret)
+
+            if not ret:
                 # 新建一个用户
                 is_video = Member.objects.filter(codeVerify=code_verify)
                 print('isVideo')

@@ -190,7 +190,7 @@ FACTOR =0.709  # scale factor
 MODELPATH = BASE_DIR + os.sep + 'facenet' + os.sep + '20180408-102900'
 
 MAX_CONTENT_LENGTH = 16 * 1024 * 1024 # 图片最大为16M
-MAX_DISTINCT = 1.00 #设置最大的相似距离，1.22是facenet基于lfw计算得到的
+MAX_DISTINCT = 0.90 #设置最大的相似距离，1.22是facenet基于lfw计算得到的
 
 APPID = 'wx56291ba66ff53a69'
 SECRET = 'f4ecc5552da2ce4241d7fe083da90592'
