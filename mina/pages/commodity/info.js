@@ -10,12 +10,8 @@ Page({
         duration: 1000,
         swiperCurrent: 0,
         hideShopPopup: true,
-        buyNumber: 1,
-        buyNumMin: 1,
-        buyNumMax: 1,
-        canSubmit: false, //  选中时候是否允许加入购物车
         good: {},
-        shopType: "addShopCar",//购物类型，加入购物车或立即购买，默认为加入购物车,
+        shopType: "addShopCar",
         id: 0,
         shopCarNum: 4,
         commentCount: 2,
@@ -33,9 +29,6 @@ Page({
         this.getComments();
     },
     goShopCar: function () {
-        // wx.reLaunch({
-        //     url: "/pages/cart/index"
-        // });
         wx.navigateTo({
             url: "/pages/cart/index"
         });
@@ -72,7 +65,6 @@ Page({
                 id: that.data.id
             },
             success: function (res) {
-                // console.log(res.data.data)
                 var resp = res.data;
                 that.setData({
                     good: resp.data[0],
@@ -99,7 +91,6 @@ Page({
             }
         });
     },
-    // memberComments:function(){}
 
     onShareAppMessage: function () {
         var that = this;

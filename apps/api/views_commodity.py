@@ -2,46 +2,33 @@
 # @Author: cheertt && xie Liangcai
 # @Time:2019年3月11日14:31:35
 # @Description: 与小程序端商品相关交互的接口
-# 谢良才你这个大胖子
 # '''
 import json
-
-from django.core import serializers
-from django.shortcuts import render
+import datetime
 from django.views.generic.base import View
 from django.db.models import Q
-import datetime
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse
 from django.core.serializers.json import DjangoJSONEncoder
-# from django.views.decorators.csrf import csrf_exempt
-from api.models import Member, Cart
 from django.core.paginator import Paginator
+from api.models import Member, Cart
 from commodity.models import Commodity, CommodityType
 from utils.wechat_utils import WechatUtils
 from apps.comment.models import Comment
-import django.utils.timezone as timezone
 from order.models import Transaction
 
 
 class CommoditySearchView(View):
 
     def get(self, request):
-        # print("111111111111111111111111111111")
-        print(request.GET['s'])
-        s = request.GET['s']
         fields = ['id', 'assin', 'title', 'imUrl', 'present_price']
-
-        comms = Commodity.objects.filter(assin__contains=s).values(*fields)
+        comms = Commodity.objects.filter(assin__contains=request.GET['s']).values(*fields)
         ret = dict(data=list(comms))
         return HttpResponse(json.dumps(ret, cls=DjangoJSONEncoder), content_type='application/json')
-
-    def post(self, request):
-        pass
 
 
 class CommodityTypeView(View):
 
-    def get(self, request):
+    def get(self):
         '''
         商品种类展示
         :param request:
@@ -87,6 +74,7 @@ class CommodityListView(View):
 
 
 class CommodityInfoView(View):
+
     def get(self, request):
         '''
         显示商品详细信息
@@ -100,14 +88,12 @@ class CommodityInfoView(View):
             filters['id'] = request.GET['id']
         commodity_info = Commodity.objects.filter(**filters).values(*fields)
         ret = dict(data=list(commodity_info))
-        # ret["code"]=200
-        # ret["msg"]="操作成功~"
         ret = json.dumps(ret, cls=DjangoJSONEncoder)
-        # print("ret:", ret)
         return HttpResponse(ret, content_type='application/json')
 
 
 class CommodityCommentsView(View):
+
     def get(self, request):
         '''
         获取商品的所有评论
@@ -116,21 +102,13 @@ class CommodityCommentsView(View):
         '''
         ret = {}
         fields = ['id', 'content', 'joined_date', 'state', 'commodity_id', 'member_id']
-
         commodity_id = request.GET['id']
-
         comment_list = Comment.objects.filter(commodity_id=commodity_id).values(*fields)
-
         for comment in comment_list:
-            # print(comment)
             member = Member.objects.filter(id=comment['member_id'])
-            # print("member:", type(member))
-            # print(member.values('pic_name')[0]['pic_name'])
             comment['nickname'] = member.values('nickname')[0]['nickname']
             comment['avatarUrl'] = member.values('avatarUrl')[0]['avatarUrl']
-
         ret = json.dumps(dict(data=list(comment_list)), cls=DjangoJSONEncoder)
-        # print("ret:", ret)
         return HttpResponse(ret, content_type='application/json')
 
 
@@ -158,13 +136,13 @@ class CommentAddView(View):
             commodity_id=commodity_id,
             member_id=auth_cookie.id
         )
-
         Transaction.objects.filter(Q(member_id=member_id) & Q(commodity_id=commodity_id)).update(rating=score)
         ret['msg'] = "评论成功"
         return HttpResponse(json.dumps(ret), content_type='application/json')
 
 
 class CartAddView(View):
+
     def get(self, request):
         ret = {}
         commodity_id = request.GET['id']
@@ -172,7 +150,7 @@ class CartAddView(View):
         member_id = auth_cookie.id
 
         cart_list = Cart.objects.filter(Q(member_id=member_id) & Q(commodity_id=commodity_id))
-        if (cart_list):
+        if cart_list:
             ret['msg'] = "已经加入收藏"
         else:
             Cart.objects.create(
@@ -184,6 +162,7 @@ class CartAddView(View):
 
 
 class CartListView(View):
+
     def get(self, request):
         ret = {}
         fields = ['id', 'imUrl', 'title', 'present_price']
@@ -199,14 +178,14 @@ class CartListView(View):
 
 
 class CartDeltView(View):
+
     def post(self, request):
         ret = {}
         commodity_ids = request.POST['goods'].split(',')
-        print("goods",request.POST['goods'])
-        print("goods",type(commodity_ids))
+        print("goods", request.POST['goods'])
+        print("goods", type(commodity_ids))
         auth_cookie = WechatUtils.checkMemberLogin(request)
         member_id = auth_cookie.id
         for commodity_id in commodity_ids:
-            print("hfsdfgs",commodity_id)
             Cart.objects.filter(Q(commodity_id=commodity_id) & Q(member_id=member_id)).delete()
         return HttpResponse(ret, content_type='application/json')

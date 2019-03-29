@@ -1,27 +1,18 @@
 .video {
-    margin-left: 50px;
+    margin-left: 200px;
+    margin-right: 100px;
     margin-top: 20px;
     float: left;
 }
 
 .commodity {
-    margin-left: 30px;
     margin-top: 20px;
+    margin-right: 200px;
     float: left;
 }
 
 .commodity .dataList {
     float: left;
-}
-
-.order {
-    margin-right: 100px;
-    margin-top: 20px;
-    float: right;
-}
-
-.order .orderList {
-    float: right;
 }
 
 .mytable tbody tr:hover{

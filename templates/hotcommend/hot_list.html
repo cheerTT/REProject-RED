@@ -25,12 +25,17 @@
     <section class="content">
         <div id="devlist">
             <div class="box box-primary" id="liebiao">
+                <div class="row">
+                    <div class="col-md-8">
+                        <div id="main" style="width: 800px;height:400px;"></div>
+                    </div>
+                    <div class="col-md-4">
+                        <div id="season_commodity_sale_container" style="height: 400px; width: auto"></div>
+                    </div>
+                </div>
 
-                <div id="main" style="width: 1500px;height:400px;"></div>
-
-{#                {{ rates }}#}
-
-                <div class="box-header">
+            </div>
+                            <div class="box-header">
                     <div class="btn-group">
                         <button type="button" id="btnCreate" class="btn btn-primary">
                             <i class="glyphicon glyphicon-plus"></i>添加推荐
@@ -42,7 +47,6 @@
                         </button>
                     </div>
                 </div>
-            </div>
             <table id="dtbList" class="display" cellspacing="0" width="100%">
                 <thead>
                 <tr valign="middle">
@@ -269,10 +273,7 @@
 
     <script type="text/javascript">
 
-
-
-
-
+    {#本月增速前五商品#}
         //获取当前日期和上个月日期
         function getDay(day){
                var today = new Date();
@@ -298,31 +299,6 @@
 
         var myChart = echarts.init(document.getElementById('main'));
         // 指定图表的配置项和数据
-
-
-        {#// $(function () {#}
-        {#//     alert("uppdgfgdp");#}
-        {#//     $.ajax({#}
-        {#//         type:'POST',#}
-        {#//         url: "{% url 'hotcommend:hotcommend' %}",#}
-        {#//         data: {"id":34, csrfmiddlewaretoken: '{{ csrf_token }}'},#}
-        {#//         // dataType:'json',#}
-        {#//         s    uccess:function (meg) {#}
-        {#//             if(meg.result)#}
-        {#//             {#}
-        {#//                 alert(result.data);#}
-        {#//             }#}
-        {#//         }#}
-        {#//     });#}
-        {#// });#}
-
-
-        // $(document).ready(function(res) {
-        //
-        //
-        //     console.log(res);
-        //
-        // });
 
         var assin_date = {{ rates }};
 
@@ -373,6 +349,7 @@
                 }
             },
             legend:{
+                top: 30,
                 data:[assin1[0], assin2[0], assin3[0], assin4[0], assin5[0]]
                 },
             toolbox: {
@@ -464,9 +441,82 @@
 
             ]
         };
-
         // 使用刚指定的配置项和数据显示图表。
         myChart.setOption(option);
+    </script>
+
+    <script type="text/javascript">
+    {#季节性商品分析#}
+    var bar_dom = document.getElementById("season_commodity_sale_container");
+    var myChart = echarts.init(bar_dom,'macarons');
+    var season_num_result = {{ season }};
+    option = null;
+    option = {
+        title: {
+            text: '本季度热销商品统计',
+            subtext: '',
+            x:'left'
+        },
+        tooltip: {
+            trigger: 'item',
+            formatter: "{a} <br/>{b} : {c} ({d}%)"
+        },
+         legend: {
+             type: 'scroll',
+             right: 10,
+             top: 30,
+             bottom: 20,
+             data : [season_num_result[0]['commodity__assin'], season_num_result[1]['commodity__assin'], season_num_result[2]['commodity__assin'],
+                 season_num_result[3]['commodity__assin'], season_num_result[4]['commodity__assin'], season_num_result[5]['commodity__assin'],
+                 season_num_result[6]['commodity__assin'], season_num_result[7]['commodity__assin'], season_num_result[8]['commodity__assin'],
+                 season_num_result[9]['commodity__assin']]
+        },
+        toolbox: {
+        show : true,
+        feature : {
+            mark : {show: true},
+            dataView : {show: true, readOnly: false},
+            magicType : {
+                show: true,
+                type: ['pie', 'funnel'],
+                option: {
+                    funnel: {
+                        x: '25%',
+                        width: '50%',
+                        funnelAlign: 'center',
+                        max: 1548
+                    }
+                }
+            },
+            restore : {show: true},
+            saveAsImage : {show: true}
+        }
+        },
+        calculable: true,
+        series: [
+            {
+                name: '本月商品销量统计',
+                type: 'pie',
+                radius : '55%',
+                center: ['40%', '50%'],
+                data: [
+                    { value: season_num_result[0]['counts'], name:season_num_result[0]['commodity__assin']},
+                    { value: season_num_result[1]['counts'], name:season_num_result[1]['commodity__assin']},
+                    { value: season_num_result[2]['counts'], name:season_num_result[2]['commodity__assin']},
+                    { value: season_num_result[3]['counts'], name:season_num_result[3]['commodity__assin']},
+                    { value: season_num_result[4]['counts'], name:season_num_result[4]['commodity__assin']},
+                    { value: season_num_result[5]['counts'], name:season_num_result[5]['commodity__assin']},
+                    { value: season_num_result[6]['counts'], name:season_num_result[6]['commodity__assin']},
+                    { value: season_num_result[7]['counts'], name:season_num_result[7]['commodity__assin']},
+                    { value: season_num_result[8]['counts'], name:season_num_result[8]['commodity__assin']},
+                    { value: season_num_result[9]['counts'], name:season_num_result[9]['commodity__assin']},
+                ]
+            },
+        ]
+    };
+    if (option && typeof option === "object") {
+        myChart.setOption(option, true);
+    }
     </script>
 
 

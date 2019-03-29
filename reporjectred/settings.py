@@ -33,7 +33,6 @@ ALLOWED_HOSTS = ['*']
 # Application definition
 
 INSTALLED_APPS = [
-    'django.contrib.sites',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -48,9 +47,8 @@ INSTALLED_APPS = [
     'apps.hotcommend.apps.HotCommendConfig',
     'apps.api.apps.ApiConfig',
     'apps.order.apps.OrderConfig',
-    'apps.comment.apps.CommentConfig',
+    'apps.comment.apps.CommentConfig'
 ]
-SITE_ID = 1
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -98,9 +96,9 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'reprojectred',
-        'HOST': '139.219.2.134',
+        'HOST': '42.159.7.12',
         'USER': 'root',
-        'PASSWORD': 'Jincan.4943198',
+        'PASSWORD': '123456',
         'PORT': '3306'
     }
 }
@@ -190,7 +188,6 @@ MINSIZE =20  # minimum size of face
 THRESHOLD = [0.6, 0.7, 0.7]  # three steps's threshold
 FACTOR =0.709  # scale factor
 MODELPATH = BASE_DIR + os.sep + 'facenet' + os.sep + '20180408-102900'
-# MODELPATH = BASE_DIR + os.sep + 'facenet' + os.sep + '20180408-102900'
 
 MAX_CONTENT_LENGTH = 16 * 1024 * 1024 # 图片最大为16M
 MAX_DISTINCT = 0.90 #设置最大的相似距离，1.22是facenet基于lfw计算得到的

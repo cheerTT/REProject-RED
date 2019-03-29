@@ -3,7 +3,6 @@
 # @Remark  :
 
 from django.db import models
-from commodity.models import Commodity
 
 # Create your models here.
 
@@ -17,6 +16,9 @@ from commodity.models import Commodity
 
 
 class hot_list(models.Model):
+    """
+    热销表单model
+    """
     assin = models.CharField(max_length=200, blank=False, null=False)
     title = models.CharField(max_length=200, blank=True, null=True)
     categories = models.CharField(max_length=20, blank=True, null=True)
@@ -25,15 +27,23 @@ class hot_list(models.Model):
     imUrl = models.CharField(max_length=1000, blank=True, null=True)
 
     class Meta:
+        """
+        指定该类的数据库表单名字
+        """
         db_table = 'hot_list'
 
 class transaction_record(models.Model):
+    """
+    交易记录model
+    """
     # id = models.IntegerField()
     user_id = models.CharField(max_length=255, blank=False, null=False)
-    # item_id = models.ForeignKey('commodity.Commodity', on_delete=models.CASCADE, blank=False, null=False)
     assin = models.CharField(max_length=255, blank=False, null=False)
     rating = models.CharField(max_length=100, blank=True, null=True)
     date = models.DateTimeField(max_length=255, blank=False, null=False)
 
     class Meta:
+        """
+        指定该类的数据库表单名字
+        """
         db_table = 'transaction_record'

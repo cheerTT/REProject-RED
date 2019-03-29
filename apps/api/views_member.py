@@ -127,12 +127,12 @@ class MemberLoginView(View):
         token = ""
         if bind_info.first():
             token = "%s#%s" % (WechatUtils.geneAuthCode(
-                id=bind_info.values_list()[0][0],
-                codeVerify=bind_info.values_list()[0][13],
-                state=bind_info.values_list()[0][12],
-                type=bind_info.values_list()[0][14],
-            ), bind_info.values_list()[0][0])
-
+                id=bind_info.first().id,
+                codeVerify=bind_info.first().codeVerify,
+                state=bind_info.first().state,
+                type=bind_info.first().type,
+            ), bind_info.first().id)
+            ret['user_id'] = bind_info.first().id
         else:
             token = "%s#%s" % (WechatUtils.geneAuthCode(
                 id='-1',
@@ -140,6 +140,8 @@ class MemberLoginView(View):
                 state='0',
                 type='0',
             ), -1)
+            ret['user_id'] = '-1'
+
         ret['data'] = {'token': token}
 
         return HttpResponse(json.dumps(ret), content_type='application/json')
@@ -227,7 +229,6 @@ class MemberInfoView(View):
         ret = {}
 
         auth_cookie = WechatUtils.checkMemberLogin(request)
-        # print('auth_cookie:',auth_cookie)
 
         ret['id'] = auth_cookie.id
         ret['openid'] = auth_cookie.openid
@@ -288,7 +289,6 @@ class MemberView(LoginRequiredMixin, View):
         :return:
         """
         return render(request, 'api/member/member.html')
-
 
 # 前方高能
 # 该段代码占用过多CPU资源，放在全局供其他函数调用
@@ -393,7 +393,9 @@ with tf.Graph().as_default():
                     ret['distance'] = pic_min_scores[i]
                     ret['picname'] = pic_min_names[i]
 
-            if ret is None:
+            print(ret)
+
+            if not ret:
                 # 新建一个用户
                 is_video = Member.objects.filter(codeVerify=code_verify)
                 print('isVideo')

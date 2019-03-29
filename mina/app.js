@@ -10,7 +10,7 @@ App({
       imagePath:"https://helianthusa.chinacloudapp.cn/media",
       // domain: "http://127.0.0.1:8000/api",
       // imagePath:"http://127.0.0.1:8000/media",
-
+      
       user_id: "not_user"
     },
     tip: function (params) {

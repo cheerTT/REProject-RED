@@ -1,3 +1,7 @@
+#### 0 项目地址
+
+https://github.com/cheerTT/REProject-RED
+
 #### 1 项目名称
 
 SCRM-社交人脸识别新零售项目
@@ -26,23 +30,23 @@ Web,微信小程序，人脸识别，数据分析
 
 ##### 5.1 收款界面
 
-![1553314950479](https://github.com/cheerTT/REProject-RED/blob/master/readme_image/1553314950479.png)
+![1553314950479](readme_image/1553314950479.png)
 
 ##### 5.2 后台主界面
 
-![1553315164375](https://github.com/cheerTT/REProject-RED/blob/master/readme_image/1553315164375.png)
+![1553315164375](readme_image/1553315164375.png)
 
 ##### 5.3 用户画像
 
-![1553315271975](https://github.com/cheerTT/REProject-RED/blob/master/readme_image/1553315271975.png)
+![1553315271975](readme_image/1553315271975.png)
 
 ##### 5.4 热销商品预测与分析
 
-![1553315314533](https://github.com/cheerTT/REProject-RED/blob/master/readme_image/1553315314533.png)
+![1553315314533](readme_image/1553315314533.png)
 
 ##### 5.5 小程序端主要显示
 
-![](https://github.com/cheerTT/REProject-RED/blob/master/readme_image/%E5%B0%8F%E7%A8%8B%E5%BA%8F.png)
+![](readme_image/%E5%B0%8F%E7%A8%8B%E5%BA%8F.png)
 
 #### 6 在线测试
 
@@ -58,7 +62,19 @@ Web,微信小程序，人脸识别，数据分析
 
 （3）小程序：微信搜索 ‘向日葵新零售’
 
-#### 7 项目成员
+#### 7 本地部署
+
+（1）导入在mysql中创建数据库，运行reprojectred.sql；
+
+（2）导入项目的依赖包requirements.txt
+
+（3）修改settings.py配置文件，换成自己对应的数据库配置即可，并把appid和secretid换成自己的
+
+（4）安装微信开发工具，导入mina文件夹， 修改自己的appid（需要提前申请开发者权限）
+
+（5）运行项目
+
+#### 8 项目成员
 
 @CatherineXX  https://github.com/CatherineXX
 
