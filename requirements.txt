@@ -28,7 +28,7 @@ Markdown==3.0.1
 mccabe==0.6.1
 more-itertools==6.0.0
 mysqlclient==1.4.2.post1
-numpy==1.16.2
+numpy==1.22.0
 odfpy==1.4.0
 opencv-python==3.4.5.20
 openpyxl==2.6.0
